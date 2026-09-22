@@ -2,35 +2,38 @@
 const KAABA_LAT = 21.4225;
 const KAABA_LNG = 39.8262;
 
-let userLat = 0;
-let userLng = 0;
 let qiblaAngle = 0;
 
 document.addEventListener('DOMContentLoaded', () => {
-  getUserLocationForQibla();
+  initQiblaCompass();
 });
 
-function getUserLocationForQibla() {
+function initQiblaCompass() {
   const statusEl = document.getElementById('qibla-status');
+  
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        userLat = position.coords.latitude;
-        userLng = position.coords.longitude;
+        const userLat = position.coords.latitude;
+        const userLng = position.coords.longitude;
+        
+        // حساب زاوية القبلة بناءً على موقع المستخدم
         qiblaAngle = calculateQibla(userLat, userLng);
-        statusEl.innerText = "حرك هاتفك ببطء لضبط اتجاه القبلة";
-        setupCompassSensors();
+        statusEl.innerText = "تم تحديد الموقع. يرجى تحريك الهاتف بشكل رقم 8 لمعايرة البوصلة.";
+        
+        setupSensors();
       },
       (error) => {
-        statusEl.innerText = "تعذر تحديد الموقع الجغرافي. يجدر تفعيل GPS.";
-      }
+        statusEl.innerText = "تعذر تحديد الموقع. يرجى السماح للخدمة بالوصول لموقعك.";
+      },
+      { enableHighAccuracy: true }
     );
   } else {
-    statusEl.innerText = "متصفحك لا يدعم تحديد الموقع الجغرافي.";
+    statusEl.innerText = "متصفحك لا يدعم تحديد الموقع.";
   }
 }
 
-// معادلة حساب اتجاه القبلة بالنسبة للشمال الجغرافي
+// معادلة حساب اتجاه القبلة بدقة
 function calculateQibla(lat, lng) {
   const phi1 = (lat * Math.PI) / 180;
   const lambda1 = (lng * Math.PI) / 180;
@@ -44,17 +47,20 @@ function calculateQibla(lat, lng) {
   return (bearing + 360) % 360;
 }
 
-function setupCompassSensors() {
-  const pointer = document.getElementById('qibla-pointer');
+function setupSensors() {
   const statusEl = document.getElementById('qibla-status');
   const btnEnable = document.getElementById('btn-enable-compass');
 
-  // التحقق من صلاحيات الأجهزة الحديثة (مثل آيفون iOS 13+)
+r  // للآيفون والأجهزة الحديثة التي تتطلب إذناً خاصاً للمستشعرات
   if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
     btnEnable.classList.remove('d-none');
-    statusEl.innerText = "اضغط على الزر أدناه لتفعيل مستشعر الحركة";
+    statusEl.innerText = "اضغط على زر تفعيل المستشعر أدناه";
+  } else if ('ondeviceorientationabsolute' in window) {
+    window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+  } else if ('ondeviceorientation' in window) {
+    window.addEventListener('deviceorientation', handleOrientation, true);
   } else {
-    startListeningCompass(pointer, statusEl);
+    statusEl.innerText = "مستشعر الحركة غير متوفر على هذا الجهاز.";
   }
 }
 
@@ -62,29 +68,33 @@ function requestCompassPermission() {
   DeviceOrientationEvent.requestPermission().then((response) => {
     if (response === 'granted') {
       document.getElementById('btn-enable-compass').classList.add('d-none');
-      startListeningCompass(document.getElementById('qibla-pointer'), document.getElementById('qibla-status'));
+      window.addEventListener('deviceorientation', handleOrientation, true);
+      document.getElementById('qibla-status').innerText = "تم التفعيل بنجاح، وجّه هاتفك أفقياً.";
     } else {
-      alert('تم رفض إذن الوصول لمستشعر الحركة.');
+      alert('تم رفض إذن الوصول للمستشعر.');
     }
   }).catch(console.error);
 }
 
-function startListeningCompass(pointer, statusEl) {
-  window.addEventListener('deviceorientation', (event) => {
-    let heading = event.alpha; // اتجاه الشمال بالنسبة للجهاز
+function handleOrientation(event) {
+  const pointer = document.getElementById('qibla-pointer');
+  const statusEl = document.getElementById('qibla-status');
+  
+  let heading = null;
 
-    // دعم أجهزة أندرويد عبر absolute / webkitCompassHeading
-    if (event.webkitCompassHeading) {
-      heading = event.webkitCompassHeading;
-    }
+  // فحص نوع الجهاز لجلب زاوية الشمال بدقة
+  if (event.webkitCompassHeading !== undefined) {
+    // لأجهزة آبل (iOS)
+    heading = event.webkitCompassHeading;
+  } else if (event.alpha !== null) {
+    // لأجهزة أندرويد (Android) - يتم عكس الزاوية أحياناً بحسب المتصفح
+    heading = 360 - event.alpha;
+  }
 
-    if (heading !== null && !isNaN(heading)) {
-      // حساب الزاوية المطلوبة لتوجيه سهم الكعبة نحو القبلة بدقة
-      let finalRotation = qiblaAngle - heading;
-      pointer.style.transform = `rotate(${finalRotation}deg)`;
-      statusEl.innerText = `اتجاه القبلة محسوب بدقة (زاوية: ${Math.round(qiblaAngle)}°)`;
-    } else {
-      statusEl.innerText = "جهازك لا يدعم بوصلة المستشعر المباشر.";
-    }
-  }, true);
+  if (heading !== null && !isNaN(heading)) {
+    // الزاوية النهائية لحركة السهم
+    let rotation = qiblaAngle - heading;
+    pointer.style.transform = `rotate(${rotation}deg)`;
+    statusEl.innerText = `اتجاه القبلة (زاوية القبلة: ${Math.round(qiblaAngle)}°)`;
+  }
 }
