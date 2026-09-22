@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-bs-theme="dark">
+  <head>
+    <title>إشراق v1.0</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap CSS RTL v5.3.3 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" />
+
+    <!-- Google Fonts (Tajawal) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+
+  <body>
+    <header>
+      <nav class="navbar navbar-expand-lg fixed-top shadow-sm" style="background-color: #21211d; border-bottom: 0.2rem solid #edcea0">
+        <div class="container-fluid">
+          <div class="h6 gold text-center d-none d-lg-block my-auto">
+            نُشرِقُ برُوحِك.. ونَسْمُو بِقَلْبِك
+          </div>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapsibleNavId"
+            aria-controls="collapsibleNavId"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+            style="border-color: #edcea0"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="collapsibleNavId">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+              <li class="nav-item"><a class="nav-link gold px-3 d-inline-block" href="./index.html">الرئيسية</a></li>
+              <li class="nav-item"><a class="nav-link gold px-3 d-inline-block" href="#">القرآن الكريم</a></li>
+              <li class="nav-item"><a class="nav-link gold px-3 d-inline-block" href="#">الحديث النبوي</a></li>
+              <li class="nav-item"><a class="nav-link gold px-3 d-inline-block" href="#">الأذكار</a></li>
+              <li class="nav-item"><a class="nav-link gold px-3 d-inline-block" href="#">الأوراد</a></li>
+              <li class="nav-item"><a class="nav-link gold px-3 d-inline-block" href="#">الأدعية</a></li>
+              <li class="nav-item"><a class="nav-link gold px-3 d-inline-block" href="#">المطوف الإلكتروني</a></li>
+            </ul>
+          </div>
+          <a class="navbar-brand ms-lg-3" href="./index.html">
+            <img src="./5b862b4281f64fd884b11984846f0e97.png" width="80" alt="إشراق" />
+          </a>
+        </div>
+      </nav>
+    </header>
+
+    <main style="margin-top: 140px">
+      <div class="container">
+        <!-- العنوان الرئيسي -->
+        <div class="row">
+          <div class="col-12 text-center mb-4">
+            <h1 class="gold hero-title fw-bold">نُشرِقُ برُوحِك.. ونَسْمُو بِقَلْبِك</h1>
+          </div>
+        </div>
+
+        <!-- قسم مواقيت الصلاة الاحترافي -->
+<div class="row justify-content-center mb-5">
+  <div class="col-12 col-lg-10">
+    <div class="prayer-card shadow-lg p-3 p-md-4 position-relative overflow-hidden">
+      
+      <!-- الهيدر العلوي: تحديد الموقع وساعة الجهاز -->
+      <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-gold-subtle pb-2">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-geo-alt-fill gold fs-5"></i>
+          <span id="user-location" class="fw-bold small text-light">جاري تحديد الموقع...</span>
+          <button id="btn-refresh-location" class="btn btn-sm btn-link gold p-0 ms-1" title="تحديث الموقع">
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
+        </div>
+       <div class="text-gold opacity-75 small text-end">
+  <div>
+    <i class="bi bi-calendar3 me-1"></i>
+    <span id="hijri-date">---</span>
+  </div>
+  <div class="text-light opacity-50 style-gregorian">
+    <span id="gregorian-date">---</span>
+  </div>
+</div>
+      </div>
+
+      <!-- البوكس الرئيسي: الصلاة القادمة والعداد التنازلي -->
+      <div class="row align-items-center text-center text-md-start my-3">
+        <div class="col-md-6 mb-3 mb-md-0">
+          <span class="badge badge-gold mb-2">الصلاة القادمة</span>
+          <h2 id="next-prayer-name" class="gold fw-bold mb-1 display-6">صلاة العصر</h2>
+          <p id="next-prayer-time" class="text-light opacity-75 mb-0 small">موعد الأذان: 03:20 م</p>
+        </div>
+
+        <!-- العداد التنازلي الرقمي -->
+        <div class="col-md-6 text-center text-md-end">
+          <div class="countdown-box d-inline-flex gap-2 justify-content-center align-items-center p-2 rounded">
+            <div class="time-unit">
+              <span id="cd-hours" class="time-num">00</span>
+              <span class="time-label">ساعة</span>
+            </div>
+            <span class="time-colon">:</span>
+            <div class="time-unit">
+              <span id="cd-minutes" class="time-num">00</span>
+              <span class="time-label">دقيقة</span>
+            </div>
+            <span class="time-colon">:</span>
+            <div class="time-unit">
+              <span id="cd-seconds" class="time-num">00</span>
+              <span class="time-label">ثانية</span>
+            </div>
+          </div>
+
+          <!-- شريط الإقامة التنازلي (بيظهر تلقائياً وقت الإقامة فقط) -->
+          <div id="iqama-container" class="mt-2 d-none">
+            <span class="badge bg-warning text-dark"><i class="bi bi-bell-fill me-1"></i> المتبقي للإقامة: <span id="iqama-timer">15:00</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- شبكة أوقات الصلوات الخمس + الشروق -->
+      <div class="prayer-times-grid mt-4 pt-3 border-top border-gold-subtle">
+        <div class="row g-2 text-center row-cols-3 row-cols-md-6">
+          
+          <div class="col">
+            <div class="p-item rounded p-2" id="p-fajr">
+              <span class="p-title d-block mb-1">الفجر</span>
+              <span class="p-time d-block fw-bold gold">04:30 ص</span>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="p-item rounded p-2" id="p-sunrise">
+              <span class="p-title d-block mb-1">الشروق</span>
+              <span class="p-time d-block fw-bold opacity-75">06:00 ص</span>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="p-item rounded p-2 active" id="p-dhuhr">
+              <span class="p-title d-block mb-1">الظهر</span>
+              <span class="p-time d-block fw-bold gold">12:15 م</span>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="p-item rounded p-2" id="p-asr">
+              <span class="p-title d-block mb-1">العصر</span>
+              <span class="p-time d-block fw-bold gold">03:20 م</span>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="p-item rounded p-2" id="p-maghrib">
+              <span class="p-title d-block mb-1">المغرب</span>
+              <span class="p-time d-block fw-bold gold">06:10 م</span>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="p-item rounded p-2" id="p-isha">
+              <span class="p-title d-block mb-1">العشاء</span>
+              <span class="p-time d-block fw-bold gold">07:40 م</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+        <!-- كروت الإشراقات اليومية -->
+        <div class="row justify-content-center g-4 mb-5">
+          <!-- إشراقة قرآنيّة -->
+          <div class="col-lg-6 col-md-10">
+            <div id="quran-card" class="card card-eshraq dark-b1 shadow-lg p-4 h-100">
+              <div class="card-body p-0 d-flex flex-column justify-content-between">
+                <div>
+                  <h4 class="card-title gold mb-3 fw-bold"><i class="bi bi-book me-2"></i>إشراقة قرآنيّة</h4>
+                  <p class="card-text gold h5 leading-relaxed mb-2">
+                    <span id="quran-text">"الَّذِينَ آمَنُوا وَتَطْمَئِنُّ قُلُوبُهُم بِذِكْرِ اللَّهِ ۗ أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ"</span>
+                  </p>
+                  <span id="quran-ref" class="ref-text opacity-75 d-block mb-3">سورة الرعد - الآية 28</span>
+                  <p id="quran-desc" class="desc-text mb-4">بالذِّكرِ تَسكُنُ النُّفوسُ وتَزولُ الهُموم.</p>
+                </div>
+                <div class="pt-2 d-flex gap-2 justify-content-end align-items-center">
+                  <button onclick="copyContent('quran')" class="btn btn-gold-outline btn-sm px-3" title="نسخ النص">
+                    <i class="bi bi-copy me-1"></i> نسخ
+                  </button>
+                  <button onclick="shareWhatsapp('quran')" class="btn btn-gold-solid btn-sm px-3" title="مشاركة عبر واتساب">
+                    <i class="bi bi-whatsapp me-1"></i> مشاركة
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- إشراقة نبويّة -->
+          <div class="col-lg-6 col-md-10">
+            <div id="hadith-card" class="card card-eshraq dark-b2 shadow-lg p-4 h-100">
+              <div class="card-body p-0 d-flex flex-column justify-content-between">
+                <div>
+                  <h4 class="card-title gold mb-3 fw-bold"><i class="bi bi-chat-quote me-2"></i>إشراقة نبويّة</h4>
+                  <p class="card-text gold h5 leading-relaxed mb-2">
+                    <span id="hadith-text">"أَقْرَبُ مَا يَكُونُ الْعَبْدُ مِنْ رَبِّهِ وَهُوَ سَاجِدٌ"</span>
+                  </p>
+                  <span id="hadith-ref" class="ref-text opacity-75 d-block mb-3">أخرجه الإمام مسلم في صحيحه (رقم 482)</span>
+                  <p id="hadith-desc" class="desc-text mb-4">انْكِسَارُكَ فِي السُّجُودِ هُوَ أَعْلَى مَقَامَاتِ قُرْبِك.</p>
+                </div>
+                <div class="pt-2 d-flex gap-2 justify-content-end align-items-center">
+                  <button onclick="copyContent('hadith')" class="btn btn-gold-outline btn-sm px-3" title="نسخ النص">
+                    <i class="bi bi-copy me-1"></i> نسخ
+                  </button>
+                  <button onclick="shareWhatsapp('hadith')" class="btn btn-gold-solid btn-sm px-3" title="مشاركة عبر واتساب">
+                    <i class="bi bi-whatsapp me-1"></i> مشاركة
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- شبكة أقسام التطبيق -->
+        <div class="row g-4 mb-5">
+          <div class="col-md-4 col-6">
+            <a href="#" class="grid-card text-decoration-none d-block">
+              <img src="./quran.png" class="grid-icon mb-3" alt="القرآن الكريم" />
+              <div class="gold h5 fw-bold mb-0">القرآن الكــريـم</div>
+            </a>
+          </div>
+
+          <div class="col-md-4 col-6">
+            <a href="#" class="grid-card text-decoration-none d-block">
+              <img src="./hadeth.png" class="grid-icon mb-3" alt="الحديث النبوي" />
+              <div class="gold h5 fw-bold mb-0">الحديث النبوي</div>
+            </a>
+          </div>
+
+          <div class="col-md-4 col-6">
+            <a href="#" class="grid-card text-decoration-none d-block">
+              <img src="./azkar.png" class="grid-icon mb-3" alt="الأذكار" style="transform: rotate(140deg);" />
+              <div class="gold h5 fw-bold mb-0">الأذكار</div>
+            </a>
+          </div>
+
+          <div class="col-md-4 col-6">
+            <a href="#" class="grid-card text-decoration-none d-block">
+              <img src="./awrad.png" class="grid-icon mb-3" alt="الأوراد" />
+              <div class="gold h5 fw-bold mb-0">الأوراد</div>
+            </a>
+          </div>
+
+          <div class="col-md-4 col-6">
+            <a href="#" class="grid-card text-decoration-none d-block">
+              <img src="./adeya.png" class="grid-icon mb-3" alt="الأدعية" />
+              <div class="gold h5 fw-bold mb-0">الأدعية</div>
+            </a>
+          </div>
+
+          <div class="col-md-4 col-6">
+            <a href="#" class="grid-card text-decoration-none d-block">
+              <img src="./mutawef.png" class="grid-icon mb-3" alt="المطوف الإلكتروني" />
+              <div class="gold h5 fw-bold mb-0">المطوف الإلكتروني</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="text-center py-3">
+      <small class="text-light opacity-50">جميع الحقوق محفوظة © إشراق 2026</small>
+    </footer>
+
+    <!-- Bootstrap JavaScript Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="./main.js"></script>
+    <!-- Bootstrap JavaScript Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="./main.js"></script>
+    <!-- سكريبت مواقيت الصلاة الجديد -->
+    <script src="./prayer.js"></script>
+  </body>
+</html>
+  </body>
+</html>
