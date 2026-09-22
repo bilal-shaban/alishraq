@@ -211,6 +211,38 @@ body {
   width: 60px;
   height: auto;
 }
+/* --- تصميم بوصلة القِبلة --- */
+.qibla-card {
+  background-color: #1b1b18;
+  border: 1px solid rgba(237, 206, 160, 0.3);
+}
+
+.compass-container {
+  width: 200px;
+  height: 200px;
+}
+
+.compass-dial {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 3px dashed rgba(237, 206, 160, 0.4);
+  background: radial-gradient(circle, #252520 0%, #151512 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+}
+
+.qibla-pointer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  transition: transform 0.1s ease-out;
+}
 /* --- تصميم قسم تحميل التطبيق (شفاف بدون تغيير الخلفية الأساسية) --- */
 .pwa-download-section {
   background-color: transparent !important;
