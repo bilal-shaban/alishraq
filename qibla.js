@@ -65,15 +65,15 @@ function handleOrientation(event) {
   const pointer = document.getElementById('qibla-pointer');
   const statusEl = document.getElementById('qibla-status');
   
-  // استخراج اتجاه الشمال الحقيقي من إحداثيات الجيروسكوب
   let heading = event.alpha; 
   if (event.webkitCompassHeading !== undefined) {
     heading = event.webkitCompassHeading; // خاص بالآيفون
   }
 
   if (heading !== null && !isNaN(heading)) {
-    // دوران السهم ليدل على الكعبة مباشرة بناءً على وجهة الهاتف والشمال
-    let rotation = qiblaAngle - heading;
+    // تعديل اتجاه الدوران بعكس الإشارة (-) لضبط الجهة الصحيحة تماماً
+    let rotation = heading - qiblaAngle; 
+    
     if (pointer) pointer.style.transform = `rotate(${rotation}deg)`;
     statusEl.innerText = `التوجيه نشط (القبلة على زاوية: ${Math.round(qiblaAngle)}°)`;
   }
