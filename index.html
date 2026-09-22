@@ -14,15 +14,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="./style.css" />
+    <!-- PWA Manifest -->
+<link rel="manifest" href="./manifest.json" />
+<meta name="theme-color" content="#21211D" />
   </head>
 
   <body>
     <header>
       <nav class="navbar navbar-expand-lg fixed-top shadow-sm" style="background-color: #21211d; border-bottom: 0.2rem solid #edcea0">
         <div class="container-fluid">
+          <a class="navbar-brand ms-lg-3" href="./index.html">
+            <img src="./5b862b4281f64fd884b11984846f0e97.png" width="80" alt="إشراق" />
+          </a>
           <div class="h6 gold text-center d-none d-lg-block my-auto">
             نُشرِقُ برُوحِك.. ونَسْمُو بِقَلْبِك
           </div>
+          
+
           <button
             class="navbar-toggler"
             type="button"
@@ -44,12 +52,10 @@
               <li class="nav-item"><a class="nav-link gold px-3 d-inline-block" href="#">الأذكار</a></li>
               <li class="nav-item"><a class="nav-link gold px-3 d-inline-block" href="#">الأوراد</a></li>
               <li class="nav-item"><a class="nav-link gold px-3 d-inline-block" href="#">الأدعية</a></li>
-              <li class="nav-item"><a class="nav-link gold px-3 d-inline-block" href="#">المطوف الإلكتروني</a></li>
+              <li class="nav-item"><a class="nav-link gold px-3 d-inline-block" href="#">المطوف </a></li>
             </ul>
           </div>
-          <a class="navbar-brand ms-lg-3" href="./index.html">
-            <img src="./5b862b4281f64fd884b11984846f0e97.png" width="80" alt="إشراق" />
-          </a>
+          
         </div>
       </nav>
     </header>
@@ -226,6 +232,41 @@
           </div>
         </div>
 
+<!-- قسم السبحة الإلكترونية -->
+<div class="row justify-content-center mb-5">
+  <div class="col-12 col-lg-8">
+    <div class="tasbeeh-card shadow-lg p-4 text-center rounded-4 position-relative overflow-hidden">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="badge badge-gold"><i class="bi bi-heptagon-fill me-1"></i> السبحة الإلكترونية</span>
+        <button onclick="resetTasbeeh()" class="btn btn-sm btn-outline-danger border-0 text-light opacity-75" title="إعادة الضبط">
+          <i class="bi bi-arrow-counterclockwise fs-5"></i>
+        </button>
+      </div>
+
+      <!-- الذكر الحالي -->
+      <h3 id="tasbeeh-phrase" class="gold fw-bold my-3">سُبْحَانَ اللَّهِ وَبِحَمْدِهِ</h3>
+
+      <!-- العداد الرقمي والزر الرئيسي -->
+      <div class="my-4">
+        <button id="tasbeeh-btn" onclick="countTasbeeh()" class="tasbeeh-circle-btn my-2 mx-auto d-flex flex-column justify-content-center align-items-center">
+          <span id="tasbeeh-count" class="display-3 fw-bold gold font-monospace">0</span>
+          <small class="text-light opacity-50">اضغط هنا</small>
+        </button>
+      </div>
+
+      <!-- شريط التنقل بين الأذكار -->
+      <div class="d-flex justify-content-center gap-2 flex-wrap mt-3">
+        <button onclick="setTasbeehPhrase('سُبْحَانَ اللَّهِ ')" class="btn btn-sm btn-gold-outline rounded-pill"> سبحان الله</button>
+        <button onclick="setTasbeehPhrase('الْحَمْدُ لِلَّهِ')" class="btn btn-sm btn-gold-outline rounded-pill">الحمد لله</button>
+        <button onclick="setTasbeehPhrase('لا إِلَهَ إِلا اللَّهُ')" class="btn btn-sm btn-gold-outline rounded-pill">لا إله إلا الله</button>
+        <button onclick="setTasbeehPhrase('اللَّهُ أَكْبَرُ')" class="btn btn-sm btn-gold-outline rounded-pill">الله أكبر</button>
+        <button onclick="setTasbeehPhrase('أَسْتَغْفِرُ اللَّهَ')" class="btn btn-sm btn-gold-outline rounded-pill">أستغفر الله</button>
+        <button onclick="setTasbeehPhrase('اللهم صلّ على سيدنا محمد ')" class="btn btn-sm btn-gold-outline rounded-pill"> اللهم صلّ على سيدنا محمد</button>
+      </div>
+    </div>
+  </div>
+</div>
+
         <!-- شبكة أقسام التطبيق -->
         <div class="row g-4 mb-5">
           <div class="col-md-4 col-6">
@@ -266,13 +307,74 @@
           <div class="col-md-4 col-6">
             <a href="#" class="grid-card text-decoration-none d-block">
               <img src="./mutawef.png" class="grid-icon mb-3" alt="المطوف الإلكتروني" />
-              <div class="gold h5 fw-bold mb-0">المطوف الإلكتروني</div>
+              <div class="gold h5 fw-bold mb-0">المطوف </div>
             </a>
           </div>
         </div>
       </div>
     </main>
+<!-- قسم تحميل وتثبيت التطبيق على الأجهزة -->
+<section class="pwa-download-section py-5 mt-5">
+  <div class="container">
+    <div class="text-center mb-4">
+      <span class="badge badge-gold mb-2"><i class="bi bi-phone me-1"></i> تطبيق إشراق</span>
+      <h3 class="gold fw-bold">حَمِّلْ إشراق على جِهَازِك</h3>
+      <p class="text-light opacity-75 small">تصفح أسرع، بدون شريط المتصفح، وبدعم يعمل حتى بدون إنترنت</p>
+    </div>
 
+    <div class="row g-4 justify-content-center">
+      
+      <!-- كارت أندرويد Android -->
+      <div class="col-md-4 col-sm-6">
+        <div class="download-card text-center p-4 rounded-4 h-100 d-flex flex-column justify-content-between">
+          <div>
+            <div class="os-icon mb-3 text-success">
+              <i class="bi bi-android2 display-4"></i>
+            </div>
+            <h5 class="gold fw-bold mb-2">أندرويد (Android)</h5>
+            <p class="text-light opacity-50 small mb-4">تثبيت مباشر كتطبيق أندرويد مستقل على هاتفك</p>
+          </div>
+          <button id="btn-install-android" class="btn btn-gold-solid w-100 rounded-pill py-2 fw-bold">
+            <i class="bi bi-download me-1"></i> تثبيت الآن
+          </button>
+        </div>
+      </div>
+
+      <!-- كارت آيفون iOS -->
+      <div class="col-md-4 col-sm-6">
+        <div class="download-card text-center p-4 rounded-4 h-100 d-flex flex-column justify-content-between">
+          <div>
+            <div class="os-icon mb-3 text-light">
+              <i class="bi bi-apple display-4"></i>
+            </div>
+            <h5 class="gold fw-bold mb-2">آيفون (iOS)</h5>
+            <p class="text-light opacity-50 small mb-3">اضغط على زر <i class="bi bi-box-arrow-up text-gold"></i> في سفاري ثم اختر <b>"إضافة إلى الشاشة الرئيسية"</b></p>
+          </div>
+          <button onclick="showIosInstructions()" class="btn btn-gold-outline w-100 rounded-pill py-2">
+            <i class="bi bi-info-circle me-1"></i> طريقة التثبيت
+          </button>
+        </div>
+      </div>
+
+      <!-- كارت ويندوز Windows -->
+      <div class="col-md-4 col-sm-6">
+        <div class="download-card text-center p-4 rounded-4 h-100 d-flex flex-column justify-content-between">
+          <div>
+            <div class="os-icon mb-3 text-primary">
+              <i class="bi bi-microsoft display-4"></i>
+            </div>
+            <h5 class="gold fw-bold mb-2">ويندوز (Windows)</h5>
+            <p class="text-light opacity-50 small mb-4">تثبيت إشراق كتطبيق سطح مكتب على الكمبيوتر</p>
+          </div>
+          <button id="btn-install-windows" class="btn btn-gold-solid w-100 rounded-pill py-2 fw-bold">
+            <i class="bi bi-laptop me-1"></i> تثبيت للكمبيوتر
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
     <footer class="text-center py-3">
       <small class="text-light opacity-50">جميع الحقوق محفوظة © إشراق 2026</small>
     </footer>
@@ -287,6 +389,7 @@
     <script src="./main.js"></script>
     <!-- سكريبت مواقيت الصلاة الجديد -->
     <script src="./prayer.js"></script>
+    <script src="./tasbeeh.js"></script>
   </body>
 </html>
   </body>

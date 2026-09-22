@@ -76,3 +76,33 @@ function shareWhatsapp(type) {
   const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(formattedMessage)}`;
   window.open(whatsappUrl, '_blank');
 }
+
+let deferredPrompt;
+const androidBtn = document.getElementById('btn-install-android');
+const windowsBtn = document.getElementById('btn-install-windows');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+});
+
+function triggerPwaInstall() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('تم قبول تثبيت التطبيق');
+      }
+      deferredPrompt = null;
+    });
+  } else {
+    alert('التطبيق مثبت بالفعل أو يمكنك التثبيت مباشرة من خيارات المتصفح (إضافة إلى الشاشة الرئيسية).');
+  }
+}
+
+if (androidBtn) androidBtn.addEventListener('click', triggerPwaInstall);
+if (windowsBtn) windowsBtn.addEventListener('click', triggerPwaInstall);
+
+function showIosInstructions() {
+  alert('لتثبيت إشراق على الآيفون:\n1. اضغط على زر المشاركة (أسفل الشاشة في متصفح Safari).\n2. اختر "إضافة إلى الشاشة الرئيسية (Add to Home Screen)".');
+}

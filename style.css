@@ -167,6 +167,29 @@ body {
   color: #000 !important;
 }
 
+/* --- تصميم السبحة الإلكترونية --- */
+.tasbeeh-card {
+  background-color: #1b1b18;
+  border: 1px solid rgba(237, 206, 160, 0.3);
+}
+
+.tasbeeh-circle-btn {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #2a2a24 0%, #1a1a17 100%);
+  border: 3px solid var(--gold-accent);
+  box-shadow: 0 0 20px rgba(237, 206, 160, 0.2);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+  user-select: none;
+}
+
+.tasbeeh-circle-btn:active {
+  transform: scale(0.93);
+  box-shadow: 0 0 10px rgba(237, 206, 160, 0.4);
+}
+
 /* شبكة كروت الأقسام الستة */
 .grid-card {
   background-color: #21211d;
@@ -188,7 +211,47 @@ body {
   width: 60px;
   height: auto;
 }
+/* --- تصميم قسم تحميل التطبيق (شفاف بدون تغيير الخلفية الأساسية) --- */
+.pwa-download-section {
+  background-color: transparent !important;
+  border: none !important; /* إلغاء الخط الممتد بعرض الشاشة */
+  position: relative;
+  padding-top: 2rem;
+}
 
+/* إضافة خط جديد بعرض نصف الشاشة وفي المنتصف */
+.pwa-download-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%); /* للمحافظة على الخط في المنتصف تماماً */
+  width: 50%; /* عرض الخط (نصف الشاشة) */
+  height: 3px; /* سماكة الخط */
+  background-color: rgba(237, 206, 160, 0.15); /* لون الخط الذهبي */
+  border-radius: 10px;
+  opacity: 0.8;
+}
+
+.download-card {
+  background-color: #21211d; /* لون كروت داكن ومريح للعين مع الهوية */
+  border: 1px solid rgba(237, 206, 160, 0.2);
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.download-card:hover {
+  transform: translateY(-7px);
+  border-color: var(--gold-accent);
+  box-shadow: 0 10px 25px rgba(237, 206, 160, 0.12);
+}
+
+.download-card .os-icon i {
+  transition: transform 0.3s ease;
+}
+
+.download-card:hover .os-icon i {
+  transform: scale(1.15);
+}
 footer {
   background-color: #1a1a17;
   border-top: 1px solid rgba(237, 206, 160, 0.1);
