@@ -231,43 +231,7 @@
             </div>
           </div>
         </div>
-
-<!-- قسم السبحة الإلكترونية -->
-<div class="row justify-content-center mb-5">
-  <div class="col-12 col-lg-8">
-    <div class="tasbeeh-card shadow-lg p-4 text-center rounded-4 position-relative overflow-hidden">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <span class="badge badge-gold"><i class="bi bi-heptagon-fill me-1"></i> السبحة الإلكترونية</span>
-        <button onclick="resetTasbeeh()" class="btn btn-sm btn-outline-danger border-0 text-light opacity-75" title="إعادة الضبط">
-          <i class="bi bi-arrow-counterclockwise fs-5"></i>
-        </button>
-      </div>
-
-      <!-- الذكر الحالي -->
-      <h3 id="tasbeeh-phrase" class="gold fw-bold my-3">سُبْحَانَ اللَّهِ وَبِحَمْدِهِ</h3>
-
-      <!-- العداد الرقمي والزر الرئيسي -->
-      <div class="my-4">
-        <button id="tasbeeh-btn" onclick="countTasbeeh()" class="tasbeeh-circle-btn my-2 mx-auto d-flex flex-column justify-content-center align-items-center">
-          <span id="tasbeeh-count" class="display-3 fw-bold gold font-monospace">0</span>
-          <small class="text-light opacity-50">اضغط هنا</small>
-        </button>
-      </div>
-
-      <!-- شريط التنقل بين الأذكار -->
-      <div class="d-flex justify-content-center gap-2 flex-wrap mt-3">
-        <button onclick="setTasbeehPhrase('سُبْحَانَ اللَّهِ ')" class="btn btn-sm btn-gold-outline rounded-pill"> سبحان الله</button>
-        <button onclick="setTasbeehPhrase('الْحَمْدُ لِلَّهِ')" class="btn btn-sm btn-gold-outline rounded-pill">الحمد لله</button>
-        <button onclick="setTasbeehPhrase('لا إِلَهَ إِلا اللَّهُ')" class="btn btn-sm btn-gold-outline rounded-pill">لا إله إلا الله</button>
-        <button onclick="setTasbeehPhrase('اللَّهُ أَكْبَرُ')" class="btn btn-sm btn-gold-outline rounded-pill">الله أكبر</button>
-        <button onclick="setTasbeehPhrase('أَسْتَغْفِرُ اللَّهَ')" class="btn btn-sm btn-gold-outline rounded-pill">أستغفر الله</button>
-        <button onclick="setTasbeehPhrase('اللهم صلّ على سيدنا محمد ')" class="btn btn-sm btn-gold-outline rounded-pill"> اللهم صلّ على سيدنا محمد</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-        <!-- شبكة أقسام التطبيق -->
+<!-- شبكة أقسام التطبيق -->
         <div class="row g-4 mb-5">
           <div class="col-md-4 col-6">
             <a href="#" class="grid-card text-decoration-none d-block">
@@ -311,6 +275,42 @@
             </a>
           </div>
         </div>
+<!-- قسم السبحة الإلكترونية -->
+<div class="row justify-content-center mb-5">
+  <div class="col-12 col-lg-8">
+    <div class="tasbeeh-card shadow-lg p-4 text-center rounded-4 position-relative overflow-hidden">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <a class="badge badge-gold text-decoration-none" href="./tasbeeh.html" ><i class="bi bi-heptagon-fill me-1"></i> السبحة الإلكترونية</a>
+        <button onclick="resetTasbeeh()" class="btn btn-sm btn-outline-danger border-0 text-light opacity-75" title="إعادة الضبط">
+          <i class="bi bi-arrow-counterclockwise fs-5"></i>
+        </button>
+      </div>
+
+      <!-- الذكر الحالي -->
+      <h3 id="tasbeeh-phrase" class="gold fw-bold my-3">سُبْحَانَ اللَّهِ وَبِحَمْدِهِ</h3>
+
+      <!-- العداد الرقمي والزر الرئيسي -->
+      <div class="my-4">
+        <button id="tasbeeh-btn" onclick="countTasbeeh()" class="tasbeeh-circle-btn my-2 mx-auto d-flex flex-column justify-content-center align-items-center">
+          <span id="tasbeeh-count" class="display-3 fw-bold gold font-monospace">0</span>
+          <small class="text-light opacity-50">اضغط هنا</small>
+        </button>
+      </div>
+
+      <!-- شريط التنقل بين الأذكار -->
+      <div class="d-flex justify-content-center gap-2 flex-wrap mt-3">
+        <button onclick="setTasbeehPhrase('سُبْحَانَ اللَّهِ ')" class="btn btn-sm btn-gold-outline rounded-pill"> سبحان الله</button>
+        <button onclick="setTasbeehPhrase('الْحَمْدُ لِلَّهِ')" class="btn btn-sm btn-gold-outline rounded-pill">الحمد لله</button>
+        <button onclick="setTasbeehPhrase('لا إِلَهَ إِلا اللَّهُ')" class="btn btn-sm btn-gold-outline rounded-pill">لا إله إلا الله</button>
+        <button onclick="setTasbeehPhrase('اللَّهُ أَكْبَرُ')" class="btn btn-sm btn-gold-outline rounded-pill">الله أكبر</button>
+        <button onclick="setTasbeehPhrase('أَسْتَغْفِرُ اللَّهَ')" class="btn btn-sm btn-gold-outline rounded-pill">أستغفر الله</button>
+        <button onclick="setTasbeehPhrase('اللهم صلّ على سيدنا محمد ')" class="btn btn-sm btn-gold-outline rounded-pill"> اللهم صلّ على سيدنا محمد</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+        
       </div>
     </main>
     <!-- قسم بوصلة القبلة الرقمية -->
