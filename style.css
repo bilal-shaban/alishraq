@@ -4,7 +4,11 @@
   --text-light: #F8F9FA;
   --desc-text-color: #D3D3C7; /* درجة وضوح عالية وقابلة للقراءة */
 }
-
+/* منع التمرير الأفقي المزعج نهائياً على الموبايل */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden !important;
+}
 body {
   font-family: 'Tajawal', sans-serif;
   background-color: var(--bg-dark);
