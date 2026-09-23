@@ -151,3 +151,27 @@ function shareProgress() {
     const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
     window.open(whatsappUrl, '_blank');
 }
+// تطبيق وضع القراءة الليلية المحفوظ فوراً عند تحميل أي صفحة في الموقع
+document.addEventListener('DOMContentLoaded', () => {
+    const isNightMode = localStorage.getItem('night_reading_mode') === 'true';
+    const toggleSwitch = document.getElementById('nightModeToggle');
+    
+    if (isNightMode) {
+        document.documentElement.setAttribute('data-night-mode', 'true');
+        if (toggleSwitch) toggleSwitch.checked = true;
+    } else {
+        document.documentElement.removeAttribute('data-night-mode');
+        if (toggleSwitch) toggleSwitch.checked = false;
+    }
+});
+
+// دالة التفعيل وإيقاف الوضع الليلي (تُستدعى عند الضغط على الزر في الإعدادات)
+function toggleNightReadingMode(checkbox) {
+    if (checkbox.checked) {
+        document.documentElement.setAttribute('data-night-mode', 'true');
+        localStorage.setItem('night_reading_mode', 'true');
+    } else {
+        document.documentElement.removeAttribute('data-night-mode');
+        localStorage.setItem('night_reading_mode', 'false');
+    }
+}

@@ -230,3 +230,65 @@ function format12Hour(timeStr) {
   hours = hours % 12 || 12;
   return `${String(hours).padStart(2, '0')}:${m} ${ampm}`;
 }
+// التحقق من حالة تفعيل إشعارات الصلاة من الـ LocalStorage عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', () => {
+    const toggleSwitch = document.getElementById('prayerNotificationsToggle');
+    if (toggleSwitch) {
+        toggleSwitch.checked = localStorage.getItem('prayer_notifications_enabled') === 'true';
+    }
+});
+
+// دالة تفعيل أو إلغاء الإشعارات من زر الإعدادات
+function togglePrayerNotifications(checkbox) {
+    if (checkbox.checked) {
+        // طلب إذن إرسال الإشعارات من المتصفح
+        if (!("Notification" in window)) {
+            alert("متصفحك لا يدعم إشعارات سطح المكتب.");
+            checkbox.checked = false;
+            return;
+        }
+
+        Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+                localStorage.setItem('prayer_notifications_enabled', 'true');
+                showNotification("تطبيق إشراق", "تم تفعيل إشعارات أوقات الصلاة بنجاح 🌙");
+            } else {
+                alert("يجب السماح بالإشعارات من إعدادات المتصفح لعمل الميزة.");
+                checkbox.checked = false;
+                localStorage.setItem('prayer_notifications_enabled', 'false');
+            }
+        });
+    } else {
+        localStorage.setItem('prayer_notifications_enabled', 'false');
+        // يمكن إظهار تنبيه داخلي خفيف
+    }
+}
+
+// دالة إرسال الإشعار النظامي للمتصفح
+function showNotification(title, bodyText) {
+    if (Notification.permission === "granted") {
+        new Notification(title, {
+            body: bodyText,
+            icon: "./5b862b4281f64fd884b11984846f0e97.png" // أيقونة التطبيق إن وجدت بالمجلد
+        });
+    }
+}
+
+// دالة المراقبة والمقارنة (تُستدعى مع كل تحديث للوقت بدقائق المواقيت)
+let lastNotifiedMinute = "";
+
+function checkPrayerTimeForNotification(prayerName, prayerTimeString) {
+    const isEnabled = localStorage.getItem('prayer_notifications_enabled') === 'true';
+    if (!isEnabled) return;
+
+    const now = new Date();
+    const currentHours = String(now.getHours()).padStart(2, '0');
+    const currentMinutes = String(now.getMinutes()).padStart(2, '0');
+    const currentTimeStr = `${currentHours}:${currentMinutes}`;
+
+    // التأكد أن الوقت تطابق وأننا لم نرسل إشعاراً لهذه الصلاة في نفس الدقيقة
+    if (prayerTimeString === currentTimeStr && lastNotifiedMinute !== currentTimeStr) {
+        showNotification("حين وقت الصلاة 🕌", `حان الآن موعد أذان صلاة ${prayerName} حسب إحداثيات موقعك.`);
+        lastNotifiedMinute = currentTimeStr;
+    }
+}

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إشراق - الإعدادات</title>
+  <!-- Bootstrap 5.3.3 RTL CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Google Fonts (Tajawal) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
+  <!-- ملف التصميم الرئيسي -->
+  <link rel="stylesheet" href="style.css">
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#21211D" />
+</head>
+<body style="background-color: #1a1a16; color: #f8f9fa; font-family: 'Tajawal', sans-serif;">
+
+  <!-- شريط التنقل العلوي (الناف بار الكامل) -->
+  <header>
+    <nav class="navbar navbar-expand-lg fixed-top shadow-sm" style="background-color: #21211d; border-bottom: 0.2rem solid #edcea0">
+      <div class="container-fluid">
+        <a class="navbar-brand ms-lg-3" href="./index.html">
+          <img src="./5b862b4281f64fd884b11984846f0e97.png" width="80" alt="إشراق" />
+        </a>
+        <div class="h6 gold text-center d-none d-lg-block my-auto" style="color: #edcea0;">
+          نُشرِقُ برُوحِك.. ونَسْمُو بِقَلْبِك
+        </div>
+        
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapsibleNavId"
+          aria-controls="collapsibleNavId"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+          style="border-color: #edcea0"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="collapsibleNavId">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link px-3 d-inline-block" style="color: #edcea0;" href="./index.html">الرئيسية</a></li>
+            <li class="nav-item"><a class="nav-link px-3 d-inline-block" style="color: #edcea0;" href="./quran.html">القرآن الكريم</a></li>
+            <li class="nav-item"><a class="nav-link px-3 d-inline-block" style="color: #edcea0;" href="./hadith.html">الحديث النبوي</a></li>
+            <li class="nav-item"><a class="nav-link px-3 d-inline-block" style="color: #edcea0;" href="./azkar.html">الأذكار</a></li>
+            <li class="nav-item"><a class="nav-link px-3 d-inline-block" style="color: #edcea0;" href="./tasbeeh.html">السبحة</a></li>
+            <li class="nav-item"><a class="nav-link px-3 d-inline-block" style="color: #edcea0;" href="./matwaf.html">المطوف</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- محتوى الصفحة مع مسافة علوية وسفلية -->
+  <main style="margin-top: 130px;" class="pb-5 mb-5">
+    <div class="container my-3" style="max-width: 600px;">
+      
+      <!-- عنوان الصفحة -->
+      <div class="text-center mb-4">
+        <h2 class="fw-bold" style="color: #edcea0;"><i class="bi bi-gear-fill me-2"></i>إعدادات التطبيق</h2>
+        <p class="text-light opacity-75 small">تخصيص تفضيلات التطبيق والإشعارات حسب رغبتك</p>
+      </div>
+
+      <!-- قسم تنبيهات أوقات الصلاة (السويتش والبطاقة الفخمة) -->
+      <div class="card border-0 rounded-4 shadow-sm mb-3" style="background-color: #262621; border: 1px solid rgba(237, 206, 160, 0.2) !important;">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="fw-bold mb-1" style="color: #edcea0;">
+                <i class="bi bi-bell-fill me-2"></i>تنبيهات أوقات الصلاة
+              </h5>
+              <p class="text-light opacity-75 small m-0">تلقي إشعار فوري من المتصفح عند دخول وقت أي صلاة.</p>
+            </div>
+            <div class="form-check form-switch fs-4">
+              <input class="form-check-input shadow-none" type="checkbox" role="switch" id="prayerNotificationsToggle" onchange="togglePrayerNotifications(this)" style="cursor: pointer; background-color: #3a3a32; border-color: #edcea0;">
+            </div>
+          </div>
+        </div>
+      </div>
+<div class="card border-0 rounded-4 shadow-sm mb-3" style="background-color: #262621; border: 1px solid rgba(237, 206, 160, 0.2) !important;">
+  <div class="card-body p-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h5 class="fw-bold mb-1" style="color: #edcea0;">
+          <i class="bi bi-moon-stars-fill me-2"></i>وضع القراءة الليلية
+        </h5>
+        <p class="text-light opacity-75 small m-0">تخفيف الإضاءة وتلطيف التباين لراحة العين أثناء القراءة ليلاً.</p>
+      </div>
+      <div class="form-check form-switch fs-4">
+        <input class="form-check-input shadow-none" type="checkbox" role="switch" id="nightModeToggle" onchange="toggleNightReadingMode(this)" style="cursor: pointer; background-color: #3a3a32; border-color: #edcea0;">
+      </div>
+    </div>
+  </div>
+</div>
+
+      <div class="card border-0 rounded-4 shadow-sm mb-3 bg-card-dark" style="border: 1px solid rgba(237, 206, 160, 0.2) !important;">
+  <div class="card-body p-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h5 class="fw-bold mb-1" style="color: #edcea0;">
+          <i class="bi bi-share-fill me-2"></i>مشاركة التطبيق
+        </h5>
+        <p class="text-light opacity-75 small m-0">شارك تطبيق إشراق مع أصدقائك والدال على الخير كفاعله.</p>
+      </div>
+      <button onclick="shareApp()" class="btn btn-sm px-3 py-2 rounded-3 fw-bold" style="background-color: #edcea0; color: #1a1a16;">
+        <i class="bi bi-send-fill me-1"></i>مشاركة
+      </button>
+    </div>
+  </div>
+</div>
+<div class="card border-0 rounded-4 shadow-sm mb-3 bg-card-dark" style="border: 1px solid rgba(237, 206, 160, 0.2) !important;" id="installCard" style="display: none;">
+  <div class="card-body p-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h5 class="fw-bold mb-1" style="color: #edcea0;">
+          <i class="bi bi-phone-fill me-2"></i>تثبيت التطبيق
+        </h5>
+        <p class="text-light opacity-75 small m-0">ثبت تطبيق إشراق على هاتفك للوصول السريع والتصفح السهل.</p>
+      </div>
+      <button id="installAppBtn" class="btn btn-sm px-3 py-2 rounded-3 fw-bold" style="background-color: #edcea0; color: #1a1a16;">
+        تثبيت
+      </button>
+    </div>
+  </div>
+</div>
+<!-- قسم إعادة تعيين البيانات وذاكرة التخزين -->
+      <div class="card border-0 rounded-4 shadow-sm mb-3 bg-card-dark" style="border: 1px solid rgba(237, 206, 160, 0.2) !important;">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="fw-bold mb-1" style="color: #edcea0;">
+                <i class="bi bi-trash3-fill me-2"></i>إعادة ضبط البيانات والتخزين
+              </h5>
+              <p class="text-light opacity-75 small m-0">مسح الذاكرة المؤقتة وإعادة التطبيق لحالته الأصلية.</p>
+            </div>
+            
+            <button onclick="clearAppStorage()" class="btn btn-outline-danger btn-sm  rounded-3 fw-bold" style="border-color: #dc3545; color: #ff6b6b; font-size: 0.75rem;;">
+              <i class="bi bi-arrow-counterclockwise me-1"></i>مسح البيانات
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- قسم معلومات إضافية أو إعدادات عامة (مستقبلاً) -->
+      <div class="card border-0 rounded-4 shadow-sm mb-3" style="background-color: #262621; border: 1px solid rgba(237, 206, 160, 0.2) !important;">
+        <div class="card-body p-4">
+          <h5 class="fw-bold mb-3" style="color: #edcea0;">
+            <i class="bi bi-info-circle-fill me-2"></i>حول تطبيق إشراق
+          </h5>
+          <p class="text-light opacity-75 small mb-2">تطبيق إشراق هو رفيقك الإسلامي اليومي، مصمم بعناية ليقدم تجربة مستخدم هادئة، خالية من الإعلانات، وبأعلى معايير الجودة البرمجية.</p>
+          <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary opacity-75 small">
+            <span>الإصدار: 2.0.0 (Pro)</span>
+            <span style="color: #edcea0;">تم البناء بكل حب 🌙</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+ <!-- شريط التنقل السفلي الثابت للهواتف -->
+  <nav class="bottom-nav fixed-bottom d-md-none">
+  <div class="container d-flex justify-content-around align-items-center py-2">
+    
+    <!-- زر الرئيسية -->
+    <a href="index.html" class="nav-item-bottom text-center text-decoration-none " data-page="home">
+      <i class="bi bi-house-door fs-5 d-block"></i>
+      <i class="bi bi-house-door-fill fs-5 d-block active-icon"></i>
+      <span class="small">الرئيسية</span>
+    </a>
+
+    <!-- زر السبحة -->
+    <a href="tasbeeh.html" class="nav-item-bottom text-center text-decoration-none " data-page="tasbeeh">
+      <i class="bi bi-circle fs-5 d-block"></i>
+      <i class="bi bi-record-circle-fill fs-5 d-block active-icon"></i>
+      <span class="small">السبحة</span>
+    </a>
+
+    <!-- زر البوصلة -->
+    <a href="qibla.html" class="nav-item-bottom text-center text-decoration-none" data-page="qibla">
+      <i class="bi bi-compass fs-5 d-block"></i>
+      <i class="bi bi-compass-fill fs-5 d-block active-icon"></i>
+      <span class="small">القبلة</span>
+    </a>
+
+    <!-- زر المطوف -->
+    <a href="matwaf.html" class="nav-item-bottom text-center text-decoration-none" data-page="matwaf">
+      <i class="bi bi-map fs-5 d-block"></i>
+      <i class="bi bi-map-fill fs-5 d-block active-icon"></i>
+      <span class="small">المطوف</span>
+    </a>
+
+    <!-- زر الإعدادات -->
+    <a href="settings.html" class="nav-item-bottom text-center text-decoration-none active" data-page="settings">
+      <i class="bi bi-gear fs-5 d-block"></i>
+      <i class="bi bi-gear-fill fs-5 d-block active-icon"></i>
+      <span class="small">الإعدادات</span>
+    </a>
+
+  </div>
+</nav>
+
+
+  <!-- JavaScript الخاص بالإعدادات -->
+  <script>
+    // التحقق من حالة التفعيل عند فتح الصفحة
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggleSwitch = document.getElementById('prayerNotificationsToggle');
+        if (toggleSwitch) {
+            toggleSwitch.checked = localStorage.getItem('prayer_notifications_enabled') === 'true';
+        }
+    });
+
+    // دالة تفعيل أو إلغاء تفعيل تنبيهات الصلاة
+    function togglePrayerNotifications(checkbox) {
+        if (checkbox.checked) {
+            if (!("Notification" in window)) {
+                alert("متصفحك لا يدعم إشعارات سطح المكتب.");
+                checkbox.checked = false;
+                return;
+            }
+
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    localStorage.setItem('prayer_notifications_enabled', 'true');
+                    // إرسال إشعار تجريبي فوري لتأكيد التفعيل
+                    new Notification("تطبيق إشراق", {
+                        body: "تم تفعيل تنبيهات أوقات الصلاة بنجاح 🌙",
+                        icon: "./5b862b4281f64fd884b11984846f0e97.png"
+                    });
+                } else {
+                    alert("يجب السماح بالإشعارات من إعدادات المتصفح لعمل الميزة.");
+                    checkbox.checked = false;
+                    localStorage.setItem('prayer_notifications_enabled', 'false');
+                }
+            });
+        } else {
+            localStorage.setItem('prayer_notifications_enabled', 'false');
+        }
+    }
+  </script>
+<script>
+   // تطبيق وضع القراءة الليلية المحفوظ عند تحميل أي صفحة
+document.addEventListener('DOMContentLoaded', () => {
+    const isNightMode = localStorage.getItem('night_reading_mode') === 'true';
+    const toggleSwitch = document.getElementById('nightModeToggle');
+    
+    if (isNightMode) {
+        document.documentElement.setAttribute('data-night-mode', 'true');
+        if (toggleSwitch) toggleSwitch.checked = true;
+    } else {
+        document.documentElement.removeAttribute('data-night-mode');
+        if (toggleSwitch) toggleSwitch.checked = false;
+    }
+});
+
+// دالة التفعيل والإيقاف
+function toggleNightReadingMode(checkbox) {
+    if (checkbox.checked) {
+        document.documentElement.setAttribute('data-night-mode', 'true');
+        localStorage.setItem('night_reading_mode', 'true');
+    } else {
+        document.documentElement.removeAttribute('data-night-mode');
+        localStorage.setItem('night_reading_mode', 'false');
+    }
+}
+// دالة مسح الذاكرة المؤقتة وتفريغ بيانات الـ PWA والـ LocalStorage
+function clearAppStorage() {
+    if (confirm("هل أنت متأكد من مسح جميع بيانات التطبيق والإعدادات المحفوظة؟ سيتم إعادة تشغيل التطبيق.")) {
+        // 1. مسح الـ LocalStorage بالكامل
+        localStorage.clear();
+
+        // 2. محاولة حذف جميع الـ Cache Storages الخاصة بالـ PWA لضمان تحديث الملفات
+        if ('caches' in window) {
+            caches.keys().then(function(names) {
+                for (let name of names) {
+                    caches.delete(name);
+                }
+            });
+        }
+
+        // 3. إلغاء تسجيل الـ Service Worker إن وجد لتجنب بقاء أي كاش قديم
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) {
+                    registration.unregister();
+                }
+            });
+        }
+
+        // تنبيه خفيف وإعادة تحميل الصفحة
+        alert("تم مسح التخزين المؤقت بنجاح. سيتم الآن إعادة تحميل التطبيق.");
+        window.location.reload();
+    }
+}
+function shareApp() {
+    if (navigator.share) {
+        navigator.share({
+            title: 'تطبيق إشراق الإسلامي',
+            text: 'تطبيق إشراق رفيقك اليومي للقرآن، الأذكار، وأوقات الصلاة بدون إعلانات.',
+            url: window.location.href
+        }).catch(console.error);
+    } else {
+        // طريقة احتياطية لو المتصفح ما بيعمح المشاركة المباشرة
+        navigator.clipboard.writeText(window.location.href);
+        alert("تم نسخ رابط التطبيق إلى الحافظة!");
+    }
+}
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const installCard = document.getElementById('installCard');
+    if (installCard) installCard.style.display = 'block';
+});
+
+document.getElementById('installAppBtn')?.addEventListener('click', async () => {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            console.log('User accepted the install prompt');
+        }
+        deferredPrompt = null;
+        document.getElementById('installCard').style.display = 'none';
+    }
+});
+</script>
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
