@@ -443,6 +443,60 @@ footer {
   background-color: #edcea0 !important;
   border-color: #edcea0 !important;
 }
+/* تنسيقات خطوات رحلة العمرة */
+.step-indicator {
+  opacity: 0.4;
+  transition: all 0.3s ease;
+  color: #fff;
+}
+
+.step-indicator.active {
+  opacity: 1;
+  color: #edcea0;
+  font-weight: bold;
+}
+
+.step-indicator.completed {
+  opacity: 0.8;
+  color: #2ecc71;
+}
+
+.badge-num {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(33, 33, 29, 0.9);
+  border: 1px solid rgba(237, 206, 160, 0.4);
+  border-radius: 50%;
+  font-size: 0.85rem;
+}
+
+.step-indicator.active .badge-num {
+  background: #edcea0;
+  color: #21211D;
+  border-color: #edcea0;
+  box-shadow: 0 0 10px rgba(237, 206, 160, 0.4);
+}
+
+.step-line {
+  flex-grow: 1;
+  height: 1px;
+  background: rgba(237, 206, 160, 0.2);
+  margin: 0 5px;
+}
+.mutawwif-card {
+  background-color: #21211D; /* نفس لون الهيدر الغامق الأساسي */
+  border: 1px solid rgba(237, 206, 160, 0.2); /* إطار ذهبي خفيف وشفاف */
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.5) !important;
+}
+
+/* لون الصناديق الداخلية (أدعية أو تنبيهات) */
+.supplication-box {
+  background: rgba(33, 33, 29, 0.6);
+  border: 1px solid rgba(237, 206, 160, 0.15);
+}
 
 
 

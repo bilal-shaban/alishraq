@@ -313,35 +313,64 @@
         
       </div>
     </main>
-    <!-- قسم بوصلة القبلة الرقمية -->
+   <!-- قسم بوصلة القبلة الخرافي والمتطور -->
 <div class="row justify-content-center mb-5">
   <div class="col-12 col-lg-8">
     <div class="qibla-card shadow-lg p-4 text-center rounded-4 position-relative overflow-hidden">
+      
+      <!-- الهيدر العلوي -->
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <span class="badge badge-gold"><i class="bi bi-compass me-1"></i> بوصلة القِبلة</span>
+        <span class="badge badge-gold"><i class="bi bi-compass me-1"></i> بوصلة القِبلة الذكية</span>
         <button onclick="initQiblaCompass()" class="btn btn-sm btn-outline-light border-0 opacity-75" title="إعادة ضبط البوصلة">
           <i class="bi bi-arrow-clockwise fs-5"></i>
         </button>
       </div>
 
-      <h5 class="gold fw-bold mb-3">اتجاه الكعبة المشرفة</h5>
+      <h5 class="gold fw-bold mb-1">اتجاه الكعبة المشرفة</h5>
       
-      <!-- دائرة البوصلة المرئية -->
+      <!-- شارة زوايا الانحراف الرقمية الدقيقة -->
+      <div class="d-flex justify-content-center gap-3 my-2 font-monospace small">
+        <span class="text-light opacity-75">اتجاهك: <strong id="device-angle-val" class="gold">--°</strong></span>
+        <span class="text-light opacity-75">|</span>
+        <span class="text-light opacity-75">القبلة: <strong id="qibla-target-val" class="gold">--°</strong></span>
+      </div>
+      
+      <!-- دائرة البوصلة الرادارية المرئية -->
       <div class="compass-container my-4 mx-auto position-relative d-flex justify-content-center align-items-center">
-        <div class="compass-dial position-relative">
-          <!-- مؤشر الكعبة المتحرك -->
-          <div id="qibla-pointer" class="qibla-pointer">
-            <i class="bi bi-caret-up-fill gold display-6"></i>
+        <div class="qibla-radar-ring"></div>
+        <div id="compass-dial" class="compass-dial position-relative">
+          
+          <!-- وردة الاتجاهات الثابتة -->
+          <div class="compass-rose">
+            <span class="rose-dir north">N</span>
+            <span class="rose-dir east">E</span>
+            <span class="rose-dir south">S</span>
+            <span class="rose-dir west">W</span>
           </div>
+
+          <!-- مؤشر الكعبة والسهم المتحرك بدقة -->
+          <div id="qibla-pointer" class="qibla-pointer">
+            <div class="kaaba-marker shadow">
+              <i class="bi bi-box-fill gold"></i>
+            </div>
+            <div class="arrow-wrapper">
+              <i class="bi bi-caret-up-fill gold display-5"></i>
+            </div>
+          </div>
+
         </div>
       </div>
 
-      <!-- حالة البوصلة والإرشادات -->
-      <p id="qibla-status" class="text-light opacity-75 small mb-3">جاري حساب الاتجاه وتحسس المستشعرات...</p>
+      <!-- صندوق الحالة والإرشادات الذكية النظيف -->
+      <div id="qibla-status-box" class="qibla-status-box normal mb-3">
+        <p id="qibla-status" class="small mb-0 fw-medium">جاري تفعيل الحساسات وحساب الاتجاه...</p>
+      </div>
       
-      <button id="btn-enable-compass" onclick="requestCompassPermission()" class="btn btn-gold-solid rounded-pill px-4 py-2 d-none">
-        <i class="bi bi-shield-lock me-1"></i> تفعيل مستشعر الاتجاه
+      <!-- زر طلب الأذونات (للأيفون والأجهزة الحديثة) -->
+      <button id="btn-enable-compass" onclick="requestCompassPermission()" class="btn btn-gold-solid rounded-pill px-4 py-2 d-none shadow-sm">
+        <i class="bi bi-shield-lock me-1"></i> تفعيل مستشعر الاتجاه (iOS / أندرويد)
       </button>
+
     </div>
   </div>
 </div>
