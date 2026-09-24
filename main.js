@@ -1,3 +1,45 @@
+document.addEventListener("DOMContentLoaded", () => {
+  const continueContainer = document.getElementById("continue-reading-container");
+  if (!continueContainer) return;
+
+  // جلب آخر تقدم مخزن، أو آخر سورة تم فتحها كبديل احتياطي
+  let progress = JSON.parse(localStorage.getItem("eshraq_last_progress"));
+  const lastSurah = JSON.parse(localStorage.getItem("eshraq_last_surah"));
+
+  // إذا لم يكن هناك تقدم محفوظ، نأخذ آخر سورة زارها المستخدم
+  if (!progress && lastSurah) {
+    progress = {
+      surahNumber: lastSurah.number,
+      surahName: lastSurah.name.replace(/^(سُورَةُ|سورة)\s*/, ""),
+      ayahNumber: 1
+    };
+  }
+
+  // إذا ما زال فارغاً تماماً، نضع الفاتحة كقيمة أولية بحتة
+  if (!progress) {
+    progress = {
+      surahNumber: 1,
+      surahName: "الفاتحة",
+      ayahNumber: 1
+    };
+  }
+
+  // طباعة الكارد بشكل ديناميكي كامل
+  continueContainer.innerHTML = `
+    <div class="card bg-dark border-gold text-light p-3 shadow-sm rounded-4" style="background-color: #21211D !important; border-color: #edcea0 !important;">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h5 class="text-gold mb-1" style="font-family: 'Amiri', serif; color: #edcea0;">متابعة القراءة 🌙</h5>
+          <p class="mb-0 text-muted small">سورة ${progress.surahName} - الآية رقم (${progress.ayahNumber})</p>
+        </div>
+        <a href="surah-reader.html?surah=${progress.surahNumber}" class="btn btn-sm btn-outline-light px-4 py-2" style="border-color: #edcea0; color: #edcea0; text-decoration: none;">
+          إكمال القراءة <i class="bi bi-arrow-left ms-1"></i>
+        </a>
+      </div>
+    </div>
+  `;
+});
+
 const sheetId = '1nHyRDkioIuAXdcHg8RdFSqwDWtvT71IFVftn5-uZUHI';
 const opensheetUrl = `https://opensheet.elk.sh/${sheetId}/Sheet1`;
 
@@ -176,3 +218,5 @@ if ('serviceWorker' in navigator) {
       });
   });
 }
+
+

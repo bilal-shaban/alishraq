@@ -657,3 +657,18 @@ html[data-night-mode="true"] h6 {
   border-color: rgba(46, 204, 113, 0.4);
   color: #d1f7c4;
 }
+
+/* تخصيص نص الآيات القرآنية ليكون فخماً وواضحاً */
+.ayah-text {
+  font-family: 'Amiri', 'Traditional Arabic', serif !important;
+  font-size: 1.6rem !important;
+  line-height: 2.6 !important;
+  color: #f8f9fa;
+  text-align: justify;
+  text-align: start !important; /* لضمان توسيص النص تماماً */
+}
+#ayahs-container {
+  margin-top: -6rem;
+  background-color: #21211D !important; /* لون أسود مطفأ وأعمق، أو فيك تحطه #1a1a17 لدرجة أفتح شوي */
+  border: 1px solid rgba(237, 206, 160, 0.3) !important; /* لون الحدود الذهبية الخفيفة */
+}
