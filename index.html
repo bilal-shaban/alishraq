@@ -6,30 +6,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- Bootstrap CSS RTL v5.3.3 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css"
+    />
 
     <!-- Google Fonts (Tajawal) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
     <link rel="stylesheet" href="./style.css" />
     <!-- PWA Manifest -->
-<link rel="manifest" href="./manifest.json" />
-<meta name="theme-color" content="#21211D" />
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="theme-color" content="#21211D" />
   </head>
 
   <body>
     <header>
-      <nav class="navbar navbar-expand-lg fixed-top shadow-sm" style="background-color: #21211d; border-bottom: 0.2rem solid #edcea0">
+      <nav
+        class="navbar navbar-expand-lg fixed-top shadow-sm"
+        style="background-color: #21211d; border-bottom: 0.2rem solid #edcea0"
+      >
         <div class="container-fluid">
           <a class="navbar-brand ms-lg-3" href="./index.html">
-            <img src="./5b862b4281f64fd884b11984846f0e97.png" width="80" alt="إشراق" />
+            <img
+              src="./5b862b4281f64fd884b11984846f0e97.png"
+              width="80"
+              alt="إشراق"
+            />
           </a>
-          <div class="h6 gold text-center d-none d-lg-block my-auto">
-            نُشرِقُ برُوحِك.. ونَسْمُو بِقَلْبِك
-          </div>
-          
 
           <button
             class="navbar-toggler"
@@ -46,16 +58,43 @@
 
           <div class="collapse navbar-collapse" id="collapsibleNavId">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-              <li class="nav-item"><a class="nav-link gold px-3 d-inline-block" href="./index.html">الرئيسية</a></li>
-              <li class="nav-item"><a class="nav-link gold px-3 d-inline-block" href="#">القرآن الكريم</a></li>
-              <li class="nav-item"><a class="nav-link gold px-3 d-inline-block" href="#">الحديث النبوي</a></li>
-              <li class="nav-item"><a class="nav-link gold px-3 d-inline-block" href="#">الأذكار</a></li>
-              <li class="nav-item"><a class="nav-link gold px-3 d-inline-block" href="#">الأوراد</a></li>
-              <li class="nav-item"><a class="nav-link gold px-3 d-inline-block" href="#">الأدعية</a></li>
-              <li class="nav-item"><a class="nav-link gold px-3 d-inline-block" href="#">المطوف </a></li>
+              <li class="nav-item">
+                <a class="nav-link gold px-3 d-inline-block" href="./index.html"
+                  >الرئيسية</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link gold px-3 d-inline-block" href="#"
+                  >القرآن الكريم</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link gold px-3 d-inline-block" href="#"
+                  >الحديث النبوي</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link gold px-3 d-inline-block" href="#"
+                  >الأذكار</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link gold px-3 d-inline-block" href="#"
+                  >الأوراد</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link gold px-3 d-inline-block" href="#"
+                  >الأدعية</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link gold px-3 d-inline-block" href="#"
+                  >المطوف
+                </a>
+              </li>
             </ul>
           </div>
-          
         </div>
       </nav>
     </header>
@@ -65,141 +104,192 @@
         <!-- العنوان الرئيسي -->
         <div class="row">
           <div class="col-12 text-center mb-4">
-            <h1 class="gold hero-title fw-bold">نُشرِقُ برُوحِك.. ونَسْمُو بِقَلْبِك</h1>
+            <h1 class="gold hero-title fw-bold">
+              نُشرِقُ برُوحِك.. ونَسْمُو بِقَلْبِك
+            </h1>
           </div>
         </div>
 
         <!-- قسم مواقيت الصلاة الاحترافي -->
-<div class="row justify-content-center mb-5">
-  <div class="col-12 col-lg-10">
-    <div class="prayer-card shadow-lg p-3 p-md-4 position-relative overflow-hidden">
-      
-      <!-- الهيدر العلوي: تحديد الموقع وساعة الجهاز -->
-      <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-gold-subtle pb-2">
-        <div class="d-flex align-items-center gap-2">
-          <i class="bi bi-geo-alt-fill gold fs-5"></i>
-          <span id="user-location" class="fw-bold small text-light">جاري تحديد الموقع...</span>
-          <button id="btn-refresh-location" class="btn btn-sm btn-link gold p-0 ms-1" title="تحديث الموقع">
-            <i class="bi bi-arrow-clockwise"></i>
-          </button>
+        <div class="row justify-content-center mb-5">
+          <div class="col-12 col-lg-10">
+            <div
+              class="prayer-card shadow-lg p-3 p-md-4 position-relative overflow-hidden"
+            >
+              <!-- الهيدر العلوي: تحديد الموقع وساعة الجهاز -->
+              <div
+                class="d-flex justify-content-between align-items-center mb-3 border-bottom border-gold-subtle pb-2"
+              >
+                <div class="d-flex align-items-center gap-2">
+                  <i class="bi bi-geo-alt-fill gold fs-5"></i>
+                  <span id="user-location" class="fw-bold small text-light"
+                    >جاري تحديد الموقع...</span
+                  >
+                  <button
+                    id="btn-refresh-location"
+                    class="btn btn-sm btn-link gold p-0 ms-1"
+                    title="تحديث الموقع"
+                  >
+                    <i class="bi bi-arrow-clockwise"></i>
+                  </button>
+                </div>
+                <div class="text-gold opacity-75 small text-end">
+                  <div>
+                    <i class="bi bi-calendar3 me-1"></i>
+                    <span id="hijri-date">---</span>
+                  </div>
+                  <div class="text-light opacity-50 style-gregorian">
+                    <span id="gregorian-date">---</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- البوكس الرئيسي: الصلاة القادمة والعداد التنازلي -->
+              <div
+                class="row align-items-center text-center text-md-start my-3"
+              >
+                <div class="col-md-6 mb-3 mb-md-0">
+                  <span class="badge badge-gold mb-2">الصلاة القادمة</span>
+                  <h2 id="next-prayer-name" class="gold fw-bold mb-1 display-6">
+                    صلاة العصر
+                  </h2>
+                  <p
+                    id="next-prayer-time"
+                    class="text-light opacity-75 mb-0 small"
+                  >
+                    موعد الأذان: 03:20 م
+                  </p>
+                </div>
+
+                <!-- العداد التنازلي الرقمي -->
+                <div class="col-md-6 text-center text-md-end">
+                  <div
+                    class="countdown-box d-inline-flex gap-2 justify-content-center align-items-center p-2 rounded"
+                  >
+                    <div class="time-unit">
+                      <span id="cd-hours" class="time-num">00</span>
+                      <span class="time-label">ساعة</span>
+                    </div>
+                    <span class="time-colon">:</span>
+                    <div class="time-unit">
+                      <span id="cd-minutes" class="time-num">00</span>
+                      <span class="time-label">دقيقة</span>
+                    </div>
+                    <span class="time-colon">:</span>
+                    <div class="time-unit">
+                      <span id="cd-seconds" class="time-num">00</span>
+                      <span class="time-label">ثانية</span>
+                    </div>
+                  </div>
+
+                  <!-- شريط الإقامة التنازلي (بيظهر تلقائياً وقت الإقامة فقط) -->
+                  <div id="iqama-container" class="mt-2 d-none">
+                    <span class="badge bg-warning text-dark"
+                      ><i class="bi bi-bell-fill me-1"></i> المتبقي للإقامة:
+                      <span id="iqama-timer">15:00</span></span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- شبكة أوقات الصلوات الخمس + الشروق -->
+              <div
+                class="prayer-times-grid mt-4 pt-3 border-top border-gold-subtle"
+              >
+                <div class="row g-2 text-center row-cols-3 row-cols-md-6">
+                  <div class="col">
+                    <div class="p-item rounded p-2" id="p-fajr">
+                      <span class="p-title d-block mb-1">الفجر</span>
+                      <span class="p-time d-block fw-bold gold">04:30 ص</span>
+                    </div>
+                  </div>
+
+                  <div class="col">
+                    <div class="p-item rounded p-2" id="p-sunrise">
+                      <span class="p-title d-block mb-1">الشروق</span>
+                      <span class="p-time d-block fw-bold opacity-75"
+                        >06:00 ص</span
+                      >
+                    </div>
+                  </div>
+
+                  <div class="col">
+                    <div class="p-item rounded p-2 active" id="p-dhuhr">
+                      <span class="p-title d-block mb-1">الظهر</span>
+                      <span class="p-time d-block fw-bold gold">12:15 م</span>
+                    </div>
+                  </div>
+
+                  <div class="col">
+                    <div class="p-item rounded p-2" id="p-asr">
+                      <span class="p-title d-block mb-1">العصر</span>
+                      <span class="p-time d-block fw-bold gold">03:20 م</span>
+                    </div>
+                  </div>
+
+                  <div class="col">
+                    <div class="p-item rounded p-2" id="p-maghrib">
+                      <span class="p-title d-block mb-1">المغرب</span>
+                      <span class="p-time d-block fw-bold gold">06:10 م</span>
+                    </div>
+                  </div>
+
+                  <div class="col">
+                    <div class="p-item rounded p-2" id="p-isha">
+                      <span class="p-title d-block mb-1">العشاء</span>
+                      <span class="p-time d-block fw-bold gold">07:40 م</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-       <div class="text-gold opacity-75 small text-end">
-  <div>
-    <i class="bi bi-calendar3 me-1"></i>
-    <span id="hijri-date">---</span>
-  </div>
-  <div class="text-light opacity-50 style-gregorian">
-    <span id="gregorian-date">---</span>
-  </div>
-</div>
-      </div>
-
-      <!-- البوكس الرئيسي: الصلاة القادمة والعداد التنازلي -->
-      <div class="row align-items-center text-center text-md-start my-3">
-        <div class="col-md-6 mb-3 mb-md-0">
-          <span class="badge badge-gold mb-2">الصلاة القادمة</span>
-          <h2 id="next-prayer-name" class="gold fw-bold mb-1 display-6">صلاة العصر</h2>
-          <p id="next-prayer-time" class="text-light opacity-75 mb-0 small">موعد الأذان: 03:20 م</p>
-        </div>
-
-        <!-- العداد التنازلي الرقمي -->
-        <div class="col-md-6 text-center text-md-end">
-          <div class="countdown-box d-inline-flex gap-2 justify-content-center align-items-center p-2 rounded">
-            <div class="time-unit">
-              <span id="cd-hours" class="time-num">00</span>
-              <span class="time-label">ساعة</span>
-            </div>
-            <span class="time-colon">:</span>
-            <div class="time-unit">
-              <span id="cd-minutes" class="time-num">00</span>
-              <span class="time-label">دقيقة</span>
-            </div>
-            <span class="time-colon">:</span>
-            <div class="time-unit">
-              <span id="cd-seconds" class="time-num">00</span>
-              <span class="time-label">ثانية</span>
-            </div>
-          </div>
-
-          <!-- شريط الإقامة التنازلي (بيظهر تلقائياً وقت الإقامة فقط) -->
-          <div id="iqama-container" class="mt-2 d-none">
-            <span class="badge bg-warning text-dark"><i class="bi bi-bell-fill me-1"></i> المتبقي للإقامة: <span id="iqama-timer">15:00</span></span>
-          </div>
-        </div>
-      </div>
-
-      <!-- شبكة أوقات الصلوات الخمس + الشروق -->
-      <div class="prayer-times-grid mt-4 pt-3 border-top border-gold-subtle">
-        <div class="row g-2 text-center row-cols-3 row-cols-md-6">
-          
-          <div class="col">
-            <div class="p-item rounded p-2" id="p-fajr">
-              <span class="p-title d-block mb-1">الفجر</span>
-              <span class="p-time d-block fw-bold gold">04:30 ص</span>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="p-item rounded p-2" id="p-sunrise">
-              <span class="p-title d-block mb-1">الشروق</span>
-              <span class="p-time d-block fw-bold opacity-75">06:00 ص</span>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="p-item rounded p-2 active" id="p-dhuhr">
-              <span class="p-title d-block mb-1">الظهر</span>
-              <span class="p-time d-block fw-bold gold">12:15 م</span>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="p-item rounded p-2" id="p-asr">
-              <span class="p-title d-block mb-1">العصر</span>
-              <span class="p-time d-block fw-bold gold">03:20 م</span>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="p-item rounded p-2" id="p-maghrib">
-              <span class="p-title d-block mb-1">المغرب</span>
-              <span class="p-time d-block fw-bold gold">06:10 م</span>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="p-item rounded p-2" id="p-isha">
-              <span class="p-title d-block mb-1">العشاء</span>
-              <span class="p-time d-block fw-bold gold">07:40 م</span>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
 
         <!-- كروت الإشراقات اليومية -->
         <div class="row justify-content-center g-4 mb-5">
           <!-- إشراقة قرآنيّة -->
           <div class="col-lg-6 col-md-10">
-            <div id="quran-card" class="card card-eshraq dark-b1 shadow-lg p-4 h-100">
-              <div class="card-body p-0 d-flex flex-column justify-content-between">
+            <div
+              id="quran-card"
+              class="card card-eshraq dark-b1 shadow-lg p-4 h-100"
+            >
+              <div
+                class="card-body p-0 d-flex flex-column justify-content-between"
+              >
                 <div>
-                  <h4 class="card-title gold mb-3 fw-bold"><i class="bi bi-book me-2"></i>إشراقة قرآنيّة</h4>
+                  <h4 class="card-title gold mb-3 fw-bold">
+                    <i class="bi bi-book me-2"></i>إشراقة قرآنيّة
+                  </h4>
                   <p class="card-text gold h5 leading-relaxed mb-2">
-                    <span id="quran-text">"الَّذِينَ آمَنُوا وَتَطْمَئِنُّ قُلُوبُهُم بِذِكْرِ اللَّهِ ۗ أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ"</span>
+                    <span id="quran-text"
+                      >"الَّذِينَ آمَنُوا وَتَطْمَئِنُّ قُلُوبُهُم بِذِكْرِ
+                      اللَّهِ ۗ أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ
+                      الْقُلُوبُ"</span
+                    >
                   </p>
-                  <span id="quran-ref" class="ref-text opacity-75 d-block mb-3">سورة الرعد - الآية 28</span>
-                  <p id="quran-desc" class="desc-text mb-4">بالذِّكرِ تَسكُنُ النُّفوسُ وتَزولُ الهُموم.</p>
+                  <span id="quran-ref" class="ref-text opacity-75 d-block mb-3"
+                    >سورة الرعد - الآية 28</span
+                  >
+                  <p id="quran-desc" class="desc-text mb-4">
+                    بالذِّكرِ تَسكُنُ النُّفوسُ وتَزولُ الهُموم.
+                  </p>
                 </div>
-                <div class="pt-2 d-flex gap-2 justify-content-end align-items-center">
-                  <button onclick="copyContent('quran')" class="btn btn-gold-outline btn-sm px-3" title="نسخ النص">
+                <div
+                  class="pt-2 d-flex gap-2 justify-content-end align-items-center"
+                >
+                  <button
+                    onclick="copyContent('quran')"
+                    class="btn btn-gold-outline btn-sm px-3"
+                    title="نسخ النص"
+                  >
                     <i class="bi bi-copy me-1"></i> نسخ
                   </button>
-                  <button onclick="shareWhatsapp('quran')" class="btn btn-gold-solid btn-sm px-3" title="مشاركة عبر واتساب">
+                  <button
+                    onclick="shareWhatsapp('quran')"
+                    class="btn btn-gold-solid btn-sm px-3"
+                    title="مشاركة عبر واتساب"
+                  >
                     <i class="bi bi-whatsapp me-1"></i> مشاركة
                   </button>
                 </div>
@@ -209,21 +299,45 @@
 
           <!-- إشراقة نبويّة -->
           <div class="col-lg-6 col-md-10">
-            <div id="hadith-card" class="card card-eshraq dark-b2 shadow-lg p-4 h-100">
-              <div class="card-body p-0 d-flex flex-column justify-content-between">
+            <div
+              id="hadith-card"
+              class="card card-eshraq dark-b2 shadow-lg p-4 h-100"
+            >
+              <div
+                class="card-body p-0 d-flex flex-column justify-content-between"
+              >
                 <div>
-                  <h4 class="card-title gold mb-3 fw-bold"><i class="bi bi-chat-quote me-2"></i>إشراقة نبويّة</h4>
+                  <h4 class="card-title gold mb-3 fw-bold">
+                    <i class="bi bi-chat-quote me-2"></i>إشراقة نبويّة
+                  </h4>
                   <p class="card-text gold h5 leading-relaxed mb-2">
-                    <span id="hadith-text">"أَقْرَبُ مَا يَكُونُ الْعَبْدُ مِنْ رَبِّهِ وَهُوَ سَاجِدٌ"</span>
+                    <span id="hadith-text"
+                      >"أَقْرَبُ مَا يَكُونُ الْعَبْدُ مِنْ رَبِّهِ وَهُوَ
+                      سَاجِدٌ"</span
+                    >
                   </p>
-                  <span id="hadith-ref" class="ref-text opacity-75 d-block mb-3">أخرجه الإمام مسلم في صحيحه (رقم 482)</span>
-                  <p id="hadith-desc" class="desc-text mb-4">انْكِسَارُكَ فِي السُّجُودِ هُوَ أَعْلَى مَقَامَاتِ قُرْبِك.</p>
+                  <span id="hadith-ref" class="ref-text opacity-75 d-block mb-3"
+                    >أخرجه الإمام مسلم في صحيحه (رقم 482)</span
+                  >
+                  <p id="hadith-desc" class="desc-text mb-4">
+                    انْكِسَارُكَ فِي السُّجُودِ هُوَ أَعْلَى مَقَامَاتِ قُرْبِك.
+                  </p>
                 </div>
-                <div class="pt-2 d-flex gap-2 justify-content-end align-items-center">
-                  <button onclick="copyContent('hadith')" class="btn btn-gold-outline btn-sm px-3" title="نسخ النص">
+                <div
+                  class="pt-2 d-flex gap-2 justify-content-end align-items-center"
+                >
+                  <button
+                    onclick="copyContent('hadith')"
+                    class="btn btn-gold-outline btn-sm px-3"
+                    title="نسخ النص"
+                  >
                     <i class="bi bi-copy me-1"></i> نسخ
                   </button>
-                  <button onclick="shareWhatsapp('hadith')" class="btn btn-gold-solid btn-sm px-3" title="مشاركة عبر واتساب">
+                  <button
+                    onclick="shareWhatsapp('hadith')"
+                    class="btn btn-gold-solid btn-sm px-3"
+                    title="مشاركة عبر واتساب"
+                  >
                     <i class="bi bi-whatsapp me-1"></i> مشاركة
                   </button>
                 </div>
@@ -231,25 +345,38 @@
             </div>
           </div>
         </div>
-<!-- شبكة أقسام التطبيق -->
+        <!-- شبكة أقسام التطبيق -->
         <div class="row g-4 mb-5">
           <div class="col-md-4 col-6">
             <a href="#" class="grid-card text-decoration-none d-block">
-              <img src="./quran.png" class="grid-icon mb-3" alt="القرآن الكريم" />
+              <img
+                src="./quran.png"
+                class="grid-icon mb-3"
+                alt="القرآن الكريم"
+              />
               <div class="gold h5 fw-bold mb-0">القرآن الكــريـم</div>
             </a>
           </div>
 
           <div class="col-md-4 col-6">
             <a href="#" class="grid-card text-decoration-none d-block">
-              <img src="./hadeth.png" class="grid-icon mb-3" alt="الحديث النبوي" />
+              <img
+                src="./hadeth.png"
+                class="grid-icon mb-3"
+                alt="الحديث النبوي"
+              />
               <div class="gold h5 fw-bold mb-0">الحديث النبوي</div>
             </a>
           </div>
 
           <div class="col-md-4 col-6">
             <a href="#" class="grid-card text-decoration-none d-block">
-              <img src="./azkar.png" class="grid-icon mb-3" alt="الأذكار" style="transform: rotate(140deg);" />
+              <img
+                src="./azkar.png"
+                class="grid-icon mb-3"
+                alt="الأذكار"
+                style="transform: rotate(140deg)"
+              />
               <div class="gold h5 fw-bold mb-0">الأذكار</div>
             </a>
           </div>
@@ -269,232 +396,347 @@
           </div>
 
           <div class="col-md-4 col-6">
-            <a href="#" class="grid-card text-decoration-none d-block">
-              <img src="./mutawef.png" class="grid-icon mb-3" alt="المطوف الإلكتروني" />
-              <div class="gold h5 fw-bold mb-0">المطوف </div>
+            <a href="./matwaf.html" class="grid-card text-decoration-none d-block">
+              <img
+                src="./mutawef.png"
+                class="grid-icon mb-3"
+                alt="المطوف الإلكتروني"
+              />
+              <div class="gold h5 fw-bold mb-0">المطوف</div>
             </a>
           </div>
         </div>
-<!-- قسم السبحة الإلكترونية -->
-<div class="row justify-content-center mb-5">
-  <div class="col-12 col-lg-8">
-    <div class="tasbeeh-card shadow-lg p-4 text-center rounded-4 position-relative overflow-hidden">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <a class="badge badge-gold text-decoration-none" href="./tasbeeh.html" ><i class="bi bi-heptagon-fill me-1"></i> السبحة الإلكترونية</a>
-        <button onclick="resetTasbeeh()" class="btn btn-sm btn-outline-danger border-0 text-light opacity-75" title="إعادة الضبط">
-          <i class="bi bi-arrow-counterclockwise fs-5"></i>
-        </button>
-      </div>
+        <!-- قسم السبحة الإلكترونية -->
+        <div class="row justify-content-center mb-5">
+          <div class="col-12 col-lg-8">
+            <div
+              class="tasbeeh-card shadow-lg p-4 text-center rounded-4 position-relative overflow-hidden"
+            >
+              <div
+                class="d-flex justify-content-between align-items-center mb-3"
+              >
+                <a
+                  class="badge badge-gold text-decoration-none"
+                  href="./tasbeeh.html"
+                  ><i class="bi bi-heptagon-fill me-1"></i> السبحة
+                  الإلكترونية</a
+                >
+                <button
+                  onclick="resetTasbeeh()"
+                  class="btn btn-sm btn-outline-danger border-0 text-light opacity-75"
+                  title="إعادة الضبط"
+                >
+                  <i class="bi bi-arrow-counterclockwise fs-5"></i>
+                </button>
+              </div>
 
-      <!-- الذكر الحالي -->
-      <h3 id="tasbeeh-phrase" class="gold fw-bold my-3">سُبْحَانَ اللَّهِ وَبِحَمْدِهِ</h3>
+              <!-- الذكر الحالي -->
+              <h3 id="tasbeeh-phrase" class="gold fw-bold my-3">
+                سُبْحَانَ اللَّهِ وَبِحَمْدِهِ
+              </h3>
 
-      <!-- العداد الرقمي والزر الرئيسي -->
-      <div class="my-4">
-        <button id="tasbeeh-btn" onclick="countTasbeeh()" class="tasbeeh-circle-btn my-2 mx-auto d-flex flex-column justify-content-center align-items-center">
-          <span id="tasbeeh-count" class="display-3 fw-bold gold font-monospace">0</span>
-          <small class="text-light opacity-50">اضغط هنا</small>
-        </button>
-      </div>
+              <!-- العداد الرقمي والزر الرئيسي -->
+              <div class="my-4">
+                <button
+                  id="tasbeeh-btn"
+                  onclick="countTasbeeh()"
+                  class="tasbeeh-circle-btn my-2 mx-auto d-flex flex-column justify-content-center align-items-center"
+                >
+                  <span
+                    id="tasbeeh-count"
+                    class="display-3 fw-bold gold font-monospace"
+                    >0</span
+                  >
+                  <small class="text-light opacity-50">اضغط هنا</small>
+                </button>
+              </div>
 
-      <!-- شريط التنقل بين الأذكار -->
-      <div class="d-flex justify-content-center gap-2 flex-wrap mt-3">
-        <button onclick="setTasbeehPhrase('سُبْحَانَ اللَّهِ ')" class="btn btn-sm btn-gold-outline rounded-pill"> سبحان الله</button>
-        <button onclick="setTasbeehPhrase('الْحَمْدُ لِلَّهِ')" class="btn btn-sm btn-gold-outline rounded-pill">الحمد لله</button>
-        <button onclick="setTasbeehPhrase('لا إِلَهَ إِلا اللَّهُ')" class="btn btn-sm btn-gold-outline rounded-pill">لا إله إلا الله</button>
-        <button onclick="setTasbeehPhrase('اللَّهُ أَكْبَرُ')" class="btn btn-sm btn-gold-outline rounded-pill">الله أكبر</button>
-        <button onclick="setTasbeehPhrase('أَسْتَغْفِرُ اللَّهَ')" class="btn btn-sm btn-gold-outline rounded-pill">أستغفر الله</button>
-        <button onclick="setTasbeehPhrase('اللهم صلّ على سيدنا محمد ')" class="btn btn-sm btn-gold-outline rounded-pill"> اللهم صلّ على سيدنا محمد</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-        
+              <!-- شريط التنقل بين الأذكار -->
+              <div class="d-flex justify-content-center gap-2 flex-wrap mt-3">
+                <button
+                  onclick="setTasbeehPhrase('سُبْحَانَ اللَّهِ ')"
+                  class="btn btn-sm btn-gold-outline rounded-pill"
+                >
+                  سبحان الله
+                </button>
+                <button
+                  onclick="setTasbeehPhrase('الْحَمْدُ لِلَّهِ')"
+                  class="btn btn-sm btn-gold-outline rounded-pill"
+                >
+                  الحمد لله
+                </button>
+                <button
+                  onclick="setTasbeehPhrase('لا إِلَهَ إِلا اللَّهُ')"
+                  class="btn btn-sm btn-gold-outline rounded-pill"
+                >
+                  لا إله إلا الله
+                </button>
+                <button
+                  onclick="setTasbeehPhrase('اللَّهُ أَكْبَرُ')"
+                  class="btn btn-sm btn-gold-outline rounded-pill"
+                >
+                  الله أكبر
+                </button>
+                <button
+                  onclick="setTasbeehPhrase('أَسْتَغْفِرُ اللَّهَ')"
+                  class="btn btn-sm btn-gold-outline rounded-pill"
+                >
+                  أستغفر الله
+                </button>
+                <button
+                  onclick="setTasbeehPhrase('اللهم صلّ على سيدنا محمد ')"
+                  class="btn btn-sm btn-gold-outline rounded-pill"
+                >
+                  اللهم صلّ على سيدنا محمد
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
-   <!-- قسم بوصلة القبلة الخرافي والمتطور -->
-<div class="row justify-content-center mb-5">
-  <div class="col-12 col-lg-8">
-    <div class="qibla-card shadow-lg p-4 text-center rounded-4 position-relative overflow-hidden">
-      
-      <!-- الهيدر العلوي -->
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <span class="badge badge-gold"><i class="bi bi-compass me-1"></i> بوصلة القِبلة الذكية</span>
-        <button onclick="initQiblaCompass()" class="btn btn-sm btn-outline-light border-0 opacity-75" title="إعادة ضبط البوصلة">
-          <i class="bi bi-arrow-clockwise fs-5"></i>
-        </button>
-      </div>
-
-      <h5 class="gold fw-bold mb-1">اتجاه الكعبة المشرفة</h5>
-      
-      <!-- شارة زوايا الانحراف الرقمية الدقيقة -->
-      <div class="d-flex justify-content-center gap-3 my-2 font-monospace small">
-        <span class="text-light opacity-75">اتجاهك: <strong id="device-angle-val" class="gold">--°</strong></span>
-        <span class="text-light opacity-75">|</span>
-        <span class="text-light opacity-75">القبلة: <strong id="qibla-target-val" class="gold">--°</strong></span>
-      </div>
-      
-      <!-- دائرة البوصلة الرادارية المرئية -->
-      <div class="compass-container my-4 mx-auto position-relative d-flex justify-content-center align-items-center">
-        <div class="qibla-radar-ring"></div>
-        <div id="compass-dial" class="compass-dial position-relative">
-          
-          <!-- وردة الاتجاهات الثابتة -->
-          <div class="compass-rose">
-            <span class="rose-dir north">N</span>
-            <span class="rose-dir east">E</span>
-            <span class="rose-dir south">S</span>
-            <span class="rose-dir west">W</span>
+    <!-- قسم بوصلة القبلة الخرافي والمتطور -->
+    <div class="row justify-content-center mb-5">
+      <div class="col-12 col-lg-8">
+        <div
+          class="qibla-card shadow-lg p-4 text-center rounded-4 position-relative overflow-hidden"
+        >
+          <!-- الهيدر العلوي -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="badge badge-gold"
+              ><i class="bi bi-compass me-1"></i> بوصلة القِبلة الذكية</span
+            >
+            <button
+              onclick="initQiblaCompass()"
+              class="btn btn-sm btn-outline-light border-0 opacity-75"
+              title="إعادة ضبط البوصلة"
+            >
+              <i class="bi bi-arrow-clockwise fs-5"></i>
+            </button>
           </div>
 
-          <!-- مؤشر الكعبة والسهم المتحرك بدقة -->
-          <div id="qibla-pointer" class="qibla-pointer">
-            <div class="kaaba-marker shadow">
-              <i class="bi bi-box-fill gold"></i>
-            </div>
-            <div class="arrow-wrapper">
-              <i class="bi bi-caret-up-fill gold display-5"></i>
+          <h5 class="gold fw-bold mb-1">اتجاه الكعبة المشرفة</h5>
+
+          <!-- شارة زوايا الانحراف الرقمية الدقيقة -->
+          <div
+            class="d-flex justify-content-center gap-3 my-2 font-monospace small"
+          >
+            <span class="text-light opacity-75"
+              >اتجاهك:
+              <strong id="device-angle-val" class="gold">--°</strong></span
+            >
+            <span class="text-light opacity-75">|</span>
+            <span class="text-light opacity-75"
+              >القبلة:
+              <strong id="qibla-target-val" class="gold">--°</strong></span
+            >
+          </div>
+
+          <!-- دائرة البوصلة الرادارية المرئية -->
+          <div
+            class="compass-container my-4 mx-auto position-relative d-flex justify-content-center align-items-center"
+          >
+            <div class="qibla-radar-ring"></div>
+            <div id="compass-dial" class="compass-dial position-relative">
+              <!-- وردة الاتجاهات الثابتة -->
+              <div class="compass-rose">
+                <span class="rose-dir north">N</span>
+                <span class="rose-dir east">E</span>
+                <span class="rose-dir south">S</span>
+                <span class="rose-dir west">W</span>
+              </div>
+
+              <!-- مؤشر الكعبة والسهم المتحرك بدقة -->
+              <div id="qibla-pointer" class="qibla-pointer">
+                <div class="kaaba-marker shadow">
+                  <i class="bi bi-box-fill gold"></i>
+                </div>
+                <div class="arrow-wrapper">
+                  <i class="bi bi-caret-up-fill gold display-5"></i>
+                </div>
+              </div>
             </div>
           </div>
 
-        </div>
-      </div>
-
-      <!-- صندوق الحالة والإرشادات الذكية النظيف -->
-      <div id="qibla-status-box" class="qibla-status-box normal mb-3">
-        <p id="qibla-status" class="small mb-0 fw-medium">جاري تفعيل الحساسات وحساب الاتجاه...</p>
-      </div>
-      
-      <!-- زر طلب الأذونات (للأيفون والأجهزة الحديثة) -->
-      <button id="btn-enable-compass" onclick="requestCompassPermission()" class="btn btn-gold-solid rounded-pill px-4 py-2 d-none shadow-sm">
-        <i class="bi bi-shield-lock me-1"></i> تفعيل مستشعر الاتجاه (iOS / أندرويد)
-      </button>
-
-    </div>
-  </div>
-</div>
-<!-- قسم تحميل وتثبيت التطبيق على الأجهزة -->
-<section class="pwa-download-section py-5 mt-5">
-  <div class="container">
-    <div class="text-center mb-4">
-      <span class="badge badge-gold mb-2"><i class="bi bi-phone me-1"></i> تطبيق إشراق</span>
-      <h3 class="gold fw-bold">حَمِّلْ إشراق على جِهَازِك</h3>
-      <p class="text-light opacity-75 small">تصفح أسرع، بدون شريط المتصفح، وبدعم يعمل حتى بدون إنترنت</p>
-    </div>
-
-    <div class="row g-4 justify-content-center">
-      
-      <!-- كارت أندرويد Android -->
-      <div class="col-md-4 col-sm-6">
-        <div class="download-card text-center p-4 rounded-4 h-100 d-flex flex-column justify-content-between">
-          <div>
-            <div class="os-icon mb-3 text-success">
-              <i class="bi bi-android2 display-4"></i>
-            </div>
-            <h5 class="gold fw-bold mb-2">أندرويد (Android)</h5>
-            <p class="text-light opacity-50 small mb-4">تثبيت مباشر كتطبيق أندرويد مستقل على هاتفك</p>
+          <!-- صندوق الحالة والإرشادات الذكية النظيف -->
+          <div id="qibla-status-box" class="qibla-status-box normal mb-3">
+            <p id="qibla-status" class="small mb-0 fw-medium">
+              جاري تفعيل الحساسات وحساب الاتجاه...
+            </p>
           </div>
-          <button id="btn-install-android" class="btn btn-gold-solid w-100 rounded-pill py-2 fw-bold">
-            <i class="bi bi-download me-1"></i> تثبيت الآن
+
+          <!-- زر طلب الأذونات (للأيفون والأجهزة الحديثة) -->
+          <button
+            id="btn-enable-compass"
+            onclick="requestCompassPermission()"
+            class="btn btn-gold-solid rounded-pill px-4 py-2 d-none shadow-sm"
+          >
+            <i class="bi bi-shield-lock me-1"></i> تفعيل مستشعر الاتجاه (iOS /
+            أندرويد)
           </button>
         </div>
       </div>
-
-      <!-- كارت آيفون iOS -->
-      <div class="col-md-4 col-sm-6">
-        <div class="download-card text-center p-4 rounded-4 h-100 d-flex flex-column justify-content-between">
-          <div>
-            <div class="os-icon mb-3 text-light">
-              <i class="bi bi-apple display-4"></i>
-            </div>
-            <h5 class="gold fw-bold mb-2">آيفون (iOS)</h5>
-            <p class="text-light opacity-50 small mb-3">اضغط على زر <i class="bi bi-box-arrow-up text-gold"></i> في سفاري ثم اختر <b>"إضافة إلى الشاشة الرئيسية"</b></p>
-          </div>
-          <button onclick="showIosInstructions()" class="btn btn-gold-outline w-100 rounded-pill py-2">
-            <i class="bi bi-info-circle me-1"></i> طريقة التثبيت
-          </button>
-        </div>
-      </div>
-
-      <!-- كارت ويندوز Windows -->
-      <div class="col-md-4 col-sm-6">
-        <div class="download-card text-center p-4 rounded-4 h-100 d-flex flex-column justify-content-between">
-          <div>
-            <div class="os-icon mb-3 text-primary">
-              <i class="bi bi-microsoft display-4"></i>
-            </div>
-            <h5 class="gold fw-bold mb-2">ويندوز (Windows)</h5>
-            <p class="text-light opacity-50 small mb-4">تثبيت إشراق كتطبيق سطح مكتب على الكمبيوتر</p>
-          </div>
-          <button id="btn-install-windows" class="btn btn-gold-solid w-100 rounded-pill py-2 fw-bold">
-            <i class="bi bi-laptop me-1"></i> تثبيت للكمبيوتر
-          </button>
-        </div>
-      </div>
-
     </div>
-  </div>
-</section>
+    <!-- قسم تحميل وتثبيت التطبيق على الأجهزة -->
+    <section class="pwa-download-section py-5 mt-5">
+      <div class="container">
+        <div class="text-center mb-4">
+          <span class="badge badge-gold mb-2"
+            ><i class="bi bi-phone me-1"></i> تطبيق إشراق</span
+          >
+          <h3 class="gold fw-bold">حَمِّلْ إشراق على جِهَازِك</h3>
+          <p class="text-light opacity-75 small">
+            تصفح أسرع، بدون شريط المتصفح، وبدعم يعمل حتى بدون إنترنت
+          </p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+          <!-- كارت أندرويد Android -->
+          <div class="col-md-4 col-sm-6">
+            <div
+              class="download-card text-center p-4 rounded-4 h-100 d-flex flex-column justify-content-between"
+            >
+              <div>
+                <div class="os-icon mb-3 text-success">
+                  <i class="bi bi-android2 display-4"></i>
+                </div>
+                <h5 class="gold fw-bold mb-2">أندرويد (Android)</h5>
+                <p class="text-light opacity-50 small mb-4">
+                  تثبيت مباشر كتطبيق أندرويد مستقل على هاتفك
+                </p>
+              </div>
+              <button
+                id="btn-install-android"
+                class="btn btn-gold-solid w-100 rounded-pill py-2 fw-bold"
+              >
+                <i class="bi bi-download me-1"></i> تثبيت الآن
+              </button>
+            </div>
+          </div>
+
+          <!-- كارت آيفون iOS -->
+          <div class="col-md-4 col-sm-6">
+            <div
+              class="download-card text-center p-4 rounded-4 h-100 d-flex flex-column justify-content-between"
+            >
+              <div>
+                <div class="os-icon mb-3 text-light">
+                  <i class="bi bi-apple display-4"></i>
+                </div>
+                <h5 class="gold fw-bold mb-2">آيفون (iOS)</h5>
+                <p class="text-light opacity-50 small mb-3">
+                  اضغط على زر <i class="bi bi-box-arrow-up text-gold"></i> في
+                  سفاري ثم اختر <b>"إضافة إلى الشاشة الرئيسية"</b>
+                </p>
+              </div>
+              <button
+                onclick="showIosInstructions()"
+                class="btn btn-gold-outline w-100 rounded-pill py-2"
+              >
+                <i class="bi bi-info-circle me-1"></i> طريقة التثبيت
+              </button>
+            </div>
+          </div>
+
+          <!-- كارت ويندوز Windows -->
+          <div class="col-md-4 col-sm-6">
+            <div
+              class="download-card text-center p-4 rounded-4 h-100 d-flex flex-column justify-content-between"
+            >
+              <div>
+                <div class="os-icon mb-3 text-primary">
+                  <i class="bi bi-microsoft display-4"></i>
+                </div>
+                <h5 class="gold fw-bold mb-2">ويندوز (Windows)</h5>
+                <p class="text-light opacity-50 small mb-4">
+                  تثبيت إشراق كتطبيق سطح مكتب على الكمبيوتر
+                </p>
+              </div>
+              <button
+                id="btn-install-windows"
+                class="btn btn-gold-solid w-100 rounded-pill py-2 fw-bold"
+              >
+                <i class="bi bi-laptop me-1"></i> تثبيت للكمبيوتر
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
     <footer class="text-center py-3">
-      <small class="text-light opacity-50">جميع الحقوق محفوظة © إشراق 2026</small>
+      <small class="text-light opacity-50"
+        >جميع الحقوق محفوظة © إشراق 2026</small
+      >
     </footer>
-<!-- شريط التنقل السفلي الثابت -->
-<nav class="bottom-nav fixed-bottom d-md-none">
-  <div class="container d-flex justify-content-around align-items-center py-2">
-    
-    <!-- زر الرئيسية -->
-    <a href="index.html" class="nav-item-bottom text-center text-decoration-none active" data-page="home">
-      <i class="bi bi-house-door fs-5 d-block"></i>
-      <i class="bi bi-house-door-fill fs-5 d-block active-icon"></i>
-      <span class="small">الرئيسية</span>
-    </a>
+    <!-- شريط التنقل السفلي الثابت -->
+    <nav class="bottom-nav fixed-bottom d-md-none">
+      <div
+        class="container d-flex justify-content-around align-items-center py-2"
+      >
+        <!-- زر الرئيسية -->
+        <a
+          href="index.html"
+          class="nav-item-bottom text-center text-decoration-none active"
+          data-page="home"
+        >
+          <i class="bi bi-house-door fs-5 d-block"></i>
+          <i class="bi bi-house-door-fill fs-5 d-block active-icon"></i>
+          <span class="small">الرئيسية</span>
+        </a>
 
-    <!-- زر السبحة -->
-    <a href="tasbeeh.html" class="nav-item-bottom text-center text-decoration-none" data-page="tasbeeh">
-      <i class="bi bi-circle fs-5 d-block"></i>
-      <i class="bi bi-record-circle-fill fs-5 d-block active-icon"></i>
-      <span class="small">السبحة</span>
-    </a>
+        <!-- زر السبحة -->
+        <a
+          href="tasbeeh.html"
+          class="nav-item-bottom text-center text-decoration-none"
+          data-page="tasbeeh"
+        >
+          <i class="bi bi-circle fs-5 d-block"></i>
+          <i class="bi bi-record-circle-fill fs-5 d-block active-icon"></i>
+          <span class="small">السبحة</span>
+        </a>
 
-    <!-- زر البوصلة -->
-    <a href="qibla.html" class="nav-item-bottom text-center text-decoration-none" data-page="qibla">
-      <i class="bi bi-compass fs-5 d-block"></i>
-      <i class="bi bi-compass-fill fs-5 d-block active-icon"></i>
-      <span class="small">القبلة</span>
-    </a>
+        <!-- زر البوصلة -->
+        <a
+          href="qibla.html"
+          class="nav-item-bottom text-center text-decoration-none"
+          data-page="qibla"
+        >
+          <i class="bi bi-compass fs-5 d-block"></i>
+          <i class="bi bi-compass-fill fs-5 d-block active-icon"></i>
+          <span class="small">القبلة</span>
+        </a>
 
-    <!-- زر المطوف -->
-    <a href="matwaf.html" class="nav-item-bottom text-center text-decoration-none" data-page="matwaf">
-      <i class="bi bi-map fs-5 d-block"></i>
-      <i class="bi bi-map-fill fs-5 d-block active-icon"></i>
-      <span class="small">المطوف</span>
-    </a>
+        <!-- زر المطوف -->
+        <a
+          href="matwaf.html"
+          class="nav-item-bottom text-center text-decoration-none"
+          data-page="matwaf"
+        >
+          <i class="bi bi-map fs-5 d-block"></i>
+          <i class="bi bi-map-fill fs-5 d-block active-icon"></i>
+          <span class="small">المطوف</span>
+        </a>
 
-    <!-- زر الإعدادات -->
-    <a href="settings.html" class="nav-item-bottom text-center text-decoration-none" data-page="settings">
-      <i class="bi bi-gear fs-5 d-block"></i>
-      <i class="bi bi-gear-fill fs-5 d-block active-icon"></i>
-      <span class="small">الإعدادات</span>
-    </a>
-
-  </div>
-</nav>
+        <!-- زر الإعدادات -->
+        <a
+          href="settings.html"
+          class="nav-item-bottom text-center text-decoration-none"
+          data-page="settings"
+        >
+          <i class="bi bi-gear fs-5 d-block"></i>
+          <i class="bi bi-gear-fill fs-5 d-block active-icon"></i>
+          <span class="small">الإعدادات</span>
+        </a>
+      </div>
+    </nav>
+    <!-- Bootstrap JavaScript Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <!-- Bootstrap JavaScript Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="./main.js"></script>
-    <!-- Bootstrap JavaScript Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="./main.js"></script>
-    <!-- سكريبت مواقيت الصلاة الجديد -->
     <script src="./prayer.js"></script>
-    <script src="./tasbeeh.js"></script>
     <script src="./qibla.js"></script>
-
-
-  </body>
-</html>
   </body>
 </html>
