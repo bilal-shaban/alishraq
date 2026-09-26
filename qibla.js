@@ -19,11 +19,16 @@ function updateQiblaStatus(message, type = "normal") {
 
 // دالة معالجة حركة واتجاه الهاتف الحقيقية
 function handleOrientation(event) {
-  let compass = event.alpha; // اتجاه الشمال للأندرويد
-  
-  // دعم أجهزة أيفون الحديثة (webkitCompassHeading)
+  let compass;
+
+  // دعم أجهزة أيفون الحديثة (webkitCompassHeading) - هاي القيمة صحيحة مباشرة (شمال=0، تزيد مع عقارب الساعة)
   if (event.webkitCompassHeading !== undefined && event.webkitCompassHeading !== null) {
     compass = event.webkitCompassHeading;
+  } else if (event.alpha !== null && event.alpha !== undefined) {
+    // على أندرويد alpha بتزيد بعكس عقارب الساعة، لازم نعكسها عشان تطابق اتجاه البوصلة الحقيقي
+    compass = 360 - event.alpha;
+  } else {
+    compass = null;
   }
 
   if (compass === null || compass === undefined) {
@@ -115,6 +120,9 @@ function initQiblaCompass() {
       window.calculatedQiblaHeading = 160; // قيمة افتراضية
       updateQiblaStatus("تعذر جلب الموقع تلقائياً، تم ضبط اتجاه افتراضي.", "warning");
     }, { timeout: 10000 });
+  } else {
+    window.calculatedQiblaHeading = 160; // قيمة افتراضية
+    updateQiblaStatus("جهازك لا يدعم تحديد الموقع الجغرافي، تم ضبط اتجاه افتراضي.", "warning");
   }
 
   // فحص الحاجة لزر الصلاحيات (أجهزة iOS)
@@ -127,7 +135,9 @@ function initQiblaCompass() {
   }
 }
 
-// التشغيل التلقائي عند تحميل الصفحة
+// التشغيل التلقائي عند تحميل الصفحة (فقط إذا كنا فعلياً بصفحة القبلة)
 document.addEventListener("DOMContentLoaded", () => {
-  initQiblaCompass();
+  if (document.getElementById("qibla-status")) {
+    initQiblaCompass();
+  }
 });

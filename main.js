@@ -174,19 +174,26 @@ function toggleNightReadingMode(checkbox) {
 }
 
 
-//عدادة التسبيح - الصفحة الرئيسية
-let currentCount = parseInt(localStorage.getItem('eshraq_tasbeeh_count')) || 0;
+//عدادة التسبيح - الصفحة الرئيسية (بتستخدم نفس مفاتيح صفحة السبحة الكاملة عشان يبقى العدد متزامن بين الصفحتين)
+let currentCount = parseInt(localStorage.getItem('tasbeeh_current')) || 0;
 let currentPhrase = localStorage.getItem('eshraq_tasbeeh_phrase') || 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ';
 
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('tasbeeh-count').innerText = currentCount;
-  document.getElementById('tasbeeh-phrase').innerText = currentPhrase;
+  const countEl = document.getElementById('tasbeeh-count');
+  const phraseEl = document.getElementById('tasbeeh-phrase');
+  if (countEl) countEl.innerText = currentCount;
+  if (phraseEl) phraseEl.innerText = currentPhrase;
 });
 
 function countTasbeeh() {
   currentCount++;
-  document.getElementById('tasbeeh-count').innerText = currentCount;
-  localStorage.setItem('eshraq_tasbeeh_count', currentCount);
+  const totalCount = (parseInt(localStorage.getItem('tasbeeh_total')) || 0) + 1;
+
+  const countEl = document.getElementById('tasbeeh-count');
+  if (countEl) countEl.innerText = currentCount;
+
+  localStorage.setItem('tasbeeh_current', currentCount);
+  localStorage.setItem('tasbeeh_total', totalCount);
 
   // هزة خفيفة للموبايل إذا كان يدعم الهزاز
   if (navigator.vibrate) {
@@ -196,15 +203,17 @@ function countTasbeeh() {
 
 function setTasbeehPhrase(phrase) {
   currentPhrase = phrase;
-  document.getElementById('tasbeeh-phrase').innerText = currentPhrase;
+  const phraseEl = document.getElementById('tasbeeh-phrase');
+  if (phraseEl) phraseEl.innerText = currentPhrase;
   localStorage.setItem('eshraq_tasbeeh_phrase', currentPhrase);
   resetTasbeeh();
 }
 
 function resetTasbeeh() {
   currentCount = 0;
-  document.getElementById('tasbeeh-count').innerText = 0;
-  localStorage.setItem('eshraq_tasbeeh_count', 0);
+  const countEl = document.getElementById('tasbeeh-count');
+  if (countEl) countEl.innerText = 0;
+  localStorage.setItem('tasbeeh_current', 0);
 }
 //offline 
 if ('serviceWorker' in navigator) {
@@ -218,5 +227,57 @@ if ('serviceWorker' in navigator) {
       });
   });
 }
+
+// ============================
+// فحص إشعارات الصلاة على كل صفحات التطبيق
+// (بالصفحة الرئيسية index.html الفحص موجود أصلاً بملف prayer.js، فما منكرر الشغل هون)
+// ملاحظة: هاد الفحص شغال بس إذا كانت إحدى صفحات التطبيق مفتوحة فعلياً بالمتصفح تلك اللحظة.
+// إشعار يوصل حتى لو الموقع مسكر بالكامل بيحتاج خادم Web Push (بنية تحتية منفصلة).
+// ============================
+(function setupBackgroundPrayerCheck() {
+  // إذا كنا بالصفحة الرئيسية، prayer.js متكفل بهاد الموضوع أصلاً
+  if (document.getElementById('p-fajr')) return;
+
+  if (localStorage.getItem('prayer_notifications_enabled') !== 'true') return;
+  if (!("Notification" in window)) return;
+
+  function showBgPrayerNotification(title, bodyText) {
+    if (Notification.permission === "granted") {
+      new Notification(title, {
+        body: bodyText,
+        icon: "./5b862b4281f64fd884b11984846f0e97.png"
+      });
+    }
+  }
+
+  function getCachedTodayTimings() {
+    const cache = JSON.parse(localStorage.getItem('eshraq_prayer_timings_cache') || 'null');
+    if (cache && cache.date === new Date().toDateString()) return cache.timings;
+    return null; // ما في مواقيت محفوظة لليوم (لازم تُفتح الصفحة الرئيسية مرة عالأقل باليوم عشان تنحسب وتنخزن)
+  }
+
+  let lastNotifiedMinuteBg = "";
+  const prayerNamesAr = { Fajr: 'صلاة الفجر', Dhuhr: 'صلاة الظهر', Asr: 'صلاة العصر', Maghrib: 'صلاة المغرب', Isha: 'صلاة العشاء' };
+
+  function checkPrayerTimeBg() {
+    if (localStorage.getItem('prayer_notifications_enabled') !== 'true') return;
+
+    const timings = getCachedTodayTimings();
+    if (!timings) return;
+
+    const now = new Date();
+    const currentTimeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+    for (const key in prayerNamesAr) {
+      if (timings[key] === currentTimeStr && lastNotifiedMinuteBg !== currentTimeStr) {
+        showBgPrayerNotification("حان وقت الصلاة 🕌", `حان الآن موعد أذان ${prayerNamesAr[key]}.`);
+        lastNotifiedMinuteBg = currentTimeStr;
+      }
+    }
+  }
+
+  checkPrayerTimeBg();
+  setInterval(checkPrayerTimeBg, 20000);
+})();
 
 

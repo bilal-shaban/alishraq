@@ -31,15 +31,7 @@ async function togglePrayerNotifications(checkbox) {
 }
 
 // 2. تفعيل / إلغاء وضع القراءة الليلية (مرتبط بـ onchange في الهاوس)
-function toggleNightReadingMode(checkbox) {
-    if (checkbox.checked) {
-        document.documentElement.setAttribute('data-night-mode', 'true');
-        localStorage.setItem('night_reading_mode', 'true');
-    } else {
-        document.documentElement.removeAttribute('data-night-mode');
-        localStorage.setItem('night_reading_mode', 'false');
-    }
-}
+// ملاحظة: دالة toggleNightReadingMode أصبحت معرّفة بملف main.js فقط (تم حذف التكرار من هنا)
 
 // 3. زر مشاركة التطبيق / صدقة جارية (مرتبط بـ onclick="shareApp()")
 async function shareApp() {
@@ -86,15 +78,20 @@ function clearAppStorage() {
 
 // 5. تهيئة الحالة عند فتح الصفحة (ضبط صحة الـ Checkboxes)
 document.addEventListener('DOMContentLoaded', () => {
-    // ضبط حالة زر الإشعارات بناءً على الصلاحية الفعلية
+    // ضبط حالة زر الإشعارات بناءً على اختيار المستخدم المحفوظ فعلياً (وليس صلاحية المتصفح وحدها)
     const notifToggle = document.getElementById('prayerNotificationsToggle');
     if (notifToggle) {
-        if ("Notification" in window && Notification.permission === "granted") {
+        const userWantsNotifications = localStorage.getItem('prayer_notifications_enabled') === 'true';
+        const permissionGranted = ("Notification" in window) && Notification.permission === "granted";
+
+        if (userWantsNotifications && permissionGranted) {
             notifToggle.checked = true;
-            localStorage.setItem('prayer_notifications_enabled', 'true');
         } else {
             notifToggle.checked = false;
-            localStorage.setItem('prayer_notifications_enabled', 'false');
+            // إذا كان المستخدم فعّلها سابقاً لكن الصلاحية سُحبت من إعدادات المتصفح، نصحح التخزين ليطابق الواقع
+            if (userWantsNotifications && !permissionGranted) {
+                localStorage.setItem('prayer_notifications_enabled', 'false');
+            }
         }
     }
 

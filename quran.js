@@ -73,7 +73,7 @@ function displaySurahs(surahs) {
   function normalizeText(text) {
     return text
       .replace(/[\u064b-\u0652]/g, "") // إزالة التشكيل العربي
-      .replace(/[أإآا]/g, "اتو")        // توحيد أشكال الألف (اختياري، أو إبقاؤها بسيطة)
+      .replace(/[أإآا]/g, "ا")        // توحيد أشكال الألف
       .toLowerCase()
       .trim();
   }

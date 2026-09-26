@@ -1,17 +1,40 @@
-const CACHE_NAME = 'ishraq-cache-v1';
+const CACHE_NAME = 'ishraq-cache-v2';
 const assetsToCache = [
+  './',
   './index.html',
-  './matwaf.html', // أو اسم صفحة المطوف عندك
+  './quran.html',
+  './surah-reader.html',
+  './tasbeeh.html',
+  './qibla.html',
+  './matwaf.html',
+  './settings.html',
   './style.css',
   './manifest.json',
-  './5b862b4281f64fd884b11984846f0e97.png' // صورة الشعار أو الأيقونات الأساسية
+  './main.js',
+  './prayer.js',
+  './qibla.js',
+  './quran.js',
+  './surah-reader.js',
+  './tasbeeh.js',
+  './matwaf.js',
+  './settings.js',
+  './app-icon.png',
+  './5b862b4281f64fd884b11984846f0e97.png'
 ];
 
 // تثبيت الكاش وتخزين الملفات
+// نستخدم cache.add لكل ملف على حدة (بدل addAll) حتى لا يفشل التثبيت بالكامل
+// في حال كان أحد الملفات (مثل صورة) غير موجود فعلياً على السيرفر
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(assetsToCache);
+      return Promise.all(
+        assetsToCache.map((url) =>
+          cache.add(url).catch((err) => {
+            console.warn('تعذر تخزين الملف في الكاش (تحقق من وجوده على السيرفر):', url, err);
+          })
+        )
+      );
     })
   );
 });

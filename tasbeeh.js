@@ -166,12 +166,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // دالة التفعيل وإيقاف الوضع الليلي (تُستدعى عند الضغط على الزر في الإعدادات)
-function toggleNightReadingMode(checkbox) {
-    if (checkbox.checked) {
-        document.documentElement.setAttribute('data-night-mode', 'true');
-        localStorage.setItem('night_reading_mode', 'true');
-    } else {
-        document.documentElement.removeAttribute('data-night-mode');
-        localStorage.setItem('night_reading_mode', 'false');
-    }
-}
+// ملاحظة: دالة toggleNightReadingMode أصبحت معرّفة بملف main.js فقط (تم حذف التكرار من هنا)

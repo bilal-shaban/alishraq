@@ -72,6 +72,12 @@ function fetchPrayerTimes(lat, lng) {
     .then(response => {
       if (response && response.data) {
         prayerTimings = response.data.timings;
+
+        // تخزين المواقيت باليوم الحالي محلياً عشان باقي صفحات التطبيق تقدر تستخدمها لفحص الإشعارات
+        localStorage.setItem('eshraq_prayer_timings_cache', JSON.stringify({
+          date: new Date().toDateString(),
+          timings: prayerTimings
+        }));
         
        // عرض التاريخ الهجري
 const hijri = response.data.date.hijri;
@@ -138,6 +144,12 @@ function updateCountdown() {
     { name: 'صلاة المغرب', key: 'Maghrib', id: 'p-maghrib' },
     { name: 'صلاة العشاء', key: 'Isha', id: 'p-isha' }
   ];
+
+  // فحص كل صلاة (ما عدا الشروق) لإرسال إشعار عند حلول وقتها
+  ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].forEach(key => {
+    const item = list.find(p => p.key === key);
+    checkPrayerTimeForNotification(item.name, prayerTimings[key]);
+  });
 
   let nextPrayer = null;
   let nextPrayerDate = null;
@@ -237,32 +249,6 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleSwitch.checked = localStorage.getItem('prayer_notifications_enabled') === 'true';
     }
 });
-
-// دالة تفعيل أو إلغاء الإشعارات من زر الإعدادات
-function togglePrayerNotifications(checkbox) {
-    if (checkbox.checked) {
-        // طلب إذن إرسال الإشعارات من المتصفح
-        if (!("Notification" in window)) {
-            alert("متصفحك لا يدعم إشعارات سطح المكتب.");
-            checkbox.checked = false;
-            return;
-        }
-
-        Notification.requestPermission().then(permission => {
-            if (permission === "granted") {
-                localStorage.setItem('prayer_notifications_enabled', 'true');
-                showNotification("تطبيق إشراق", "تم تفعيل إشعارات أوقات الصلاة بنجاح 🌙");
-            } else {
-                alert("يجب السماح بالإشعارات من إعدادات المتصفح لعمل الميزة.");
-                checkbox.checked = false;
-                localStorage.setItem('prayer_notifications_enabled', 'false');
-            }
-        });
-    } else {
-        localStorage.setItem('prayer_notifications_enabled', 'false');
-        // يمكن إظهار تنبيه داخلي خفيف
-    }
-}
 
 // دالة إرسال الإشعار النظامي للمتصفح
 function showNotification(title, bodyText) {
