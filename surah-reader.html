@@ -149,23 +149,29 @@
         </div>
       </nav>
     </header>
-<div class="reader-toolbar p-3 mb-auto mt-2">
-  <div class="d-flex flex-wrap align-items-center gap-2">
-    <button id="display-options-btn" style="max-width: 382px;" class="btn btn-gold-outline btn-sm w-100" title="خيارات العرض" data-bs-toggle="collapse" data-bs-target="#display-options-panel" aria-expanded="false">
+<div class="container">
+      <div class="row justify-content-center g-2 mt-2 mb-2">
+        <div class="col-11">
+          <button id="display-options-btn" class="btn btn-gold-outline btn-sm w-100" title="خيارات العرض" data-bs-toggle="collapse" data-bs-target="#display-options-panel" aria-expanded="false">
       <i class="bi bi-sliders"></i> خيارات العرض
     </button>
-
-    <button id="focus-mode-btn" class="btn btn-gold-outline btn-sm " title="وضع القراءة المركزة">
+        </div>
+        <div class="col-1">
+          <button id="focus-mode-btn" class="btn btn-gold-outline btn-sm w-100 " title="وضع القراءة المركزة">
       <i class="bi bi-arrows-fullscreen"></i>
     </button>
-
-    <select id="reciter-select" class="form-select form-select-sm ms-auto w-75" style="max-width: 200px; background-color: #21211d; color: #edcea0; border-color: #edcea0;" title="اختيار القارئ"></select>
-    <button id="audio-play-btn" class="btn btn-gold-solid btn-sm  px-3 w-50" title="استماع لتلاوة السورة">
+        </div>
+        <div class="col-6">
+          <select id="reciter-select" class="form-select form-select-sm ms-auto w-100" style="background-color: #21211d; color: #edcea0; border-color: #edcea0;" title="اختيار القارئ"></select>
+        </div>
+        <div class="col-6">
+          <button id="audio-play-btn" class="btn btn-gold-solid btn-sm  px-3 w-100" title="استماع لتلاوة السورة">
       <i class="bi bi-play-fill"></i> استماع للسورة
     </button>
-  </div>
+        </div>
+      </div>
 
-  <div class="collapse mt-2 " id="display-options-panel">
+      <div class="collapse mt-2 " id="display-options-panel">
     <div class="d-flex flex-wrap align-items-center gap-2 p-2 rounded-3" style="background: rgba(33,33,29,0.6); border: 1px solid rgba(237,206,160,0.15);">
       <button id="toggle-layout-btn" class="btn btn-gold-outline btn-sm rounded-pill px-3">
         <i class="bi bi-book"></i> شكل المصحف الشريف
@@ -182,7 +188,8 @@
       </div>
     </div>
   </div>
-</div>
+    </div>
+
 
 <div id="audio-progress-wrap" class="px-2 px-lg-0 mb-3 d-none">
   <div class="d-flex align-items-center justify-content-between">
