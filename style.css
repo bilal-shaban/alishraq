@@ -462,6 +462,14 @@ footer {
 }
 
 /* وضع القراءة المركزة (ملء الشاشة) */
+/* شريط أدوات القراءة - يبقى ظاهراً أثناء التمرير */
+.reader-toolbar {
+  position: sticky;
+  top: 112px; /* يساوي ارتفاع الهيدر الثابت العلوي حتى لا يغطيه */
+  z-index: 900;
+  background-color: #21211d;
+}
+
 body.focus-reading-mode header {
   display: none !important;
 }
@@ -470,6 +478,91 @@ body.focus-reading-mode .bottom-nav {
 }
 body.focus-reading-mode #surah-main {
   margin-top: 20px !important;
+}
+body.focus-reading-mode .reader-toolbar {
+  top: 0; /* بما إن الهيدر مخفي بهذا الوضع، يلتصق الشريط بأعلى الشاشة تماماً */
+}
+
+/* ===== بطاقات الأذكار / الأوراد / الأدعية ===== */
+.zikr-card {
+  background: rgba(33, 33, 29, 0.6);
+  border: 1px solid rgba(237, 206, 160, 0.15);
+  border-radius: 1rem;
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 1rem;
+  transition: opacity 0.3s ease, background 0.3s ease;
+}
+.zikr-card.done {
+  opacity: 0.4;
+}
+.zikr-text {
+  font-family: 'Amiri', 'Traditional Arabic', serif;
+  line-height: 2.1;
+  color: #f8f9fa;
+}
+.zikr-source {
+  font-size: 0.78rem;
+  opacity: 0.65;
+}
+.zikr-count-btn {
+  background: transparent;
+  border: 2px solid var(--gold-color, #edcea0);
+  color: var(--gold-color, #edcea0);
+  border-radius: 50%;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.05rem;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, background 0.2s ease;
+}
+.zikr-count-btn:active {
+  transform: scale(0.88);
+}
+.zikr-card.done .zikr-count-btn {
+  background: var(--gold-color, #edcea0);
+  color: #21211d;
+  border-color: var(--gold-color, #edcea0);
+}
+.zikr-actions .btn {
+  opacity: 0.75;
+}
+/* شرائط تبويب الفئات (صباح/مساء، النووي/البحر/النصر...) */
+.category-tabs {
+  overflow-x: auto;
+  white-space: nowrap;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+}
+.category-tabs::-webkit-scrollbar { display: none; }
+.category-tabs .btn {
+  flex-shrink: 0;
+}
+.category-tabs .btn.active-tab {
+  background-color: var(--gold-color, #edcea0) !important;
+  color: #21211d !important;
+  font-weight: 600;
+  border-color: var(--gold-color, #edcea0) !important;
+}
+.zikr-progress-note {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* صفحات الأذكار / الأوراد / الأدعية */
+#category-tabs::-webkit-scrollbar {
+  display: none;
+}
+.azkar-item.azkar-complete,
+.dua-item.dua-complete {
+  opacity: 0.55;
+}
+.wird-block {
+  white-space: pre-line;
 }
 /* تنسيقات خطوات رحلة العمرة */
 .step-indicator {
@@ -688,7 +781,7 @@ html[data-night-mode="true"] h6 {
 
 /* تخصيص نص الآيات القرآنية ليكون فخماً وواضحاً */
 .ayah-text {
-  font-family: 'Amiri', 'Traditional Arabic', serif !important;
+  font-family: 'Amiri', 'Traditional Arabic', serif;
   font-size: 1.6rem !important;
   line-height: 2.6 !important;
   color: #f8f9fa;

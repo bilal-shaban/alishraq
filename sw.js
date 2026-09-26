@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ishraq-cache-v2';
+const CACHE_NAME = 'ishraq-cache-v3';
 const assetsToCache = [
   './',
   './index.html',
@@ -8,6 +8,9 @@ const assetsToCache = [
   './qibla.html',
   './matwaf.html',
   './settings.html',
+  './azkar.html',
+  './awrad.html',
+  './adiya.html',
   './style.css',
   './manifest.json',
   './main.js',
@@ -18,6 +21,9 @@ const assetsToCache = [
   './tasbeeh.js',
   './matwaf.js',
   './settings.js',
+  './azkar.js',
+  './awrad.js',
+  './adiya.js',
   './app-icon.png',
   './5b862b4281f64fd884b11984846f0e97.png'
 ];

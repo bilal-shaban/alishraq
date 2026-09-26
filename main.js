@@ -280,4 +280,18 @@ if ('serviceWorker' in navigator) {
   setInterval(checkPrayerTimeBg, 20000);
 })();
 
+// دالة مشتركة لإضافة أذكار/أوراد/أدعية للمفضلة (منفصلة عن مفضلة آيات القرآن eshraq_favorites)
+function addAzkarFavorite(category, text) {
+  let favorites = JSON.parse(localStorage.getItem("eshraq_azkar_favorites")) || [];
+  const exists = favorites.some(f => f.text === text);
+  if (exists) {
+    favorites = favorites.filter(f => f.text !== text);
+    alert("تمت إزالته من المفضلة.");
+  } else {
+    favorites.push({ category, text });
+    alert("تمت الإضافة إلى المفضلة بنجاح! ⭐");
+  }
+  localStorage.setItem("eshraq_azkar_favorites", JSON.stringify(favorites));
+}
+
 

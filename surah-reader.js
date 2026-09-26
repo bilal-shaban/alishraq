@@ -15,16 +15,16 @@ document.addEventListener("DOMContentLoaded", () => {
   let ayahsList = [];
   let hasAutoScrolled = false;
 
+  // حالة العرض وحجم الخط ونوع الخط المحفوظة بالذاكرة المحلية
   let isMushafMode = localStorage.getItem("eshraq_mushaf_mode") === "true";
   let currentFontSize = parseFloat(localStorage.getItem("eshraq_font_size")) || 1.6;
   let isUthmaniFont = localStorage.getItem("eshraq_font_family") === "uthmani";
   let isFocusMode = localStorage.getItem("eshraq_focus_mode") === "true";
 
-  // دالة الخطوط: الخط العثماني (Amiri Quran) أو العادي (Amiri)
   function getFontFamilyCss() {
     return isUthmaniFont
-      ? "'Amiri Quran', serif"
-      : "'Amiri', serif";
+      ? "'Amiri Quran', 'Traditional Arabic', serif"
+      : "'Amiri', 'Traditional Arabic', serif";
   }
 
   function updateFontIndicator() {
@@ -71,6 +71,8 @@ document.addEventListener("DOMContentLoaded", () => {
         
         renderAyahs();
         localStorage.setItem("eshraq_last_surah", JSON.stringify({ number: surahNumber, name: surah.name }));
+        
+        // حفظ موضع القراءة تلقائياً عند فتح السورة
         saveReadingProgress(surahNumber, surah.name, 1);
 
       } else {
@@ -85,8 +87,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function getCleanAyahText(ayah, index) {
     let text = ayah.text;
     if (surahNumber != 1 && surahNumber != 9 && index === 0) {
-      text = text.replace(/^بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ\s*/, "")
-                 .replace(/^بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\s*/, "")
+      text = text.replace(/^بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ\s*/, "")
+                 .replace(/^بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\s*/, "")
                  .trim();
     }
     return text;
@@ -103,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // العرض العادي
+  // الشكل الأول: القائمة العادية
   function renderStandardLayout() {
     if (!ayahsContainer) return;
     
@@ -111,13 +113,19 @@ document.addEventListener("DOMContentLoaded", () => {
       const text = getCleanAyahText(ayah, index);
       return `
         <div class="ayah-item mb-4 pb-3 border-bottom border-gold-subtle position-relative text-center" data-ayahnum="${ayah.numberInSurah}">
-          <p class="ayah-text mb-3" style="font-size: ${currentFontSize}rem !important; line-height: 2.3; font-family: ${getFontFamilyCss()} !important; color: #f8f9fa;">
+          <p class="ayah-text mb-3" style="font-size: ${currentFontSize}rem !important; line-height: 2.2; font-family: ${getFontFamilyCss()};">
             ${text} <span class="badge rounded-pill border border-gold text-gold ms-2" style="border-color: #edcea0 !important; color: #edcea0; font-family: 'Tajawal', sans-serif; font-size: 1rem;">(${ayah.numberInSurah})</span>
           </p>
           <div class="d-flex justify-content-start gap-2">
-            <button type="button" class="btn btn-sm btn-outline-light border-0 opacity-75 copy-btn" data-index="${index}"><i class="bi bi-copy"></i> نسخ</button>
-            <button type="button" class="btn btn-sm btn-outline-light border-0 opacity-75 text-success share-btn" data-index="${index}"><i class="bi bi-whatsapp"></i> مشاركة</button>
-            <button type="button" class="btn btn-sm btn-outline-light border-0 opacity-75 fav-btn" data-index="${index}"><i class="bi bi-star"></i> مفضلة</button>
+            <button type="button" class="btn btn-sm btn-outline-light border-0 opacity-75 copy-btn" data-index="${index}" title="نسخ الآية">
+              <i class="bi bi-copy"></i> نسخ
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-light border-0 opacity-75 text-success share-btn" data-index="${index}" title="مشاركة عبر واتساب">
+              <i class="bi bi-whatsapp"></i> مشاركة
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-light border-0 opacity-75 fav-btn" data-index="${index}" title="إضافة للمفضلة">
+              <i class="bi bi-star"></i> مفضلة
+            </button>
           </div>
         </div>
       `;
@@ -128,19 +136,19 @@ document.addEventListener("DOMContentLoaded", () => {
     tryAutoScrollToSavedPosition();
   }
 
-  // عرض شكل المصحف الشريف
+  // الشكل الثاني: طريقة المصحف الشريف المتصل
   function renderMushafLayout() {
     if (!ayahsContainer) return;
 
     let fullMushafText = "";
     ayahsList.forEach((ayah, index) => {
       const text = getCleanAyahText(ayah, index);
-      fullMushafText += `<span class="mushaf-ayah-unit" data-ayahnum="${ayah.numberInSurah}">${text} <span class="text-gold" style="font-family: ${getFontFamilyCss()} !important; font-size: ${currentFontSize}rem;">﴿${ayah.numberInSurah}﴾</span></span> `;
+      fullMushafText += `<span class="mushaf-ayah-unit" data-ayahnum="${ayah.numberInSurah}">${text} <span class="text-gold" style="font-family: ${getFontFamilyCss()}; font-size: ${currentFontSize}rem;">﴿${ayah.numberInSurah}﴾</span></span> `;
     });
 
     ayahsContainer.innerHTML = `
-      <div class="mushaf-box p-3 rounded" style="direction: rtl; text-align: justify;">
-        <p class="mushaf-paragraph" style="font-family: ${getFontFamilyCss()} !important; font-size: ${currentFontSize}rem; line-height: 2.8; color: #f8f9fa; letter-spacing: 0.3px;">
+      <div class="mushaf-box p-4 rounded bg-dark bg-opacity-25 border border-gold-subtle" style="direction: rtl; text-align: justify;">
+        <p class="mushaf-paragraph" style="font-family: ${getFontFamilyCss()}; font-size: ${currentFontSize}rem; line-height: 2.7; color: #f8f9fa; letter-spacing: 0.3px;">
           ${fullMushafText}
         </p>
       </div>
@@ -149,6 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tryAutoScrollToSavedPosition();
   }
 
+  // ===== تتبع مكان القراءة والرجوع له تلقائياً =====
   let scrollSaveTimeout = null;
   function setupScrollTracking() {
     const observer = new IntersectionObserver((entries) => {
@@ -175,19 +184,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setTimeout(() => {
       const target = document.querySelector(`[data-ayahnum="${savedAyah}"]`);
-      if (target) target.scrollIntoView({ behavior: "auto", block: "center" });
+      if (target) {
+        target.scrollIntoView({ behavior: "auto", block: "center" });
+      }
       hasAutoScrolled = true;
     }, 150);
   }
 
-  function bindEvents() {
+ function bindEvents() {
     document.querySelectorAll(".copy-btn").forEach(btn => {
       btn.addEventListener("click", (e) => {
         const index = e.currentTarget.getAttribute("data-index");
         const ayah = ayahsList[index];
         const text = getCleanAyahText(ayah, parseInt(index));
+        
+        // ⭐ تحديث موضع القراءة فوراً عند نسخ الآية
         saveReadingProgress(surahNumber, currentSurahName, ayah.numberInSurah);
-        navigator.clipboard.writeText(`"${text}" [سورة ${currentSurahName} - الآية ${ayah.numberInSurah}]`).then(() => alert("تم نسخ الآية!"));
+
+        const fullText = `"${text}" [سورة ${currentSurahName} - الآية ${ayah.numberInSurah}]`;
+        navigator.clipboard.writeText(fullText).then(() => alert("تم نسخ الآية بنجاح!"));
       });
     });
 
@@ -196,8 +211,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const index = e.currentTarget.getAttribute("data-index");
         const ayah = ayahsList[index];
         const text = getCleanAyahText(ayah, parseInt(index));
+        
+        // ⭐ تحديث موضع القراءة فوراً عند مشاركة الآية
         saveReadingProgress(surahNumber, currentSurahName, ayah.numberInSurah);
-        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`"${text}" \n[سورة ${currentSurahName} - الآية ${ayah.numberInSurah}]`)}`, '_blank');
+
+        const fullText = `"${text}" \n[سورة ${currentSurahName} - الآية ${ayah.numberInSurah}]\nمشاركة عبر تطبيق إشراق 🌙`;
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(fullText)}`, '_blank');
       });
     });
 
@@ -205,21 +224,25 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.addEventListener("click", (e) => {
         const index = e.currentTarget.getAttribute("data-index");
         const ayah = ayahsList[index];
+        
+        // ⭐ تحديث موضع القراءة فوراً عند إضافة الآية للمفضلة
         saveReadingProgress(surahNumber, currentSurahName, ayah.numberInSurah);
-        toggleFavorite(ayah, currentSurahName);
+
+        toggleFavorite(ayah, currentSurahName, parseInt(index));
       });
     });
   }
 
   function updateToggleButtonText() {
     if (toggleLayoutBtn) {
-      toggleLayoutBtn.innerHTML = isMushafMode 
-        ? `<i class="bi bi-list-task"></i> العرض العادي` 
-        : `<i class="bi bi-book"></i> شكل المصحف`;
+      if (isMushafMode) {
+        toggleLayoutBtn.innerHTML = `<i class="bi bi-list-task"></i> العرض العادي`;
+      } else {
+        toggleLayoutBtn.innerHTML = `<i class="bi bi-book"></i> شكل المصحف الشريف`;
+      }
     }
   }
 
-  // زر تغيير التخطيط (عادي / مصحف)
   if (toggleLayoutBtn) {
     toggleLayoutBtn.addEventListener("click", () => {
       isMushafMode = !isMushafMode;
@@ -229,7 +252,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // زر تبديل الخط (الرسم العثماني / الخط العادي) - تم ربطه مباشرة ليعمل فوراً
   if (toggleFontFamilyBtn) {
     toggleFontFamilyBtn.addEventListener("click", () => {
       isUthmaniFont = !isUthmaniFont;
@@ -244,11 +266,6 @@ document.addEventListener("DOMContentLoaded", () => {
       isFocusMode = !isFocusMode;
       localStorage.setItem("eshraq_focus_mode", isFocusMode);
       updateFocusModeButton();
-      if (isFocusMode) {
-        document.documentElement.requestFullscreen?.().catch(() => {});
-      } else {
-        document.exitFullscreen?.().catch(() => {});
-      }
     });
   }
 
@@ -274,15 +291,42 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // نظام الصوت والتلاوة
+  // ===== تشغيل تلاوة السورة مع اختيار القارئ =====
+  const RECITERS = [
+    { id: "ar.alafasy", name: "مشاري العفاسي", perAyah: true },
+    { id: "ar.mahermuaiqly", name: "ماهر المعيقلي", perAyah: true },
+    { id: "ar.abdurrahmaansudais", name: "عبدالرحمن السديس", perAyah: true },
+    { id: "ar.yasseraldossari", name: "ياسر الدوسري", perAyah: false }
+  ];
+
   const audioEl = document.getElementById("surah-audio");
   const audioPlayBtn = document.getElementById("audio-play-btn");
   const audioProgressWrap = document.getElementById("audio-progress-wrap");
   const audioAyahIndicator = document.getElementById("audio-ayah-indicator");
+  const audioReciterLabel = document.getElementById("audio-reciter-label");
   const audioStopBtn = document.getElementById("audio-stop-btn");
+  const reciterSelect = document.getElementById("reciter-select");
 
-  let currentAudioAyahIndex = -1;
+  let currentAudioAyahIndex = -1; // فهرس الآية الحالية جوا ayahsList (للقراء اللي فيهم تلاوة آية بآية فقط)
   let isAudioPlaying = false;
+  let selectedReciterId = localStorage.getItem("eshraq_reciter") || "ar.alafasy";
+  let triedFullSurahFallback = false; // لتفادي محاولات لا نهائية إذا فشل التشغيل بكل الطرق
+
+  function getSelectedReciter() {
+    return RECITERS.find(r => r.id === selectedReciterId) || RECITERS[0];
+  }
+
+  if (reciterSelect) {
+    reciterSelect.innerHTML = RECITERS.map(r => `<option value="${r.id}">${r.name}</option>`).join("");
+    reciterSelect.value = selectedReciterId;
+    if (audioReciterLabel) audioReciterLabel.textContent = getSelectedReciter().name;
+    reciterSelect.addEventListener("change", () => {
+      stopAudioPlayback();
+      selectedReciterId = reciterSelect.value;
+      localStorage.setItem("eshraq_reciter", selectedReciterId);
+      if (audioReciterLabel) audioReciterLabel.textContent = getSelectedReciter().name;
+    });
+  }
 
   function highlightAyah(numberInSurah) {
     document.querySelectorAll(".active-ayah").forEach(el => el.classList.remove("active-ayah"));
@@ -294,73 +338,133 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // تشغيل آية بآية (يتيح تمييز الآية الحالية) - يعمل فقط مع القراء الذين تتوفر لهم ملفات لكل آية
   function playAyahAtIndex(index) {
     if (!audioEl || index < 0 || index >= ayahsList.length) {
       stopAudioPlayback();
       return;
     }
     currentAudioAyahIndex = index;
+    triedFullSurahFallback = false;
     const ayah = ayahsList[index];
-    audioEl.src = `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${ayah.number}.mp3`;
+    audioEl.src = `https://cdn.islamic.network/quran/audio/128/${selectedReciterId}/${ayah.number}.mp3`;
     audioEl.play();
+
     highlightAyah(ayah.numberInSurah);
-    if (audioAyahIndicator) audioAyahIndicator.textContent = `الآية ${ayah.numberInSurah} من ${ayahsList.length}`;
+    if (audioAyahIndicator) {
+      audioAyahIndicator.textContent = `الآية ${ayah.numberInSurah} من ${ayahsList.length}`;
+    }
+  }
+
+  // تشغيل ملف السورة كاملة دفعة واحدة - يُستخدم مع القراء الذين لا تتوفر لهم ملفات منفصلة لكل آية
+  function playFullSurah() {
+    if (!audioEl) return;
+    currentAudioAyahIndex = -1;
+    audioEl.src = `https://cdn.islamic.network/quran/audio-surah/128/${selectedReciterId}/${surahNumber}.mp3`;
+    audioEl.play();
+    highlightAyah(null);
+    if (audioAyahIndicator) {
+      audioAyahIndicator.textContent = `تشغيل السورة كاملة (بدون تمييز آية بآية لهذا القارئ)`;
+    }
   }
 
   function stopAudioPlayback() {
-    if (audioEl) { audioEl.pause(); audioEl.removeAttribute("src"); }
+    if (audioEl) {
+      audioEl.pause();
+      audioEl.removeAttribute("src");
+    }
     isAudioPlaying = false;
     currentAudioAyahIndex = -1;
     highlightAyah(null);
     if (audioProgressWrap) audioProgressWrap.classList.add("d-none");
-    if (audioPlayBtn) audioPlayBtn.innerHTML = `<i class="bi bi-play-fill me-1"></i> استماع لتلاوة السورة (الشيخ مشاري العفاسي)`;
+    if (audioPlayBtn) audioPlayBtn.innerHTML = `<i class="bi bi-play-fill"></i> استماع للسورة`;
   }
 
   if (audioPlayBtn && audioEl) {
     audioPlayBtn.addEventListener("click", () => {
-      if (isAudioPlaying) { audioEl.pause(); return; }
+      if (isAudioPlaying) {
+        audioEl.pause();
+        return;
+      }
       if (audioProgressWrap) audioProgressWrap.classList.remove("d-none");
-      playAyahAtIndex(currentAudioAyahIndex >= 0 ? currentAudioAyahIndex : 0);
+      const reciter = getSelectedReciter();
+      if (reciter.perAyah) {
+        const startIndex = currentAudioAyahIndex >= 0 ? currentAudioAyahIndex : 0;
+        playAyahAtIndex(startIndex);
+      } else {
+        playFullSurah();
+      }
     });
 
     audioEl.addEventListener("play", () => {
       isAudioPlaying = true;
-      audioPlayBtn.innerHTML = `<i class="bi bi-pause-fill me-1"></i> إيقاف مؤقت`;
+      audioPlayBtn.innerHTML = `<i class="bi bi-pause-fill"></i> إيقاف مؤقت`;
     });
 
     audioEl.addEventListener("pause", () => {
       isAudioPlaying = false;
-      if (currentAudioAyahIndex >= 0) audioPlayBtn.innerHTML = `<i class="bi bi-play-fill me-1"></i> متابعة التلاوة`;
+      if (audioEl.src) {
+        audioPlayBtn.innerHTML = `<i class="bi bi-play-fill"></i> متابعة الاستماع`;
+      }
     });
 
-    audioEl.addEventListener("ended", () => playAyahAtIndex(currentAudioAyahIndex + 1));
-    audioEl.addEventListener("error", () => { stopAudioPlayback(); alert("تعذر تحميل التلاوة."); });
+    audioEl.addEventListener("ended", () => {
+      const reciter = getSelectedReciter();
+      if (reciter.perAyah) {
+        playAyahAtIndex(currentAudioAyahIndex + 1);
+      } else {
+        stopAudioPlayback();
+      }
+    });
+
+    audioEl.addEventListener("error", () => {
+      if (!audioEl.src) return;
+      const reciter = getSelectedReciter();
+      // إذا فشل تحميل ملف آية بمفردها، جرّب تشغيل السورة كاملة كخطة بديلة قبل الاستسلام
+      if (reciter.perAyah && !triedFullSurahFallback) {
+        triedFullSurahFallback = true;
+        playFullSurah();
+        return;
+      }
+      stopAudioPlayback();
+      alert("تعذر تحميل التلاوة الصوتية بصوت هذا القارئ حالياً، جرّب قارئاً آخر أو تحقق من الاتصال بالإنترنت.");
+    });
   }
 
-  if (audioStopBtn) audioStopBtn.addEventListener("click", stopAudioPlayback);
+  if (audioStopBtn) {
+    audioStopBtn.addEventListener("click", stopAudioPlayback);
+  }
 
   fetchSurahData();
 });
 
+// حفظ موضع القراءة الحالي وتحديثه فوراً
 function saveReadingProgress(surahNum, surahName, ayahNum) {
   const cleanName = surahName.replace(/^(سُورَةُ|سورة)\s*/, "").trim();
-  localStorage.setItem("eshraq_last_progress", JSON.stringify({
+  const progress = {
     surahNumber: parseInt(surahNum),
     surahName: cleanName,
     ayahNumber: parseInt(ayahNum),
     date: new Date().toLocaleDateString('ar-SY')
-  }));
+  };
+  localStorage.setItem("eshraq_last_progress", JSON.stringify(progress));
 }
 
-function toggleFavorite(ayah, surahName) {
+function toggleFavorite(ayah, surahName, index) {
   let favorites = JSON.parse(localStorage.getItem("eshraq_favorites")) || [];
   const existingIndex = favorites.findIndex(fav => fav.surahName === surahName && fav.ayahNum === ayah.numberInSurah);
+
   if (existingIndex > -1) {
     favorites.splice(existingIndex, 1);
     alert("تمت إزالة الآية من المفضلة.");
   } else {
-    favorites.push({ surahName, ayahNum: ayah.numberInSurah, text: ayah.text });
-    alert("تمت إضافة الآية للمفضلة ⭐");
+    favorites.push({
+      surahName: surahName,
+      ayahNum: ayah.numberInSurah,
+      text: ayah.text
+    });
+    alert("تمت إضافة الآية إلى المفضلة بنجاح! ⭐");
   }
+
   localStorage.setItem("eshraq_favorites", JSON.stringify(favorites));
 }
