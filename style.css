@@ -791,5 +791,9 @@ html[data-night-mode="true"] h6 {
 #ayahs-container {
   margin-top: -2rem;
   background-color: #21211D !important; /* لون أسود مطفأ وأعمق، أو فيك تحطه #1a1a17 لدرجة أفتح شوي */
-  border: 1px solid rgba(237, 206, 160, 0.3) !important; /* لون الحدود الذهبية الخفيفة */
+  border: 1px solid rgba(237, 206, 160, 0.3) !important;
+}
+
+#audio-seek, #audio-volume {
+  accent-color: #edcea0;
 }
