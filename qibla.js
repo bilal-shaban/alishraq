@@ -1,137 +1,181 @@
-// إحداثيات الكعبة المشرفة (مكة المكرمة)
+// ============================================================
+// بوصلة القبلة - نسخة معاد بناؤها بالكامل
+// ============================================================
+// السبب الجذري للاتجاه الخاطئ بالنسخة القديمة: كان الكود يعتمد على
+// حدث "deviceorientation" العادي فقط، وعلى أغلب أجهزة أندرويد/كروم
+// هذا الحدث يعطي زاوية "نسبية" (تعتمد على وضعية الهاتف لحظة فتح
+// الصفحة) وليست زاوية "مطلقة" بالنسبة للشمال الحقيقي - فأي انعكاس
+// إشارة (+/-) ما كان رح يصلحها لأنها أصلاً مش قيمة بوصلة حقيقية.
+// الحل الصحيح: الاعتماد على حدث "deviceorientationabsolute" (أو
+// alpha مع absolute=true) على أندرويد، و"webkitCompassHeading" على
+// آيفون فقط - وهذول القيمتين فقط مضمون إنهم بالنسبة للشمال الحقيقي.
+// ============================================================
+
 const KAABA_LAT = 21.4225;
 const KAABA_LNG = 39.8262;
 
-// متغيرات عامة لحساب القبلة وحالة الاهتزاز
-window.calculatedQiblaHeading = 0;
-window.hasVibrated = false;
+let qiblaBearing = null;       // زاوية اتجاه القبلة بالنسبة للشمال (محسوبة من موقع المستخدم)
+let hasAlignedVibrated = false;
+let compassDataReceived = false;
+let noSensorTimeoutId = null;
 
-// دالة تحديث الحالة الذكية بنظام الفئات النظيف
+function toRad(deg) { return (deg * Math.PI) / 180; }
+function toDeg(rad) { return (rad * 180) / Math.PI; }
+
+// حساب زاوية اتجاه القبلة بمعادلة الجهة العظمى (Great Circle Bearing)
+function computeQiblaBearing(lat, lon) {
+  const phi1 = toRad(lat);
+  const phi2 = toRad(KAABA_LAT);
+  const deltaLambda = toRad(KAABA_LNG - lon);
+
+  const y = Math.sin(deltaLambda) * Math.cos(phi2);
+  const x = Math.cos(phi1) * Math.sin(phi2) - Math.sin(phi1) * Math.cos(phi2) * Math.cos(deltaLambda);
+  const theta = Math.atan2(y, x);
+
+  return (toDeg(theta) + 360) % 360;
+}
+
 function updateQiblaStatus(message, type = "normal") {
   const statusEl = document.getElementById("qibla-status");
   const statusBox = document.getElementById("qibla-status-box");
-  
   if (statusEl && statusBox) {
     statusEl.textContent = message;
     statusBox.className = `qibla-status-box ${type} mb-3`;
   }
 }
 
-// دالة معالجة حركة واتجاه الهاتف الحقيقية
-function handleOrientation(event) {
-  let compass;
-
-  // دعم أجهزة أيفون الحديثة (webkitCompassHeading) - هاي القيمة صحيحة مباشرة (شمال=0، تزيد مع عقارب الساعة)
-  if (event.webkitCompassHeading !== undefined && event.webkitCompassHeading !== null) {
-    compass = event.webkitCompassHeading;
-  } else if (event.alpha !== null && event.alpha !== undefined) {
-    // على أندرويد alpha بتزيد بعكس عقارب الساعة، لازم نعكسها عشان تطابق اتجاه البوصلة الحقيقي
-    compass = 360 - event.alpha;
-  } else {
-    compass = null;
+// تعويض دوران الشاشة (بورتريه/لاندسكيب) حتى تبقى القراءة صحيحة أيّاً كانت وضعية الهاتف
+function getScreenAngle() {
+  if (window.screen && window.screen.orientation && typeof window.screen.orientation.angle === "number") {
+    return window.screen.orientation.angle;
   }
+  if (typeof window.orientation === "number") {
+    return window.orientation;
+  }
+  return 0;
+}
 
-  if (compass === null || compass === undefined) {
-    updateQiblaStatus("المستشعر المغناطيسي غير متوفر، يرجى تفعيل الموقع أو تدوير الهاتف.", "warning");
+// المعالج الموحّد لكل من حدثي deviceorientation و deviceorientationabsolute
+// يتجاهل أي قراءة غير موثوقة (نسبية) بدل ما يعرض اتجاهاً خاطئاً بصمت
+function handleOrientation(event) {
+  let heading = null;
+
+  if (typeof event.webkitCompassHeading === "number" && !isNaN(event.webkitCompassHeading)) {
+    // آيفون: هذه القيمة جاهزة وصحيحة دائماً (الشمال الحقيقي = صفر، تزيد مع عقارب الساعة)
+    heading = event.webkitCompassHeading;
+  } else if (event.absolute === true && typeof event.alpha === "number") {
+    // أندرويد/كروم: alpha هون موثّق أنه بالنسبة للشمال الحقيقي، لكن اتجاه دورانه معاكس لعقارب الساعة فنعكسه
+    heading = (360 - event.alpha) % 360;
+  } else {
+    // قراءة غير مطلقة (نسبية) - نتجاهلها لأنها غير موثوقة، لا نعرض بناء عليها أي اتجاه
     return;
   }
 
-  let qiblaHeading = window.calculatedQiblaHeading || 0;
-  let diff = qiblaHeading - compass;
+  compassDataReceived = true;
+  if (noSensorTimeoutId) {
+    clearTimeout(noSensorTimeoutId);
+    noSensorTimeoutId = null;
+  }
 
-  // تحريك مؤشر البوصلة بسلاسة
+  heading = (heading + getScreenAngle() + 360) % 360;
+  applyHeading(heading);
+}
+
+function applyHeading(heading) {
+  if (qiblaBearing === null) return;
+
+  const diff = (qiblaBearing - heading + 360) % 360;
+
   const pointer = document.getElementById("qibla-pointer");
   const dial = document.getElementById("compass-dial");
-  
-  if (pointer) {
-    pointer.style.transform = `rotate(${diff}deg)`;
-  }
+  if (pointer) pointer.style.transform = `rotate(${diff}deg)`;
 
-  // تحديث القيم الرقمية بالشاشة (إن وجدت العناصر)
   const angleVal = document.getElementById("device-angle-val");
   const targetVal = document.getElementById("qibla-target-val");
-  if (angleVal) angleVal.textContent = Math.round(compass) + "°";
-  if (targetVal) targetVal.textContent = Math.round(qiblaHeading) + "°";
+  if (angleVal) angleVal.textContent = Math.round(heading) + "°";
+  if (targetVal) targetVal.textContent = Math.round(qiblaBearing) + "°";
 
-  // فحص التطابق التام ضمن هامش خطأ 3 درجات
-  let normalizedDiff = Math.abs(diff % 360);
-  if (normalizedDiff > 180) normalizedDiff = 360 - normalizedDiff;
+  let normalizedDiff = diff > 180 ? 360 - diff : diff;
 
-  if (normalizedDiff <= 3) {
-    if (dial) dial.classList.add('aligned-success');
-    updateQiblaStatus("✨ ما شاء الله! أنت باتجاه القبلة تماماً، تقبل الله طاعتك.", "success");
-    
-    // اهتزازة خفيفة للتنبيه (إذا كانت مدعومة بالمتصفح)
-    if (navigator.vibrate && !window.hasVibrated) {
+  if (normalizedDiff <= 5) {
+    if (dial) dial.classList.add("aligned-success");
+    updateQiblaStatus("✨ ما شاء الله! أنت متجه الآن نحو القبلة تماماً.", "success");
+    if (navigator.vibrate && !hasAlignedVibrated) {
       navigator.vibrate(60);
-      window.hasVibrated = true;
+      hasAlignedVibrated = true;
     }
   } else {
-    if (dial) dial.classList.remove('aligned-success');
-    window.hasVibrated = false;
-    updateQiblaStatus("أبعد هاتفك عن أي حديد أو مجالات مغناطيسية، وحافظ على أفقية الهاتف.");
+    if (dial) dial.classList.remove("aligned-success");
+    hasAlignedVibrated = false;
+    updateQiblaStatus("دوّر هاتفك ببطء (وهو مستوٍ أفقياً) حتى يستقر المؤشر على اتجاه القبلة.");
   }
 }
 
-// زر تفعيل المستشعرات لأجهزة أيفون وبعض هواتف أندرويد الأمنية
+function startCompassListeners() {
+  window.addEventListener("deviceorientationabsolute", handleOrientation, true);
+  window.addEventListener("deviceorientation", handleOrientation, true);
+
+  // لو بعد 3 ثواني ما وصلت ولا قراءة موثوقة، نوضح للمستخدم السبب بدل ما نتركه بلا تفسير
+  noSensorTimeoutId = setTimeout(() => {
+    if (!compassDataReceived) {
+      updateQiblaStatus(
+        "تعذّر الحصول على قراءة بوصلة موثوقة من جهازك أو المتصفح. جرّب متصفح كروم أو سفاري محدث، وتأكد من السماح بصلاحية أجهزة الاستشعار.",
+        "warning"
+      );
+    }
+  }, 3000);
+}
+
+// زر تفعيل المستشعرات (لازم على آيفون، وأحياناً على بعض أجهزة أندرويد الحديثة)
 function requestCompassPermission() {
-  if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+  if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
     DeviceOrientationEvent.requestPermission()
-      .then(response => {
-        if (response === 'granted') {
-          window.addEventListener('deviceorientation', handleOrientation, true);
-          const btn = document.getElementById('btn-enable-compass');
-          if (btn) btn.classList.add('d-none');
+      .then((response) => {
+        if (response === "granted") {
+          const btn = document.getElementById("btn-enable-compass");
+          if (btn) btn.classList.add("d-none");
           updateQiblaStatus("تم تفعيل المستشعر بنجاح، حرّك هاتفك ببطء.", "normal");
+          startCompassListeners();
         } else {
-          updateQiblaStatus("تم رفض إذن مستشعر الاتجاه من قبل المستخدم.", "warning");
+          updateQiblaStatus("تم رفض إذن مستشعر الاتجاه، فلن تعمل البوصلة بدونه.", "warning");
         }
       })
-      .catch(console.error);
+      .catch(() => {
+        updateQiblaStatus("حدث خطأ أثناء طلب صلاحية مستشعر الاتجاه.", "warning");
+      });
   } else {
-    window.addEventListener('deviceorientation', handleOrientation, true);
-    updateQiblaStatus("تم تفعيل المستشعر المباشر بنجاح.", "normal");
+    startCompassListeners();
   }
 }
 
-// التهيئة الأولية والتحقق من دعم الأجهزة
+// التهيئة الأولية: تحديد الموقع وحساب زاوية القبلة، ثم تفعيل المستشعرات
 function initQiblaCompass() {
   updateQiblaStatus("جاري جلب إحداثيات الموقع وحساب اتجاه الكعبة...");
+  compassDataReceived = false;
 
-  // جلب موقع المستخدم الجغرافي لحساب زاوية القبلة الحقيقية
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(position => {
-      let lat1 = position.coords.latitude;
-      let lon1 = position.coords.longitude;
-      
-      let lat2 = KAABA_LAT;
-      let lon2 = KAABA_LNG;
-
-      // معادلة حساب زاوية القبلة بدقة رياضية عالمية
-      let dLon = (lon2 - lon1) * Math.PI / 180;
-      let y = Math.sin(dLon) * Math.cos(lat2 * Math.PI / 180);
-      let x = Math.cos(lat1 * Math.PI / 180) * Math.sin(lat2 * Math.PI / 180) - Math.sin(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.cos(dLon);
-      let brng = Math.atan2(y, x) * 180 / Math.PI;
-      window.calculatedQiblaHeading = (brng + 360) % 360;
-
-      updateQiblaStatus("تم تحديد موقعك بنجاح، يرجى تدوير الهاتف بحركة رقم 8 لضبط الدقة.");
-
-    }, error => {
-      window.calculatedQiblaHeading = 160; // قيمة افتراضية
-      updateQiblaStatus("تعذر جلب الموقع تلقائياً، تم ضبط اتجاه افتراضي.", "warning");
-    }, { timeout: 10000 });
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        qiblaBearing = computeQiblaBearing(position.coords.latitude, position.coords.longitude);
+        updateQiblaStatus("تم تحديد موقعك بنجاح، يرجى تدوير الهاتف بحركة رقم 8 لضبط دقة المستشعر.");
+      },
+      () => {
+        qiblaBearing = null;
+        updateQiblaStatus("تعذّر تحديد موقعك، فعّل صلاحية الموقع الجغرافي لحساب اتجاه القبلة بدقة.", "warning");
+      },
+      { timeout: 10000 }
+    );
   } else {
-    window.calculatedQiblaHeading = 160; // قيمة افتراضية
-    updateQiblaStatus("جهازك لا يدعم تحديد الموقع الجغرافي، تم ضبط اتجاه افتراضي.", "warning");
+    qiblaBearing = null;
+    updateQiblaStatus("جهازك لا يدعم تحديد الموقع الجغرافي، لا يمكن حساب اتجاه القبلة.", "warning");
   }
 
-  // فحص الحاجة لزر الصلاحيات (أجهزة iOS)
-  if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-    const btn = document.getElementById('btn-enable-compass');
-    if (btn) btn.classList.remove('d-none');
-    updateQiblaStatus("يرجى الضغط على زر 'تفعيل مستشعر الاتجاه' للسماح بقراءة البوصلة.", "warning");
+  // فحص الحاجة لزر الصلاحيات (أجهزة آيفون بشكل أساسي)
+  if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
+    const btn = document.getElementById("btn-enable-compass");
+    if (btn) btn.classList.remove("d-none");
   } else {
-    window.addEventListener('deviceorientation', handleOrientation, true);
+    startCompassListeners();
   }
 }
 
