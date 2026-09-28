@@ -122,12 +122,35 @@
               class="p-2 bg-card-dark border-gold-subtle rounded-3 shadow-sm"
             >
               <span class="d-block small text-light opacity-75"
-                >إجمالي التسبيحات</span
+                >الإجمالي</span
               >
               <span id="total-counter" class="gold fw-bold fs-5">0</span>
             </div>
           </div>
         </div>
+
+        <!-- الهدف اليومي -->
+        <div class="card bg-card-dark border-gold-subtle rounded-4 mb-3 shadow-sm">
+          <div class="card-body p-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span id="daily-goal-label" class="small gold fw-bold">0 / 300 تسبيحة اليوم</span>
+              <button class="btn btn-sm btn-link gold text-decoration-none p-0" data-bs-toggle="collapse" data-bs-target="#goal-edit-row">
+                <i class="bi bi-pencil-square"></i>
+              </button>
+            </div>
+            <div class="progress bg-secondary bg-opacity-25" style="height: 8px;">
+              <div id="daily-goal-bar" class="progress-bar bg-gold" role="progressbar" style="width: 0%;"></div>
+            </div>
+            <div class="collapse mt-2" id="goal-edit-row">
+              <div class="input-group input-group-sm">
+                <input type="number" id="daily-goal-input" class="form-control bg-dark text-light border-gold-subtle" min="10" step="10" value="300">
+                <button class="btn btn-gold-solid" onclick="setDailyGoal(document.getElementById('daily-goal-input').value)">حفظ الهدف</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+       
 
         <!-- صندوق اختيار الذكر -->
         <div
@@ -146,6 +169,15 @@
                 data-bs-target="#addDhikrModal"
               >
                 <i class="bi bi-plus-circle me-1"></i>إضافة ذكر مخصص
+              </button>
+            </div>
+            <div class="mb-2">
+              <button
+                class="btn btn-sm btn-gold-outline w-100"
+                data-bs-toggle="modal"
+                data-bs-target="#asmaModal"
+              >
+                <i class="bi bi-stars me-1"></i> التسبيح بأسماء الله الحسنى
               </button>
             </div>
             <select
@@ -196,7 +228,7 @@
               <span id="counter-number" class="display-3 fw-bold gold m-0"
                 >0</span
               >
-              <span class="text-light opacity-50 small mt-1">اضغط للتسبيح</span>
+              <span class="text-light opacity-50 small mt-1">اضغط أو مرّر إصبعك للتسبيح</span>
             </div>
           </div>
         </div>
@@ -215,8 +247,26 @@
           </div>
         </div>
 
+        <!-- اختيار صوت النقر -->
+        <div class="card bg-card-dark border-gold-subtle rounded-4 p-2 my-3">
+          <div class="text-center mb-1 small text-light opacity-75">صوت النقر</div>
+          <div class="d-flex justify-content-center gap-2 sound-picker">
+            <button class="btn btn-sm btn-gold-outline" data-sound="silent" onclick="setSoundPref('silent')"><i class="bi bi-volume-mute"></i> صامت</button>
+            <button class="btn btn-sm btn-gold-outline" data-sound="wood" onclick="setSoundPref('wood')"><i class="bi bi-circle-fill"></i> خشبي</button>
+            <button class="btn btn-sm btn-gold-outline" data-sound="metal" onclick="setSoundPref('metal')"><i class="bi bi-gem"></i> معدني</button>
+          </div>
+        </div>
+
+         <!-- الرسم البياني الأسبوعي -->
+        <div class="card bg-card-dark border-gold-subtle rounded-4 mb-3 shadow-sm">
+          <div class="card-body p-3">
+            <div class="small text-light opacity-75 mb-2">تسبيحاتك خلال آخر 7 أيام</div>
+            <div class="weekly-chart" id="weekly-chart"></div>
+          </div>
+        </div>
+
         <!-- أزرار التحكم (تصفير ومشاركة الأجر) -->
-        <div class="d-flex justify-content-center gap-2 mt-3">
+        <div class="d-flex justify-content-center gap-2 mt-3 flex-wrap">
           <button
             onclick="resetCounter()"
             class="btn btn-outline-danger btn-sm rounded-pill px-3 py-2"
@@ -233,6 +283,17 @@
             "
           >
             <i class="bi bi-whatsapp me-1"></i> مشاركة الأجر
+          </button>
+          <button
+            onclick="shareTodayChallenge()"
+            class="btn btn-sm rounded-pill px-3 py-2"
+            style="
+              background-color: transparent;
+              border: 1px solid #edcea0;
+              color: #edcea0;
+            "
+          >
+            <i class="bi bi-people-fill me-1"></i> تحدَّ أصدقاءك
           </button>
         </div>
       </div>
@@ -268,6 +329,27 @@
             >
               حفظ وإضافة
             </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- نافذة أسماء الله الحسنى (Modal) -->
+    <div class="modal fade" id="asmaModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content bg-card-dark text-light border-gold-subtle">
+          <div class="modal-header border-gold-subtle">
+            <h5 class="modal-title gold fw-bold fs-6"><i class="bi bi-stars me-1"></i> أسماء الله الحسنى</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p class="small text-light opacity-75 mb-3">اضغط على أي اسم لتبدأ التسبيح والذكر به.</p>
+            <div id="asma-list-container"></div>
           </div>
         </div>
       </div>

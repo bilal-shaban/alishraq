@@ -175,7 +175,7 @@ function toggleNightReadingMode(checkbox) {
 
 
 //عدادة التسبيح - الصفحة الرئيسية (بتستخدم نفس مفاتيح صفحة السبحة الكاملة عشان يبقى العدد متزامن بين الصفحتين)
-let currentCount = parseInt(localStorage.getItem('tasbeeh_current')) || 0;
+ currentCount = parseInt(localStorage.getItem('tasbeeh_current')) || 0;
 let currentPhrase = localStorage.getItem('eshraq_tasbeeh_phrase') || 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -278,6 +278,62 @@ if ('serviceWorker' in navigator) {
 
   checkPrayerTimeBg();
   setInterval(checkPrayerTimeBg, 20000);
+})();
+
+// ============================
+// تنبيه لطيف لو ما سبّح المستخدم إطلاقاً اليوم (يُفحص مرة واحدة قرب نهاية اليوم)
+// يعمل فقط إذا كانت صلاحية الإشعارات ممنوحة أصلاً (لا يطلب إذناً جديداً بنفسه)
+// ============================
+(function setupTasbeehReminderCheck() {
+  function checkTasbeehReminder() {
+    if (!("Notification" in window) || Notification.permission !== "granted") return;
+
+    const now = new Date();
+    if (now.getHours() < 20) return; // نفحص فقط من الساعة 8 مساءً فصاعداً
+
+    const todayKey = now.toDateString();
+    if (localStorage.getItem('tasbeeh_reminder_shown_' + todayKey) === 'true') return;
+
+    const history = JSON.parse(localStorage.getItem('tasbeeh_history') || '{}');
+    const todayCount = history[todayKey] || 0;
+
+    if (todayCount === 0) {
+      new Notification("تذكير لطيف 📿", {
+        body: "لسا ما سبّحت اليوم... خصص دقيقة وسبّح ربك قبل ما ينتهي يومك.",
+        icon: "./5b862b4281f64fd884b11984846f0e97.png"
+      });
+      localStorage.setItem('tasbeeh_reminder_shown_' + todayKey, 'true');
+    }
+  }
+
+  checkTasbeehReminder();
+  setInterval(checkTasbeehReminder, 5 * 60 * 1000); // إعادة الفحص كل 5 دقائق
+})();
+
+// ============================
+// تذكير أسبوعي بدعاء وأذكار يوم الجمعة (مرة كل جمعة فقط)
+// يعمل فقط إذا كانت صلاحية الإشعارات ممنوحة أصلاً (لا يطلب إذناً جديداً بنفسه)
+// ============================
+(function setupFridayReminderCheck() {
+  function checkFridayReminder() {
+    if (!("Notification" in window) || Notification.permission !== "granted") return;
+
+    const now = new Date();
+    if (now.getDay() !== 5) return; // الجمعة فقط
+    if (now.getHours() < 9 || now.getHours() >= 18) return; // نافذة معقولة بين الصباح والمغرب
+
+    const todayKey = now.toDateString();
+    if (localStorage.getItem('friday_reminder_shown_' + todayKey) === 'true') return;
+
+    new Notification("جمعة مباركة 🕌", {
+      body: "لا تنسَ قراءة سورة الكهف والإكثار من الصلاة على النبي ﷺ، وتحرّي ساعة الإجابة آخر ساعة قبل المغرب.",
+      icon: "./5b862b4281f64fd884b11984846f0e97.png"
+    });
+    localStorage.setItem('friday_reminder_shown_' + todayKey, 'true');
+  }
+
+  checkFridayReminder();
+  setInterval(checkFridayReminder, 15 * 60 * 1000); // إعادة الفحص كل 15 دقيقة
 })();
 
 // دالة مشتركة لإضافة أذكار/أوراد/أدعية للمفضلة (منفصلة عن مفضلة آيات القرآن eshraq_favorites)

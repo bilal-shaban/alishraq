@@ -1,4 +1,4 @@
-    // بيانات الحالة والوضع (عمرة أو حج)
+// بيانات الحالة والوضع (عمرة أو حج)
     let ritualMode = localStorage.getItem("mutawwif_mode") || "umrah"; // "umrah" أو "hajj"
     let currentStage = parseInt(localStorage.getItem("mutawwif_stage")) || 1;
     let currentLap = parseInt(localStorage.getItem("mutawwif_lap")) || 1;

@@ -444,7 +444,7 @@ footer {
   border-color: #edcea0 !important;
 }
 /* شريط تقدم تلاوة السورة الصوتية */
-#audio-seek {
+#audio-seek, #audio-volume {
   accent-color: #edcea0;
 }
 
@@ -552,17 +552,72 @@ body.focus-reading-mode .reader-toolbar {
   font-size: 0.85rem;
   opacity: 0.8;
 }
+.bg-gold {
+  background-color: #edcea0 !important;
+}
 
-/* صفحات الأذكار / الأوراد / الأدعية */
-#category-tabs::-webkit-scrollbar {
-  display: none;
+/* ===== ميزات صفحة السبحة الجديدة ===== */
+.weekly-chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 6px;
+  height: 90px;
+  padding: 0 4px;
 }
-.azkar-item.azkar-complete,
-.dua-item.dua-complete {
-  opacity: 0.55;
+.weekly-chart .bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
 }
-.wird-block {
-  white-space: pre-line;
+.weekly-chart .bar {
+  width: 100%;
+  max-width: 22px;
+  background-color: rgba(237, 206, 160, 0.25);
+  border-radius: 6px 6px 0 0;
+  transition: height 0.4s ease;
+}
+.weekly-chart .bar.today {
+  background-color: #edcea0;
+}
+.weekly-chart .bar-label {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
+.sound-picker .btn.active-sound {
+  background-color: #edcea0 !important;
+  color: #21211d !important;
+  border-color: #edcea0 !important;
+}
+
+.asma-item {
+  background: rgba(33, 33, 29, 0.6);
+  border: 1px solid rgba(237, 206, 160, 0.15);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.6rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.asma-item:hover, .asma-item:active {
+  background: rgba(237, 206, 160, 0.12);
+}
+.asma-item .asma-name {
+  font-family: 'Amiri', 'Traditional Arabic', serif;
+  font-size: 1.3rem;
+}
+.asma-item .asma-meaning {
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
+
+.counter-circle-container {
+  touch-action: none; /* لمنع تمرير الصفحة أثناء سحب الإصبع فوق الدائرة (ميزة التسبيح بالسحب) */
 }
 /* تنسيقات خطوات رحلة العمرة */
 .step-indicator {
@@ -789,11 +844,7 @@ html[data-night-mode="true"] h6 {
   text-align: start !important; /* لضمان توسيص النص تماماً */
 }
 #ayahs-container {
-  margin-top: -2rem;
+  margin-top: -6rem;
   background-color: #21211D !important; /* لون أسود مطفأ وأعمق، أو فيك تحطه #1a1a17 لدرجة أفتح شوي */
-  border: 1px solid rgba(237, 206, 160, 0.3) !important;
-}
-
-#audio-seek, #audio-volume {
-  accent-color: #edcea0;
+  border: 1px solid rgba(237, 206, 160, 0.3) !important; /* لون الحدود الذهبية الخفيفة */
 }
