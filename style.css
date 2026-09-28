@@ -19,6 +19,15 @@ body {
   display: flex;
   flex-direction: column;
 }
+/* لمتصفحات كروم وسفاري وأوبرا */
+.element::-webkit-scrollbar {
+    display: none;
+}
+
+/* لمتصفح فايرفوكس */
+.element {
+    scrollbar-width: none; 
+}
 
 .gold {
   color: var(--gold-accent) !important;
@@ -672,6 +681,32 @@ body.focus-reading-mode .reader-toolbar {
 .supplication-box {
   background: rgba(33, 33, 29, 0.6);
   border: 1px solid rgba(237, 206, 160, 0.15);
+  overflow-x: hidden; /* لإلغاء شريط التمرير الأفقي وإخفائه */
+overflow-y: auto;   /* لإبقاء التمرير العمودي عند الحاجة */
+
+    /* تخصيص شريط التمرير لمتصفحات كروم وسفاري وأيدج */
+    scrollbar-width: thin; /* لمتصفح فايرفوكس (يعطي شكلاً نحيفاً) */
+    scrollbar-color: rgba(237, 206, 160, 0.5) rgba(33, 33, 29, 0.3); /* لون المقبض ولون الخلفية لفايرفوكس */
+}
+
+/* تخصيص شريط التمرير لمتصفحات (Chrome, Edge, Safari) */
+.supplication-box::-webkit-scrollbar {
+    width: 6px; /* عرض شريط التمرير العمودي */
+}
+
+.supplication-box::-webkit-scrollbar-track {
+    background: rgba(33, 33, 29, 0.3); /* لون خلفية مسار السكرول */
+    border-radius: 10px;
+}
+
+.supplication-box::-webkit-scrollbar-thumb {
+    background: rgba(237, 206, 160, 0.5); /* لون مقبض السكرول (يمكنك جعله بلون ذهبي أو متناسق مع التصميم) */
+    border-radius: 10px;
+}
+
+.supplication-box::-webkit-scrollbar-thumb:hover {
+    background: rgba(237, 206, 160, 0.8); /* لون المقبض عند مرور الماوس عليه */
+}
 }
 
 
