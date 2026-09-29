@@ -172,25 +172,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
   
 function getCleanAyahText(ayah, index) {
-    let text = ayah.text;
+    let text = ayah.text || "";
 
-    if (surahNumber !== 1 && surahNumber !== 9 && index === 0) {
-        // مصفوفة تحتوي على احتمالات نص البسملة بالتشكيل وبدونه
-        const basmalas = [
-            "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِیمِ",
-            "بسم الله الرحمن الرحيم",
-            "بِسْمِ اللَّهِ الرَّحْمٰنِ الرَّحِيمِ",
-            "بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيمِ"
-        ];
-       
-        for (let b of basmalas) {
-            if (text.startsWith(b)) {
-                text = text.replace(b, "").trim();
-                break;
+    // 1. سورة الفاتحة (1): الآية الأولى هي البسملة نفسها، نتركها كما هي
+    if (surahNumber === 1 && index === 0) {
+        return text;
+    }
+
+    // 2. سورة التوبة (9): لا تحتوي على بسملة، نترك النص كما هو
+    if (surahNumber === 9) {
+        return text;
+    }
+
+    // 3. لبقية السور، إذا كانت الآية الأولى
+    if (index === 0) {
+        // نقوم بإزالة أي تشكيل أو رموز عثمانية لتحويل النص إلى شكل قياسي نظيف للفحص
+        // أو نقوم بحذف الكلمات الأربع الأولى مباشرة إذا كانت تبدأ بالبسملة
+        let words = text.trim().split(/\s+/);
+        
+        // التحقق مما إذا كانت الكلمات الأولى تمثل البسملة (بناءً على أول حرفين أو شكل الكلمة)
+        if (words.length > 4) {
+          
+            // نتحقق من الكلمة الأولى إذا كانت تبدأ بـ "بسم" أو "بِسْم" أو "بِسۡمِ"
+            let firstWord = words[0];
+            if (firstWord.includes("بسم") || firstWord.includes("بِسْم") || firstWord.includes("بِسۡمِ")) {
+                // غالباً البسملة تتكون من 4 كلمات (بسم الله الرحمن الرحيم)
+                // نحذف اول 4 كلمات ونعيد دمج ما تبقى
+                words = words.slice(4);
+                text = words.join(" ");
             }
         }
     }
-   
+
     return text;
 }
 

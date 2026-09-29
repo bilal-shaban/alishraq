@@ -64,8 +64,9 @@ function fetchLocationName(lat, lng) {
 
 // 3. طلب المواقيت والتاريخ الهجري من Aladhan API
 function fetchPrayerTimes(lat, lng) {
-  // Method 4: أم القرى / الشؤون الإسلامية (أنسب للمنطقة العربية)
-  const url = `https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lng}&method=5`;
+  // طريقة الحساب تُقرأ من إعدادات المستخدم (افتراضياً 5: الهيئة المصرية العامة للمساحة)
+  const prayerMethod = localStorage.getItem('eshraq_prayer_method') || '5';
+  const url = `https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lng}&method=${prayerMethod}`;
 
   fetch(url)
     .then(res => res.json())

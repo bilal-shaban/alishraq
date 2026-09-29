@@ -153,176 +153,177 @@
           </p>
         </div>
 
-        <!-- قسم تنبيهات أوقات الصلاة (السويتش والبطاقة الفخمة) -->
-        <div
-          class="card border-0 rounded-4 shadow-sm mb-3"
-          style="
-            background-color: #262621;
-            border: 1px solid rgba(237, 206, 160, 0.2) !important;
-          "
-        >
-          <div class="card-body p-4">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <h5 class="fw-bold mb-1" style="color: #edcea0">
-                  <i class="bi bi-bell-fill me-2"></i>تنبيهات أوقات الصلاة
-                </h5>
-                <p class="text-light opacity-75 small m-0">
-                  تلقي إشعار فوري من المتصفح عند دخول وقت أي صلاة.
-                </p>
-              </div>
-              <div class="form-check form-switch fs-4">
-                <input
-                  class="form-check-input shadow-none"
-                  type="checkbox"
-                  role="switch"
-                  id="prayerNotificationsToggle"
-                  onchange="togglePrayerNotifications(this)"
-                  style="
-                    cursor: pointer;
-                    background-color: #3a3a32;
-                    border-color: #edcea0;
-                  "
-                />
-              </div>
+        <!-- ============== قسم العبادة والإشعارات ============== -->
+        <div class="settings-section-title"><i class="bi bi-bell-fill"></i> العبادة والإشعارات</div>
+        <div class="settings-card">
+          <div class="settings-row d-flex justify-content-between align-items-center">
+            <div>
+              <div class="settings-row-title">تنبيهات أوقات الصلاة</div>
+              <div class="settings-row-desc">إشعار فوري عند دخول وقت أي صلاة، بأي صفحة بالتطبيق.</div>
+            </div>
+            <div class="form-check form-switch fs-4">
+              <input class="form-check-input shadow-none" type="checkbox" role="switch" id="prayerNotificationsToggle" onchange="togglePrayerNotifications(this)">
             </div>
           </div>
+
+          <div class="settings-row d-flex justify-content-between align-items-center">
+            <div>
+              <div class="settings-row-title">تذكير السبحة المسائي</div>
+              <div class="settings-row-desc">تنبيه لطيف الساعة 8 مساءً لو ما سبّحت شيء طول اليوم.</div>
+            </div>
+            <div class="form-check form-switch fs-4">
+              <input class="form-check-input shadow-none" type="checkbox" role="switch" id="tasbeehReminderToggle" onchange="toggleTasbeehReminder(this)">
+            </div>
+          </div>
+
+          <div class="settings-row d-flex justify-content-between align-items-center">
+            <div>
+              <div class="settings-row-title">تذكير الجمعة الأسبوعي</div>
+              <div class="settings-row-desc">تنبيه كل جمعة بقراءة الكهف والإكثار من الصلاة على النبي ﷺ.</div>
+            </div>
+            <div class="form-check form-switch fs-4">
+              <input class="form-check-input shadow-none" type="checkbox" role="switch" id="fridayReminderToggle" onchange="toggleFridayReminder(this)">
+            </div>
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-row-title mb-2">طريقة حساب مواقيت الصلاة</div>
+            <select id="prayerMethodSelect" class="form-select settings-select form-select-sm" onchange="setPrayerMethod(this.value)">
+              <option value="5">الهيئة المصرية العامة للمساحة</option>
+              <option value="4">أم القرى - مكة المكرمة</option>
+              <option value="3">رابطة العالم الإسلامي</option>
+              <option value="2">ISNA - أمريكا الشمالية</option>
+              <option value="1">جامعة العلوم الإسلامية - كراتشي</option>
+              <option value="8">الإمارات العربية المتحدة</option>
+            </select>
+          </div>
         </div>
-        <div
-          class="card border-0 rounded-4 shadow-sm mb-3"
-          style="
-            background-color: #262621;
-            border: 1px solid rgba(237, 206, 160, 0.2) !important;
-          "
-        >
-          <div class="card-body p-4">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <h5 class="fw-bold mb-1" style="color: #edcea0">
-                  <i class="bi bi-moon-stars-fill me-2"></i>وضع القراءة الليلية
-                </h5>
-                <p class="text-light opacity-75 small m-0">
-                  تخفيف الإضاءة وتلطيف التباين لراحة العين أثناء القراءة ليلاً.
-                </p>
-              </div>
-              <div class="form-check form-switch fs-4">
-                <input
-                  class="form-check-input shadow-none"
-                  type="checkbox"
-                  role="switch"
-                  id="nightModeToggle"
-                  onchange="toggleNightReadingMode(this)"
-                  style="
-                    cursor: pointer;
-                    background-color: #3a3a32;
-                    border-color: #edcea0;
-                  "
-                />
-              </div>
+
+        <!-- ============== قسم القراءة والعرض ============== -->
+        <div class="settings-section-title"><i class="bi bi-book-half"></i> القراءة والعرض</div>
+        <div class="settings-card">
+          <div class="settings-row d-flex justify-content-between align-items-center">
+            <div>
+              <div class="settings-row-title">وضع القراءة الليلية</div>
+              <div class="settings-row-desc">تخفيف الإضاءة وتلطيف التباين لراحة العين ليلاً.</div>
+            </div>
+            <div class="form-check form-switch fs-4">
+              <input class="form-check-input shadow-none" type="checkbox" role="switch" id="nightModeToggle" onchange="toggleNightReadingMode(this)">
+            </div>
+          </div>
+
+          <div class="settings-row">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="settings-row-title mb-0">حجم الخط العام</div>
+              <span id="fontSizeValueLabel" class="gold small">100%</span>
+            </div>
+            <div class="settings-row-desc mb-2">يُطبَّق على القرآن والأذكار والأوراد والأدعية.</div>
+            <input type="range" id="globalFontSizeSlider" class="form-range" min="1.1" max="2.4" step="0.1" oninput="setGlobalFontSize(this.value)">
+          </div>
+
+          <div class="settings-row d-flex justify-content-between align-items-center">
+            <div>
+              <div class="settings-row-title">الرسم العثماني للقرآن</div>
+              <div class="settings-row-desc">استخدام خط "Amiri Quran" بدل الخط العادي بصفحة قراءة السور.</div>
+            </div>
+            <div class="form-check form-switch fs-4">
+              <input class="form-check-input shadow-none" type="checkbox" role="switch" id="fontFamilyToggle" onchange="toggleDefaultFontFamily(this)">
+            </div>
+          </div>
+
+          <div class="settings-row">
+            <div class="settings-row-title mb-2">القارئ الافتراضي</div>
+            <select id="reciterSelect" class="form-select settings-select form-select-sm" onchange="setDefaultReciter(this.value)">
+              <option value="ar.alafasy">مشاري العفاسي</option>
+              <option value="ar.mahermuaiqly">ماهر المعيقلي</option>
+              <option value="ar.abdurrahmaansudais">عبدالرحمن السديس</option>
+              <option value="ar.yasseraldossari">ياسر الدوسري</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- ============== قسم السبحة ============== -->
+        <div class="settings-section-title"><i class="bi bi-circle"></i> السبحة</div>
+        <div class="settings-card">
+          <div class="settings-row">
+            <div class="settings-row-title mb-2">صوت النقر الافتراضي</div>
+            <div class="d-flex gap-2 sound-picker" id="settingsSoundPicker">
+              <button class="btn btn-sm btn-gold-outline" data-sound="silent" onclick="setDefaultTasbeehSound('silent')"><i class="bi bi-volume-mute"></i> صامت</button>
+              <button class="btn btn-sm btn-gold-outline" data-sound="wood" onclick="setDefaultTasbeehSound('wood')"><i class="bi bi-circle-fill"></i> خشبي</button>
+              <button class="btn btn-sm btn-gold-outline" data-sound="metal" onclick="setDefaultTasbeehSound('metal')"><i class="bi bi-gem"></i> معدني</button>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-title mb-2">الهدف اليومي</div>
+            <div class="input-group input-group-sm">
+              <input type="number" id="tasbeehGoalInput" class="form-control settings-select" min="10" step="10" onchange="setDefaultTasbeehGoal(this.value)">
+              <span class="input-group-text settings-select">تسبيحة/يوم</span>
             </div>
           </div>
         </div>
 
-        <div
-          class="card border-0 rounded-4 shadow-sm mb-3 bg-card-dark"
-          style="border: 1px solid rgba(237, 206, 160, 0.2) !important"
-        >
-          <div class="card-body p-4">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <h5 class="fw-bold mb-1" style="color: #edcea0">
-                  <i class="bi bi-share-fill me-2"></i>صدقة جارية
-                </h5>
-                <p class="text-light opacity-75 small m-0">
-                  شارك تطبيق إشراق مع أصدقائك والدال على الخير كفاعله.
-                </p>
-              </div>
-              <button
-                onclick="shareApp()"
-                class="btn btn-sm px-3 py-2 rounded-3 fw-bold"
-                style="background-color: #edcea0; color: #1a1a16"
-              >
-                <i class="bi bi-send-fill me-1"></i>مشاركة
-              </button>
+        <!-- ============== قسم البيانات والنسخ الاحتياطي ============== -->
+        <div class="settings-section-title"><i class="bi bi-hdd-fill"></i> البيانات والنسخ الاحتياطي</div>
+        <div class="settings-card">
+          <div class="settings-row d-flex justify-content-between align-items-center">
+            <div>
+              <div class="settings-row-title">تصدير نسخة احتياطية</div>
+              <div class="settings-row-desc">احفظ كل بياناتك وإعداداتك كملف يمكنك استعادته لاحقاً.</div>
             </div>
+            <button onclick="exportBackup()" class="btn btn-gold-outline btn-sm"><i class="bi bi-download"></i></button>
+          </div>
+          <div class="settings-row d-flex justify-content-between align-items-center">
+            <div>
+              <div class="settings-row-title">استيراد نسخة احتياطية</div>
+              <div class="settings-row-desc">استعد بياناتك من ملف نسخة احتياطية سابقة.</div>
+            </div>
+            <label class="btn btn-gold-outline btn-sm mb-0">
+              <i class="bi bi-upload"></i>
+              <input type="file" id="importBackupInput" accept="application/json" class="d-none" onchange="importBackup(this.files[0])">
+            </label>
+          </div>
+          <div class="settings-row d-flex justify-content-between align-items-center">
+            <div>
+              <div class="settings-row-title">تحديث ذاكرة التخزين المؤقت</div>
+              <div class="settings-row-desc">اجلب أحدث نسخة من التطبيق فوراً بدون مسح بياناتك.</div>
+            </div>
+            <button onclick="refreshAppCache()" class="btn btn-gold-outline btn-sm"><i class="bi bi-arrow-repeat"></i></button>
+          </div>
+          <div class="settings-row d-flex justify-content-between align-items-center">
+            <div>
+              <div class="settings-row-title text-danger">مسح جميع البيانات</div>
+              <div class="settings-row-desc">حذف كل شيء نهائياً وإعادة التطبيق لحالته الأصلية.</div>
+            </div>
+            <button onclick="clearAppStorage()" class="btn btn-outline-danger btn-sm">
+              <i class="bi bi-trash3-fill"></i>
+            </button>
           </div>
         </div>
-        <div
-          class="card border-0 rounded-4 shadow-sm mb-3 bg-card-dark"
-          style="border: 1px solid rgba(237, 206, 160, 0.2) !important"
-          id="installCard"
-          style="display: none"
-        >
-          <div class="card-body p-4">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <h5 class="fw-bold mb-1" style="color: #edcea0">
-                  <i class="bi bi-phone-fill me-2"></i>تثبيت التطبيق
-                </h5>
-                <p class="text-light opacity-75 small m-0">
-                  ثبت تطبيق إشراق على هاتفك للوصول السريع والتصفح السهل.
-                </p>
-              </div>
-              <button
-                id="installAppBtn"
-                class="btn btn-sm px-3 py-2 rounded-3 fw-bold"
-                style="background-color: #edcea0; color: #1a1a16"
-              >
-                تثبيت
-              </button>
-            </div>
-          </div>
-        </div>
-        <!-- قسم إعادة تعيين البيانات وذاكرة التخزين -->
-        <div
-          class="card border-0 rounded-4 shadow-sm mb-3 bg-card-dark"
-          style="border: 1px solid rgba(237, 206, 160, 0.2) !important"
-        >
-          <div class="card-body p-4">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <h5 class="fw-bold mb-1" style="color: #edcea0">
-                  <i class="bi bi-trash3-fill me-2"></i>إعادة ضبط البيانات
-                  والتخزين
-                </h5>
-                <p class="text-light opacity-75 small m-0">
-                  مسح الذاكرة المؤقتة وإعادة التطبيق لحالته الأصلية.
-                </p>
-              </div>
 
-              <button
-                onclick="clearAppStorage()"
-                class="btn btn-outline-danger btn-sm rounded-3 fw-bold"
-                style="
-                  border-color: #dc3545;
-                  color: #ff6b6b;
-                  font-size: 0.75rem;
-                "
-              >
-                <i class="bi bi-arrow-counterclockwise me-1"></i>مسح البيانات
-              </button>
+        <!-- ============== قسم عام ============== -->
+        <div class="settings-section-title"><i class="bi bi-info-circle-fill"></i> عام</div>
+        <div class="settings-card">
+          <div class="settings-row d-flex justify-content-between align-items-center">
+            <div>
+              <div class="settings-row-title">صدقة جارية</div>
+              <div class="settings-row-desc">شارك تطبيق إشراق مع أصدقائك والدال على الخير كفاعله.</div>
             </div>
+            <button onclick="shareApp()" class="btn btn-gold-solid btn-sm"><i class="bi bi-send-fill"></i></button>
           </div>
-        </div>
-        <!-- قسم معلومات إضافية أو إعدادات عامة (مستقبلاً) -->
-        <div
-          class="card border-0 rounded-4 shadow-sm mb-3"
-          style="
-            background-color: #262621;
-            border: 1px solid rgba(237, 206, 160, 0.2) !important;
-          "
-        >
-          <div class="card-body p-4">
-            <h5 class="fw-bold mb-3" style="color: #edcea0">
-              <i class="bi bi-info-circle-fill me-2"></i>حول تطبيق إشراق
-            </h5>
-            <p class="text-light opacity-75 small mb-2">
+          <div class="settings-row d-flex justify-content-between align-items-center" id="installRow" style="display: none;">
+            <div>
+              <div class="settings-row-title">تثبيت التطبيق</div>
+              <div class="settings-row-desc">ثبت إشراق على هاتفك للوصول السريع والتصفح السهل.</div>
+            </div>
+            <button id="installAppBtn" class="btn btn-gold-solid btn-sm">تثبيت</button>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-title mb-2">حول تطبيق إشراق</div>
+            <p class="settings-row-desc mb-2">
               تطبيق إشراق هو رفيقك الإسلامي اليومي، مصمم بعناية ليقدم تجربة
               مستخدم هادئة، خالية من الإعلانات، وبأعلى معايير الجودة البرمجية.
             </p>
-            <div
-              class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary opacity-75 small"
-            >
+            <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary opacity-75 small">
               <span>الإصدار: v1.0.0 (نسخة تجريبية)</span>
               <span style="color: #edcea0">تم البناء بكل حب 🌙</span>
             </div>

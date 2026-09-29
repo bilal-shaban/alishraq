@@ -27,7 +27,7 @@
 
   <body>
     <!-- الهيدر العلوي الموحد -->
-      <header>
+    <header>
       <nav
         class="navbar navbar-expand-lg fixed-top shadow-sm"
         style="background-color: #21211d; border-bottom: 0.2rem solid #edcea0"
@@ -131,111 +131,225 @@
         </div>
       </nav>
     </header>
-  
-  <header>
+
+    <header>
       <nav
-        class="navbar navbar-expand-lg "
-        style="background-color: #21211d; border-bottom: 0.2rem solid #edcea0 ; margin-top: 7rem;"
+        class="navbar navbar-expand-lg"
+        style="
+          background-color: #21211d;
+          border-bottom: 0.2rem solid #edcea0;
+          margin-top: 7rem;
+        "
       >
         <div class="container-fluid">
-          
-          <div id="surah-top-title" class="h5 gold text-center my-auto fw-bold" style="color: #edcea0 ;">
+          <div
+            id="surah-top-title"
+            class="h5 gold text-center my-auto fw-bold"
+            style="color: #edcea0"
+          >
             جاري تحميل السورة...
           </div>
-          <a href="./quran.html" class="btn btn-sm btn-gold-solid border-gold" style="border-color: #edcea0; color: #edcea0;">
+          <a
+            href="./quran.html"
+            class="btn btn-sm btn-gold-solid border-gold"
+            style="border-color: #edcea0; color: #edcea0"
+          >
             <i class="bi bi-arrow-right me-1"></i> العودة للسور
           </a>
-          
         </div>
       </nav>
     </header>
-<div class="container">
+    <div class="container">
       <div class="row justify-content-center g-2 mt-4 mb-">
-         <div class="col-1 text-center">
-          <button id="focus-mode-btn" class="btn btn-gold-solid btn-sm w-100" title="وضع القراءة المركزة">
-      <i class="bi bi-arrows-fullscreen "></i>
-    </button>
+        <div class="col-1 text-center">
+          <button
+            id="focus-mode-btn"
+            class="btn btn-gold-solid btn-sm w-100"
+            title="وضع القراءة المركزة"
+          >
+            <i class="bi bi-arrows-fullscreen"></i>
+          </button>
         </div>
         <div class="col-11">
-          <button id="display-options-btn" class="btn btn-gold-outline btn-sm w-100" title="خيارات العرض" data-bs-toggle="collapse" data-bs-target="#display-options-panel" aria-expanded="false">
-      <i class="bi bi-sliders"></i> خيارات العرض
-    </button>
+          <button
+            id="display-options-btn"
+            class="btn btn-gold-outline btn-sm w-100"
+            title="خيارات العرض"
+            data-bs-toggle="collapse"
+            data-bs-target="#display-options-panel"
+            aria-expanded="false"
+          >
+            <i class="bi bi-sliders"></i> خيارات العرض
+          </button>
         </div>
-       
+
         <div class="col-6">
-          <select id="reciter-select" class="form-select form-select-sm ms-auto w-100" style="background-color: #21211d; color: #edcea0; border-color: #edcea0;" title="اختيار القارئ"></select>
+          <select
+            id="reciter-select"
+            class="form-select form-select-sm ms-auto w-100"
+            style="
+              background-color: #21211d;
+              color: #edcea0;
+              border-color: #edcea0;
+            "
+            title="اختيار القارئ"
+          ></select>
         </div>
         <div class="col-6">
-          <button id="audio-play-btn" class="btn btn-gold-solid btn-sm  px-3 w-100" title="استماع لتلاوة السورة">
-      <i class="bi bi-play-fill"></i> استماع للسورة
-    </button>
+          <button
+            id="audio-play-btn"
+            class="btn btn-gold-solid btn-sm px-3 w-100"
+            title="استماع لتلاوة السورة"
+          >
+            <i class="bi bi-play-fill"></i> استماع للسورة
+          </button>
         </div>
       </div>
 
-      <div class="collapse mt-2 " id="display-options-panel">
-    <div class="d-flex flex-wrap align-items-center gap-2 p-2 rounded-3 " style="background: rgba(33,33,29,0.6); border: 1px solid rgba(237,206,160,0.15);">
-      <button id="toggle-layout-btn" class="btn btn-gold-outline btn-sm rounded-pil px-3 ">
-        <i class="bi bi-book"></i> شكل المصحف الشريف
-      </button>
+      <div class="collapse mt-2" id="display-options-panel">
+        <div
+          class="d-flex flex-wrap align-items-center gap-2 p-2 rounded-3"
+          style="
+            background: rgba(33, 33, 29, 0.6);
+            border: 1px solid rgba(237, 206, 160, 0.15);
+          "
+        >
+          <button
+            id="toggle-layout-btn"
+            class="btn btn-gold-outline btn-sm rounded-pil px-3"
+          >
+            <i class="bi bi-book"></i> شكل المصحف الشريف
+          </button>
 
-      <button id="toggle-font-family-btn" class="btn btn-gold-outline btn-sm rounded-pil px-3 " title="تبديل نوع الخط">
-        <i class="bi bi-fonts"></i> الرسم العثماني
-      </button>
+          <button
+            id="toggle-font-family-btn"
+            class="btn btn-gold-outline btn-sm rounded-pil px-3"
+            title="تبديل نوع الخط"
+          >
+            <i class="bi bi-fonts"></i> الرسم العثماني
+          </button>
 
-      <div class="btn-group " role="group" aria-label="حجم الخط">
-        <button id="font-decrease-btn" class="btn btn-gold-outline btn-sm" title="تصغير الخط"><i class="bi bi-dash-lg"></i></button>
-        <span id="font-size-indicator" class="btn btn-gold-outline btn-sm disabled" style="pointer-events: none; min-width: 3.2rem;">100%</span>
-        <button id="font-increase-btn" class="btn btn-gold-outline btn-sm" title="تكبير الخط"><i class="bi bi-plus-lg"></i></button>
+          <div class="btn-group" role="group" aria-label="حجم الخط">
+            <button
+              id="font-decrease-btn"
+              class="btn btn-gold-outline btn-sm"
+              title="تصغير الخط"
+            >
+              <i class="bi bi-dash-lg"></i>
+            </button>
+            <span
+              id="font-size-indicator"
+              class="btn btn-gold-outline btn-sm disabled"
+              style="pointer-events: none; min-width: 3.2rem"
+              >100%</span
+            >
+            <button
+              id="font-increase-btn"
+              class="btn btn-gold-outline btn-sm"
+              title="تكبير الخط"
+            >
+              <i class="bi bi-plus-lg"></i>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-8">
+          <div id="audio-progress-wrap" class="px-2 px-lg-0 mb-3 d-none mt-3">
+            <div class="d-flex align-items-center justify-content-between">
+              <small id="audio-ayah-indicator" class="gold">الآية 1 من 1</small>
+              <button
+                id="audio-stop-btn"
+                class="btn btn-sm btn-gold-outline py-0 px-2"
+                title="إيقاف التلاوة"
+              >
+                <i class="bi bi-stop-fill"></i>
+              </button>
+            </div>
+
+            <div class="d-flex align-items-center gap-2 mt-2">
+              <small
+                id="audio-current-time"
+                class="gold"
+                style="min-width: 40px"
+                >00:00</small
+              >
+              <input
+                type="range"
+                id="audio-seek"
+                class="form-range flex-grow-1"
+                min="0"
+                max="100"
+                value="0"
+                step="1"
+              />
+              <small id="audio-total-time" class="gold" style="min-width: 40px"
+                >00:00</small
+              >
+            </div>
+
+            <div class="d-flex align-items-center gap-2 mt-1">
+              <i class="bi bi-volume-up gold"></i>
+              <input
+                type="range"
+                id="audio-volume"
+                class="form-range"
+                style="max-width: 120px"
+                min="0"
+                max="1"
+                step="0.05"
+                value="1"
+              />
+            </div>
+
+            <div class="text-center text-opacity-75" style="font-size: 0.8rem">
+              تلاوة بصوت الشيخ
+              <span id="audio-reciter-label">مشاري العفاسي</span>
+            </div>
+          </div>
+          <audio id="surah-audio" preload="none"></audio>
+        </div>
+      </div>
     </div>
-
-
-<div id="audio-progress-wrap" class="px-2 px-lg-0 mb-3 d-none mt-3">
-  <div class="d-flex align-items-center justify-content-between">
-    <small id="audio-ayah-indicator" class="gold">الآية 1 من 1</small>
-    <button id="audio-stop-btn" class="btn btn-sm btn-gold-outline py-0 px-2" title="إيقاف التلاوة"><i class="bi bi-stop-fill"></i></button>
-  </div>
-
-<div class="d-flex align-items-center gap-2 mt-2">
-    <small id="audio-current-time" class="gold" style="min-width: 40px;">00:00</small>
-    <input type="range" id="audio-seek" class="form-range flex-grow-1" min="0" max="100" value="0" step="1">
-    <small id="audio-total-time" class="gold" style="min-width: 40px;">00:00</small>
-  </div>
-
-  <div class="d-flex align-items-center gap-2 mt-1">
-    <i class="bi bi-volume-up gold"></i>
-    <input type="range" id="audio-volume" class="form-range" style="max-width: 120px;" min="0" max="1" step="0.05" value="1">
-  </div>
-
-  <div class="text-center text-opacity-75" style="font-size: 0.8rem;">تلاوة بصوت الشيخ <span id="audio-reciter-label">مشاري العفاسي</span></div>
-</div>
-<audio id="surah-audio" preload="none"></audio>
     <!-- محتوى الآيات -->
     <main id="surah-main" style="margin-top: 25px; margin-bottom: 90px">
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-12 col-lg-10">
-            
             <!-- البسملة (تظهر تلقائياً إلا في سورة التوبة) -->
-            <div id="bismillah-container" class="text-center mb-4 d-none ">
-              <h3 class="gold fw-bold font-monospace " style="color: #edcea0; letter-spacing: 2px;">
+            <div id="bismillah-container" class="text-center mb-4 d-none">
+              <h3
+                class="gold fw-bold font-monospace"
+                style="color: #edcea0; letter-spacing: 2px"
+              >
                 بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
               </h3>
-              <hr class="w-25 mx-auto" style="border-color: #edcea0; opacity: 0.5;" />
+              <hr
+                class="w-25 mx-auto"
+                style="border-color: #edcea0; opacity: 0.5"
+              />
             </div>
 
             <!-- صندوق الآيات -->
-            <div id="ayahs-container" class="p-4 mt-2 rounded-4 shadow-lg bg-dark" style="border: 1px solid rgba(237, 206, 160, 0.3); ">
+            <div
+              id="ayahs-container"
+              class="p-4 mt-2 rounded-4 shadow-lg bg-dark"
+              style="border: 1px solid rgba(237, 206, 160, 0.3)"
+            >
               <div class="text-center text-light py-5">
-                <div class="spinner-border text-gold" role="status" style="color: #edcea0;">
+                <div
+                  class="spinner-border text-gold"
+                  role="status"
+                  style="color: #edcea0"
+                >
                   <span class="visually-hidden">جاري التحميل...</span>
                 </div>
                 <p class="mt-2 text-opacity-75">جاري جلب آيات السورة...</p>
               </div>
             </div>
-
           </div>
         </div>
       </div>
@@ -243,28 +357,50 @@
 
     <!-- شريط التنقل السفلي الثابت -->
     <nav class="bottom-nav fixed-bottom d-md-none">
-      <div class="container d-flex justify-content-around align-items-center py-2">
-        <a href="index.html" class="nav-item-bottom text-center text-decoration-none" data-page="home">
+      <div
+        class="container d-flex justify-content-around align-items-center py-2"
+      >
+        <a
+          href="index.html"
+          class="nav-item-bottom text-center text-decoration-none"
+          data-page="home"
+        >
           <i class="bi bi-house-door fs-5 d-block"></i>
           <i class="bi bi-house-door-fill fs-5 d-block active-icon"></i>
           <span class="small">الرئيسية</span>
         </a>
-        <a href="tasbeeh.html" class="nav-item-bottom text-center text-decoration-none" data-page="tasbeeh">
+        <a
+          href="tasbeeh.html"
+          class="nav-item-bottom text-center text-decoration-none"
+          data-page="tasbeeh"
+        >
           <i class="bi bi-circle fs-5 d-block"></i>
           <i class="bi bi-record-circle-fill fs-5 d-block active-icon"></i>
           <span class="small">السبحة</span>
         </a>
-        <a href="qibla.html" class="nav-item-bottom text-center text-decoration-none" data-page="qibla">
+        <a
+          href="qibla.html"
+          class="nav-item-bottom text-center text-decoration-none"
+          data-page="qibla"
+        >
           <i class="bi bi-compass fs-5 d-block"></i>
           <i class="bi bi-compass-fill fs-5 d-block active-icon"></i>
           <span class="small">القبلة</span>
         </a>
-        <a href="matwaf.html" class="nav-item-bottom text-center text-decoration-none" data-page="matwaf">
+        <a
+          href="matwaf.html"
+          class="nav-item-bottom text-center text-decoration-none"
+          data-page="matwaf"
+        >
           <i class="bi bi-person-walking fs-5 d-block"></i>
           <i class="bi bi-person-walking fs-5 d-block active-icon"></i>
           <span class="small">المطوف</span>
         </a>
-        <a href="settings.html" class="nav-item-bottom text-center text-decoration-none" data-page="settings">
+        <a
+          href="settings.html"
+          class="nav-item-bottom text-center text-decoration-none"
+          data-page="settings"
+        >
           <i class="bi bi-gear fs-5 d-block"></i>
           <i class="bi bi-gear-fill fs-5 d-block active-icon"></i>
           <span class="small">الإعدادات</span>
@@ -275,5 +411,6 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="./surah-reader.js"></script>
+    <script src="./main.js"></script>
   </body>
 </html>

@@ -19,15 +19,6 @@ body {
   display: flex;
   flex-direction: column;
 }
-/* لمتصفحات كروم وسفاري وأوبرا */
-.element::-webkit-scrollbar {
-    display: none;
-}
-
-/* لمتصفح فايرفوكس */
-.element {
-    scrollbar-width: none; 
-}
 
 .gold {
   color: var(--gold-accent) !important;
@@ -565,6 +556,50 @@ body.focus-reading-mode .reader-toolbar {
   background-color: #edcea0 !important;
 }
 
+/* ===== صفحة الإعدادات الجديدة ===== */
+.settings-section-title {
+  color: #edcea0;
+  font-weight: bold;
+  font-size: 0.95rem;
+  margin: 1.75rem 0.25rem 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.settings-card {
+  background-color: #262621;
+  border: 1px solid rgba(237, 206, 160, 0.2);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+.settings-row {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(237, 206, 160, 0.08);
+}
+.settings-row:last-child {
+  border-bottom: none;
+}
+.settings-row-title {
+  color: #edcea0;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.15rem;
+}
+.settings-row-desc {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+.settings-select {
+  background-color: #1a1a16;
+  color: #f8f9fa;
+  border: 1px solid rgba(237, 206, 160, 0.3);
+  border-radius: 0.5rem;
+}
+.settings-select:focus {
+  border-color: #edcea0;
+  box-shadow: none;
+}
+
 /* ===== ميزات صفحة السبحة الجديدة ===== */
 .weekly-chart {
   display: flex;
@@ -688,26 +723,18 @@ overflow-y: auto;   /* لإبقاء التمرير العمودي عند الح�
     scrollbar-width: thin; /* لمتصفح فايرفوكس (يعطي شكلاً نحيفاً) */
     scrollbar-color: rgba(237, 206, 160, 0.5) rgba(33, 33, 29, 0.3); /* لون المقبض ولون الخلفية لفايرفوكس */
 }
+.supplication-box-1{
+    background: rgba(33, 33, 29, 0.6);
+  border: 1px solid rgba(237, 206, 160, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 
-/* تخصيص شريط التمرير لمتصفحات (Chrome, Edge, Safari) */
-.supplication-box::-webkit-scrollbar {
-    width: 6px; /* عرض شريط التمرير العمودي */
 }
-
-.supplication-box::-webkit-scrollbar-track {
-    background: rgba(33, 33, 29, 0.3); /* لون خلفية مسار السكرول */
-    border-radius: 10px;
-}
-
-.supplication-box::-webkit-scrollbar-thumb {
-    background: rgba(237, 206, 160, 0.5); /* لون مقبض السكرول (يمكنك جعله بلون ذهبي أو متناسق مع التصميم) */
-    border-radius: 10px;
+.supplication-box-1:hover{
+  transform: translateY(-5px);
+  border-color: var(--gold-accent);
+  box-shadow: 0 8px 20px rgba(237, 206, 160, 0.15);  
 }
 
-.supplication-box::-webkit-scrollbar-thumb:hover {
-    background: rgba(237, 206, 160, 0.8); /* لون المقبض عند مرور الماوس عليه */
-}
-}
 
 
 

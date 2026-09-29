@@ -175,7 +175,7 @@ function toggleNightReadingMode(checkbox) {
 
 
 //عدادة التسبيح - الصفحة الرئيسية (بتستخدم نفس مفاتيح صفحة السبحة الكاملة عشان يبقى العدد متزامن بين الصفحتين)
- currentCount = parseInt(localStorage.getItem('tasbeeh_current')) || 0;
+let currentCount = parseInt(localStorage.getItem('tasbeeh_current')) || 0;
 let currentPhrase = localStorage.getItem('eshraq_tasbeeh_phrase') || 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ';
 
 document.addEventListener('DOMContentLoaded', () => {
