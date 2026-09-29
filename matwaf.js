@@ -147,7 +147,7 @@
               <p class=" p-3 text-light lh-lg mb-0 " style="height: 350px; font-size: ${currentFontSize}px;">${tawafSupplications[currentLap]}</p>
             </div>
             <div class="mb-3">
-              <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#extraAdiyaModal"><i class="bi bi-book me-1"></i> أدعية إضافية (الملتزم/الحجر)</button>
+              <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#extraAdiyaModal"><i class="bi bi-book me-1"></i> أدعية إضافية</button>
             </div>
             <div class="d-flex gap-2 justify-content-center">
               <button onclick="prevLap()" class="btn btn-outline-light px-3 py-2 rounded-pill flex-fill">الشوط السابق</button>
@@ -177,6 +177,9 @@
             </div>
             <div class="supplication-box p-3 rounded-3 mb-3 text-center">
               <p class="text-light lh-lg mb-0" style="height: 350px; font-size: ${currentFontSize}px;">${saySupplications[currentLap - 1]}</p>
+            </div>
+            <div class="mb-3">
+              <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#extraAdiyaMOdal"><i class="bi bi-book me-1"></i> أدعية إضافية</button>
             </div>
             <div class="d-flex gap-2 justify-content-center">
               <button onclick="prevLap()" class="btn btn-outline-light px-3 py-2 rounded-pill flex-fill">الشوط السابق</button>
