@@ -1,3 +1,25 @@
+// ============================
+// دالة موحّدة لعرض الإشعارات (مشتركة لكل صفحات التطبيق)
+// السبب: متصفح كروم على أندرويد لا يدعم استدعاء new Notification() مباشرة من
+// كود الصفحة (بيرمي خطأ "Illegal constructor" بصمت) - ولازم تمر عبر
+// الـ Service Worker عبر reg.showNotification() حتى تظهر فعلياً.
+// هاد كان سبب عدم ظهور إشعارات الصلاة على الهاتف رغم أنها تشتغل عالكمبيوتر.
+// ============================
+function showAppNotification(title, options) {
+  if (!("Notification" in window) || Notification.permission !== "granted") return;
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.ready
+      .then((reg) => reg.showNotification(title, options))
+      .catch(() => {
+        // كحل احتياطي فقط على المتصفحات التي تدعم الطريقة القديمة (أجهزة كمبيوتر غالباً)
+        try { new Notification(title, options); } catch (e) { console.warn('تعذر عرض الإشعار', e); }
+      });
+  } else {
+    try { new Notification(title, options); } catch (e) { console.warn('تعذر عرض الإشعار', e); }
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const continueContainer = document.getElementById("continue-reading-container");
   if (!continueContainer) return;
@@ -242,12 +264,10 @@ if ('serviceWorker' in navigator) {
   if (!("Notification" in window)) return;
 
   function showBgPrayerNotification(title, bodyText) {
-    if (Notification.permission === "granted") {
-      new Notification(title, {
-        body: bodyText,
-        icon: "./5b862b4281f64fd884b11984846f0e97.png"
-      });
-    }
+    showAppNotification(title, {
+      body: bodyText,
+      icon: "./5b862b4281f64fd884b11984846f0e97.png"
+    });
   }
 
   function getCachedTodayTimings() {
@@ -298,7 +318,7 @@ if ('serviceWorker' in navigator) {
     const todayCount = history[todayKey] || 0;
 
     if (todayCount === 0) {
-      new Notification("تذكير لطيف 📿", {
+      showAppNotification("تذكير لطيف 📿", {
         body: "لسا ما سبّحت اليوم... خصص دقيقة وسبّح ربك قبل ما ينتهي يومك.",
         icon: "./5b862b4281f64fd884b11984846f0e97.png"
       });
@@ -325,7 +345,7 @@ if ('serviceWorker' in navigator) {
     const todayKey = now.toDateString();
     if (localStorage.getItem('friday_reminder_shown_' + todayKey) === 'true') return;
 
-    new Notification("جمعة مباركة 🕌", {
+    showAppNotification("جمعة مباركة 🕌", {
       body: "لا تنسَ قراءة سورة الكهف والإكثار من الصلاة على النبي ﷺ، وتحرّي ساعة الإجابة آخر ساعة قبل المغرب.",
       icon: "./5b862b4281f64fd884b11984846f0e97.png"
     });

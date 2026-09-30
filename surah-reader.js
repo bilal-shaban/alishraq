@@ -221,12 +221,6 @@ function getCleanAyahText(ayah, index) {
 
     }
 
-    if (currentAudioAyahIndex >= 0 && ayahsList[currentAudioAyahIndex]) {
-
-      highlightAyah(ayahsList[currentAudioAyahIndex].numberInSurah);
-
-    }
-
   }
 
 
@@ -603,311 +597,121 @@ function bindEvents() {
 
 
 
-  // ===== تشغيل تلاوة السورة مع اختيار القارئ =====
-
+  // ===== تشغيل تلاوة السورة كاملة مع اختيار القارئ (شريط تقدم واحد للسورة كاملة) =====
   const RECITERS = [
-
-    { id: "ar.alafasy", name: "مشاري العفاسي", perAyah: true },
-
-    { id: "ar.mahermuaiqly", name: "ماهر المعيقلي", perAyah: true },
-
-    { id: "ar.abdurrahmaansudais", name: "عبدالرحمن السديس", perAyah: false },
-
-    { id: "ar.yasseraldossari", name: "ياسر الدوسري", perAyah: false }
-
+    { id: "ar.alafasy", name: "مشاري العفاسي" },
+    { id: "ar.mahermuaiqly", name: "ماهر المعيقلي" },
+    { id: "ar.abdurrahmaansudais", name: "عبدالرحمن السديس" },
+    { id: "ar.yasseraldossari", name: "ياسر الدوسري" }
   ];
 
-
-
   const audioEl = document.getElementById("surah-audio");
-
   const audioPlayBtn = document.getElementById("audio-play-btn");
-
   const audioProgressWrap = document.getElementById("audio-progress-wrap");
-
   const audioAyahIndicator = document.getElementById("audio-ayah-indicator");
-
   const audioReciterLabel = document.getElementById("audio-reciter-label");
-
   const audioStopBtn = document.getElementById("audio-stop-btn");
   const audioSeek = document.getElementById("audio-seek");
   const audioVolume = document.getElementById("audio-volume");
   const audioCurrentTime = document.getElementById("audio-current-time");
   const audioTotalTime = document.getElementById("audio-total-time");
-
   const reciterSelect = document.getElementById("reciter-select");
 
-
-
-  let currentAudioAyahIndex = -1; // فهرس الآية الحالية جوا ayahsList (للقراء اللي فيهم تلاوة آية بآية فقط)
-
   let isAudioPlaying = false;
-
   let selectedReciterId = localStorage.getItem("eshraq_reciter") || "ar.alafasy";
-
-  let triedFullSurahFallback = false; // لتفادي محاولات لا نهائية إذا فشل التشغيل بكل الطرق
-
-
+  let loadedReciterId = null; // القارئ اللي محمّل حالياً بعنصر الصوت (لمعرفة هل نكمّل أو نحمّل من جديد)
+  let loadedSurahNumber = null;
 
   function getSelectedReciter() {
-
     return RECITERS.find(r => r.id === selectedReciterId) || RECITERS[0];
-
   }
-
-
 
   if (reciterSelect) {
-
     reciterSelect.innerHTML = RECITERS.map(r => `<option value="${r.id}">${r.name}</option>`).join("");
-
     reciterSelect.value = selectedReciterId;
-
     if (audioReciterLabel) audioReciterLabel.textContent = getSelectedReciter().name;
-
     reciterSelect.addEventListener("change", () => {
-
       stopAudioPlayback();
-
       selectedReciterId = reciterSelect.value;
-
       localStorage.setItem("eshraq_reciter", selectedReciterId);
-
       if (audioReciterLabel) audioReciterLabel.textContent = getSelectedReciter().name;
-
     });
-
   }
 
-
-
-  function highlightAyah(numberInSurah) {
-
-    document.querySelectorAll(".active-ayah").forEach(el => el.classList.remove("active-ayah"));
-
-    if (numberInSurah === null) return;
-
-    const target = document.querySelector(`[data-ayahnum="${numberInSurah}"]`);
-
-    if (target) {
-
-      target.classList.add("active-ayah");
-
-      target.scrollIntoView({ behavior: "smooth", block: "center" });
-
-    }
-
-  }
-
-
-
-  // تشغيل آية بآية (يتيح تمييز الآية الحالية) - يعمل فقط مع القراء الذين تتوفر لهم ملفات لكل آية
-
-  function playAyahAtIndex(index) {
-
-    if (!audioEl || index < 0 || index >= ayahsList.length) {
-
-      stopAudioPlayback();
-
-      return;
-
-    }
-
-    currentAudioAyahIndex = index;
-
-    triedFullSurahFallback = false;
-
-    const ayah = ayahsList[index];
-
-    audioEl.src = `https://cdn.islamic.network/quran/audio/128/${selectedReciterId}/${ayah.number}.mp3`;
-
-    audioEl.play();
-
-
-
-    highlightAyah(ayah.numberInSurah);
-
-    if (audioAyahIndicator) {
-
-      audioAyahIndicator.textContent = `الآية ${ayah.numberInSurah} من ${ayahsList.length}`;
-
-    }
-
-  }
-
-
-
-  // تشغيل ملف السورة كاملة دفعة واحدة - يُستخدم مع القراء الذين لا تتوفر لهم ملفات منفصلة لكل آية
-
-  function playFullSurah() {
-
+  // تشغيل ملف السورة كاملة من البداية (يُستدعى فقط عند أول تشغيل أو تغيير القارئ/السورة)
+  function loadAndPlayFullSurah() {
     if (!audioEl) return;
-
-    currentAudioAyahIndex = -1;
-
     audioEl.src = `https://cdn.islamic.network/quran/audio-surah/128/${selectedReciterId}/${surahNumber}.mp3`;
-
+    loadedReciterId = selectedReciterId;
+    loadedSurahNumber = surahNumber;
     audioEl.play();
-
-    highlightAyah(null);
-
     if (audioAyahIndicator) {
-
-      audioAyahIndicator.textContent = `تشغيل السورة كاملة (بدون تمييز آية بآية لهذا القارئ)`;
-
+      audioAyahIndicator.textContent = `تلاوة السورة كاملة`;
     }
-
   }
-
-
 
   function stopAudioPlayback() {
-
     if (audioEl) {
-
       audioEl.pause();
-
       audioEl.removeAttribute("src");
-
     }
-
     isAudioPlaying = false;
-
-    currentAudioAyahIndex = -1;
-
-    highlightAyah(null);
-
+    loadedReciterId = null;
+    loadedSurahNumber = null;
     if (audioProgressWrap) audioProgressWrap.classList.add("d-none");
-
     if (audioPlayBtn) audioPlayBtn.innerHTML = `<i class="bi bi-play-fill"></i> استماع للسورة`;
-
     if (audioSeek) audioSeek.value = 0;
-
     if (audioCurrentTime) audioCurrentTime.textContent = "٠٠:٠٠";
-
     if (audioTotalTime) audioTotalTime.textContent = "٠٠:٠٠";
-
   }
 
-
-
   if (audioPlayBtn && audioEl) {
-
     audioPlayBtn.addEventListener("click", () => {
-
       if (isAudioPlaying) {
-
+        // إيقاف مؤقت فقط - لا نلمس src أبداً حتى لا يعيد التشغيل من الصفر
         audioEl.pause();
-
         return;
-
       }
 
       if (audioProgressWrap) audioProgressWrap.classList.remove("d-none");
 
-      const reciter = getSelectedReciter();
-
-      if (reciter.perAyah) {
-
-        const startIndex = currentAudioAyahIndex >= 0 ? currentAudioAyahIndex : 0;
-
-        playAyahAtIndex(startIndex);
-
+      const sameFileAlreadyLoaded = loadedReciterId === selectedReciterId && loadedSurahNumber === surahNumber && audioEl.src;
+      if (sameFileAlreadyLoaded) {
+        // استئناف من نفس النقطة التي توقفنا عندها بالضبط (لا نعيد ضبط src)
+        audioEl.play();
       } else {
-
-        playFullSurah();
-
+        loadAndPlayFullSurah();
       }
-
     });
-
-
 
     audioEl.addEventListener("play", () => {
-
       isAudioPlaying = true;
-
       audioPlayBtn.innerHTML = `<i class="bi bi-pause-fill"></i> إيقاف مؤقت`;
-
     });
-
-
 
     audioEl.addEventListener("pause", () => {
-
       isAudioPlaying = false;
-
       if (audioEl.src) {
-
         audioPlayBtn.innerHTML = `<i class="bi bi-play-fill"></i> متابعة الاستماع`;
-
       }
-
     });
-
-
 
     audioEl.addEventListener("ended", () => {
-
-      const reciter = getSelectedReciter();
-
-      if (reciter.perAyah) {
-
-        playAyahAtIndex(currentAudioAyahIndex + 1);
-
-      } else {
-
-        stopAudioPlayback();
-
-      }
-
+      stopAudioPlayback();
     });
-
-
 
     audioEl.addEventListener("error", () => {
-
       if (!audioEl.src) return;
-
-      const reciter = getSelectedReciter();
-
-      // إذا فشل تحميل ملف آية بمفردها، جرّب تشغيل السورة كاملة كخطة بديلة قبل الاستسلام
-
-      if (reciter.perAyah && !triedFullSurahFallback) {
-
-        triedFullSurahFallback = true;
-
-        playFullSurah();
-
-        return;
-
-      }
-
       stopAudioPlayback();
-
-      alert("تعذر تحميل التلاوة الصوتية بصوت هذا القارئ حالياً، جرّب قارئاً آخر أو تحقق من الاتصال بالإنترنت.");
-
+      alert("تعذر تحميل التلاوة الصوتية بصوت هذا القارئ لهذه السورة. قد لا تتوفر تلاوة كاملة للسورة بصوت هذا القارئ تحديداً - جرّب قارئاً آخر.");
     });
-
   }
-
-
 
   if (audioStopBtn) {
-
     audioStopBtn.addEventListener("click", stopAudioPlayback);
-
   }
 
-
-
-
-
-
-
-
-
-// ===== شريط التقدّم (تقريب/ترجيع) والتحكم بمستوى الصوت =====
+  // ===== شريط التقدّم (تقريب/ترجيع) والتحكم بمستوى الصوت =====
 
   function formatAudioTime(seconds) {
 

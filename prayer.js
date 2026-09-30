@@ -252,12 +252,17 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // دالة إرسال الإشعار النظامي للمتصفح
+// ملاحظة: نستخدم الدالة الموحّدة showAppNotification (من main.js) لأنها تمر عبر
+// الـ Service Worker، وهذا ضروري لعمل الإشعارات على متصفحات الهاتف (أندرويد خصوصاً)
 function showNotification(title, bodyText) {
-    if (Notification.permission === "granted") {
-        new Notification(title, {
+    if (typeof showAppNotification === "function") {
+        showAppNotification(title, {
             body: bodyText,
-            icon: "./5b862b4281f64fd884b11984846f0e97.png" // أيقونة التطبيق إن وجدت بالمجلد
+            icon: "./5b862b4281f64fd884b11984846f0e97.png"
         });
+    } else if (Notification.permission === "granted") {
+        // احتياطي فقط لو تعذر تحميل main.js لأي سبب
+        try { new Notification(title, { body: bodyText }); } catch (e) {}
     }
 }
 

@@ -15,10 +15,12 @@ async function togglePrayerNotifications(checkbox) {
             const permission = await Notification.requestPermission();
             if (permission === "granted") {
                 localStorage.setItem('prayer_notifications_enabled', 'true');
-                new Notification("تطبيق إشراق", {
-                    body: "تم تفعيل تنبيهات أوقات الصلاة بنجاح 🌙",
-                    icon: "./5b862b4281f64fd884b11984846f0e97.png"
-                });
+                if (typeof showAppNotification === "function") {
+                    showAppNotification("تطبيق إشراق", {
+                        body: "تم تفعيل تنبيهات أوقات الصلاة بنجاح 🌙",
+                        icon: "./5b862b4281f64fd884b11984846f0e97.png"
+                    });
+                }
             } else {
                 alert("يجب السماح بالإشعارات من إعدادات المتصفح.");
                 checkbox.checked = false;

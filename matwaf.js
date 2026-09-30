@@ -236,19 +236,7 @@
 
     function prevStage() {
       if (ritualMode === "hajj") return;
-      if (currentStage === 2 && currentLap > 1) {
-        currentLap--;
-        saveProgress();
-        renderMutawwifStage();
-        return;
-      }
-      if (currentStage === 4 && currentLap > 1) {
-        currentLap--;
-        saveProgress();
-        renderMutawwifStage();
-        return;
-      }
-     
+
       if (currentStage > 1) {
         currentStage--;
         if (currentStage === 2 || currentStage === 4) {
@@ -294,10 +282,27 @@
         return;
       }
       let html = "";
-      history.forEach(item => {
-        html += `<li class="py-1 border-bottom border-secondary d-flex justify-content-between"><span><i class="bi bi-check-circle-fill text-gold me-1"></i> إتمام ${item.type}</span><span class="font-monospace text-muted small">${item.date}</span></li>`;
+      history.forEach((item, index) => {
+        html += `<li class="py-1 border-bottom border-secondary d-flex justify-content-between align-items-center">
+          <span><i class="bi bi-check-circle-fill text-gold me-1"></i> إتمام ${item.type}</span>
+          <span class="d-flex align-items-center gap-2">
+            <span class="font-monospace text-muted small">${item.date}</span>
+            <button onclick="deleteHistoryItem(${index})" class="btn btn-sm btn-link text-danger p-0" title="حذف هذا الإنجاز" style="line-height: 1;">
+              <i class="bi bi-x-circle-fill"></i>
+            </button>
+          </span>
+        </li>`;
       });
       list.innerHTML = html;
+    }
+
+    // حذف إنجاز واحد بعينه من الأرشيف (وليس السجل كاملاً)
+    function deleteHistoryItem(index) {
+      if (!confirm("هل تريد حذف هذا الإنجاز من الأرشيف؟")) return;
+      let history = JSON.parse(localStorage.getItem("mutawwif_history")) || [];
+      history.splice(index, 1);
+      localStorage.setItem("mutawwif_history", JSON.stringify(history));
+      loadHistory();
     }
 
     function clearHistory() {
