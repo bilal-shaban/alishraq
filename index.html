@@ -19,6 +19,10 @@
       rel="stylesheet"
     />
     <link
+      href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap"
+      rel="stylesheet"
+    />
+    <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
     />
@@ -26,11 +30,11 @@
     <!-- PWA Manifest -->
     <link rel="manifest" href="./manifest.json" />
     <meta name="theme-color" content="#21211D" />
-    <link rel="icon" href="data:,">
+    <link rel="icon" href="data:," />
   </head>
 
   <body>
-   <header>
+    <header>
       <nav
         class="navbar navbar-expand-lg fixed-top shadow-sm"
         style="background-color: #21211d; border-bottom: 0.2rem solid #edcea0"
@@ -380,13 +384,32 @@
             </div>
           </div>
         </div>
-        <div id="continue-reading-container" class="container my-4 ">
-  <!-- سيتم حقن بطاقة المتابعة هنا ديناميكياً إذا وجد سجل سابق -->
-</div>
+        <div id="continue-reading-container" class="container my-4">
+          <!-- سيتم حقن بطاقة المتابعة هنا ديناميكياً إذا وجد سجل سابق -->
+        </div>
         <!-- شبكة أقسام التطبيق -->
         <div class="row g-4 mb-5 mt-4">
-          <div class="col-md-4 col-6">
-            <a href="./quran.html" class="grid-card text-decoration-none d-block">
+          <!-- 1. قسم القرآن الكريم -->
+          <div class="col-12 mb-4">
+            <h3 class="fw-bold mb-2 gold">القرآن الكريم</h3>
+            <div class="mb-3" style="color: var(--gold-accent)">
+              <p
+                class="mb-1"
+                style="
+                  font-family: &quot;Amiri Quran&quot;, serif;
+                  font-size: 1.1rem;
+                "
+              >
+                قال الله تعالى : " وَرَتِّلِ الْقُرْآنَ تَرْتِيلًا "
+              </p>
+              <p style="font-size: 0.9rem" class="opacity-50 mt-3 text-light">
+                نور قلبك بكتاب الله وتلاوة آياته العطرة
+              </p>
+            </div>
+            <a
+              href="./quran.html"
+              class="grid-card text-decoration-none d-block"
+            >
               <img
                 src="./quran.png"
                 class="grid-icon mb-3"
@@ -396,8 +419,30 @@
             </a>
           </div>
 
-          <div class="col-md-4 col-6">
-            <a href="./hadith.html" class="grid-card text-decoration-none d-block">
+          <!-- 2. قسم الحديث النبوي -->
+          <div class="col-12 mb-4">
+            <h3 class="gold fw-bold mb-2">الحديث النبوي</h3>
+            <div class="mb-3" style="color: var(--gold-accent)">
+              <p
+                class="fst-italic mb-1"
+                style="
+                  line-height: 2rem;
+                  font-family: &quot;Amiri Quran&quot;, serif;
+                  font-size: 1.1rem;
+                "
+              >
+                قال رسول الله صلى الله عليه وسلم : <br />
+                " مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا سَهَّلَ اللَّهُ
+                له به طَرِيقًا إلى الجَنَّةِ "
+              </p>
+              <p style="font-size: 0.9rem" class="mt-3 opacity-50 text-light">
+                اكتشف جوامع الكلم وخير الهدي النبوي الشريف
+              </p>
+            </div>
+            <a
+              href="./hadith.html"
+              class="grid-card text-decoration-none d-block"
+            >
               <img
                 src="./hadeth.png"
                 class="grid-icon mb-3"
@@ -407,8 +452,25 @@
             </a>
           </div>
 
-          <div class="col-md-4 col-6">
-            <a href="./azkar.html" class="grid-card text-decoration-none d-block">
+          <!-- 3. قسم الأذكار -->
+          <div class="col-12 mb-4 d-flex justify-content-between">
+            <div class="mb-3" style="color: var(--gold-accent)">
+              <h3 class="gold fw-bold mb-3 mt-2">الأذكار</h3>
+              <p
+                class="fst-italic mb-3"
+                style="
+                  font-family: &quot;Amiri Quran&quot;, serif;
+                  font-size: 1.1rem;
+                "
+              >
+                قال الله تعالى : <br />
+                "أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ"
+              </p>
+              <p style="font-size: 0.9rem" class="opacity-50 text-light">
+                حصن حصين ليومك وراحة لقلبك وروحك
+              </p>
+            </div>
+            <a href="./azkar.html" class="grid-card text-decoration-none w-50">
               <img
                 src="./azkar.png"
                 class="grid-icon mb-3"
@@ -419,22 +481,81 @@
             </a>
           </div>
 
-          <div class="col-md-4 col-6">
-            <a href="./awrad.html" class="grid-card text-decoration-none d-block">
+          <!-- 4. قسم الأوراد -->
+          <div class="col-12 text- mb-4 d-flex justify-content-between gap-3">
+            <a href="./awrad.html" class="grid-card text-decoration-none w-75">
               <img src="./awrad.png" class="grid-icon mb-3" alt="الأوراد" />
-              <div class="gold h5 fw-bold mb-0">الأوراد</div>
+              <div class="gold h5 fw-bold mb-3 mt-2">الأوراد</div>
             </a>
+            <div class="mb-3" style="color: var(--gold-accent)">
+              <h3 class="gold fw-bold mb-2">الأوراد</h3>
+              <p
+                class="fst-italic mb-3"
+                style="
+                  font-family: &quot;Amiri Quran&quot;, serif;
+                  font-size: 1.1rem;
+                  line-height: 2rem;
+                "
+              >
+                قال رسول الله صلى الله عليه وسلم : <br />
+                "أَحَبُّ الأَعْمَالِ إِلَى اللَّهِ أَدْوَمُهَا وَإِنْ قَلَّ "
+              </p>
+              <p style="font-size: 0.9rem" class="opacity-50 text-light">
+                صاحِب اجعل لك ورداً يومياً لا تتركه، فقليل دائم خير من كثير
+                منقطع
+              </p>
+            </div>
           </div>
 
-          <div class="col-md-4 col-6">
-            <a href="./adiya.html" class="grid-card text-decoration-none d-block">
-              <img src="./adeya.png" class="grid-icon mb-3" alt="الأدعية" />
+          <!-- 5. قسم الأدعية -->
+          <div class="col-12 mb-4 d-flex justify-content-between">
+            <div class="mb-3" style="color: var(--gold-accent)">
+              <h3 class="gold fw-bold mb-3 mt-2">الأدعية</h3>
+              <p
+                class="fst-italic mb-3"
+                style="
+                  font-family: &quot;Amiri Quran&quot;, serif;
+                  font-size: 1.1rem;
+                  line-height: 2rem;
+                "
+              >
+                قال الله تعالى : <br />
+                "وَقَالَ رَبُّكُمُ ادْعُونِي أَسْتَجِبْ لَكُمْ"
+              </p>
+              <p style="font-size: 0.9rem" class="opacity-50 text-light">
+                باب السائلين مفتوح لا ينغلق، بث مناجاتك لربك
+              </p>
+            </div>
+            <a href="./azkar.html" class="grid-card text-decoration-none w-50">
+              <img
+                src="./adeya.png"
+                class="grid-icon mb-3 mt-4"
+                alt="الأدعية"
+              />
               <div class="gold h5 fw-bold mb-0">الأدعية</div>
             </a>
           </div>
 
-          <div class="col-md-4 col-6">
-            <a href="./matwaf.html" class="grid-card text-decoration-none d-block">
+          <!-- 6. قسم المطوف -->
+          <div class="col-md-4 col-12 mb-4">
+            <h3 class="gold fw-bold mb-2">المطوف</h3>
+            <div class="mb-3" style="color: var(--gold-accent)">
+              <p
+                class="fst-italic mb-3"
+                style="font-family: &quot;Amiri&quot;, serif; font-size: 1.1rem"
+              >
+                قال الله تعالى : <br />
+                "وَلِلَّهِ عَلَى النَّاسِ حِجُّ الْبَيْتِ مَنِ اسْتَطَاعَ
+                إِلَيْهِ سَبِيلًا"
+              </p>
+              <p style="font-size: 0.9rem" class="opacity-50 text-light">
+                دليلك المُيسّر لخطوات مناسك الحج والعمرة والأدعية المباركة
+              </p>
+            </div>
+            <a
+              href="./matwaf.html"
+              class="grid-card text-decoration-none d-block"
+            >
               <img
                 src="./mutawef.png"
                 class="grid-icon mb-3"
@@ -444,20 +565,40 @@
             </a>
           </div>
         </div>
-        
-<!-- دعاء اليوم -->
-    <div class="grid-card-d">
-      <div class="supplication-box-1 p-3 rounded-4 mb-5" id="daily-dua-box">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <a href="./adiya.html" class="gold fw-bold stretched-link text-decoration-none"><i class="bi bi-sun-fill me-1"></i> دعاء اليوم</a>
-          <div class="d-flex gap-1">
-            <button class="btn btn-sm btn-outline-light border-0 py-0 px-2" id="daily-dua-copy-btn" title="نسخ"><i class="bi bi-copy"></i></button>
-            <button class="btn btn-sm btn-outline-light border-0 py-0 px-2 text-success" id="daily-dua-share-img-btn" title="مشاركة كصورة"><i class="bi bi-image"></i></button>
+
+        <!-- دعاء اليوم -->
+        <div class="grid-card-d">
+          <div class="supplication-box-1 p-3 rounded-4 mb-5" id="daily-dua-box">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <a
+                href="./adiya.html"
+                class="gold fw-bold stretched-link text-decoration-none"
+                ><i class="bi bi-sun-fill me-1"></i> دعاء اليوم</a
+              >
+              <div class="d-flex gap-1">
+                <button
+                  class="btn btn-sm btn-outline-light border-0 py-0 px-2"
+                  id="daily-dua-copy-btn"
+                  title="نسخ"
+                >
+                  <i class="bi bi-copy"></i>
+                </button>
+                <button
+                  class="btn btn-sm btn-outline-light border-0 py-0 px-2 text-success"
+                  id="daily-dua-share-img-btn"
+                  title="مشاركة كصورة"
+                >
+                  <i class="bi bi-image"></i>
+                </button>
+              </div>
+            </div>
+            <p
+              class="zikr-text mb-0"
+              id="daily-dua-text"
+              style="font-size: 1.3rem"
+            ></p>
           </div>
         </div>
-        <p class="zikr-text mb-0" id="daily-dua-text" style="font-size: 1.3rem;"></p>
-      </div>
-      </div>
 
         <!-- قسم السبحة الإلكترونية -->
         <div class="row justify-content-center mb-5">
@@ -549,8 +690,8 @@
       </div>
     </main>
     <!-- قسم بوصلة القبلة الخرافي والمتطور -->
-   <main  class="pb-5 mb-5">
-      <div class="container my-3" >
+    <main class="pb-5 mb-5">
+      <div class="container my-3">
         <!-- قسم بوصلة القبلة الخرافي والمتطور -->
         <div class="row justify-content-center mb-5">
           <div class="col-11 col-lg-8">
@@ -637,11 +778,140 @@
         </div>
       </div>
     </main>
+
+    <main class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-4 col-10">
+          <div
+            id="carouselId"
+            class="carousel slide carousel-light carousel-fade"
+            data-bs-ride="carousel"
+          >
+            <div class="carousel-inner" role="listbox">
+              <!-- الشريحة الأولى (لاحظ وجود active هنا فقط) -->
+              <div
+                class="card carousel-item active rounded-0 d-flex justify-content-center;"
+                style="height: 360px ; background-color: #21211d;"
+              >
+                <a href="./quran.html" class="text-decoration-none">
+                  <img src="./quran.png" class="w-75 ca-w" alt="First slide" />
+                  <h6 class="fw-bolder text-center gold mt-3">القرآن الكريم</h6>
+                </a>
+              </div>
+
+              <!-- الشريحة الثانية (بدون active) -->
+              <div
+                class="card carousel-item rounded-0 d-flex justify-content-center"
+                style="height: 360px; background-color: #21211d;"
+              >
+                <a href="./hadith.html" class="text-decoration-none">
+                  <img
+                    src="./hadeth.png"
+                    class="w-75 ca-w"
+                    alt="Second slide"
+                  />
+                  <h6 class="fw-bolder text-center mt-3 gold">
+                    الحديث النبوي الشريف
+                  </h6>
+                </a>
+              </div>
+
+              <!-- الشريحة الثالثة (بدون active) -->
+              <div
+                class="card carousel-item rounded-0 d-flex justify-content-center"
+                style="height: 360px; background-color: #21211d;"
+              >
+                <a href="./azkar.html" class="text-decoration-none">
+                  <img src="./azkar.png" class="w-75 ca-w" alt="Third slide" />
+                  <h6 class="fw-bolder text-center mt-3 gold">الأذكار</h6>
+                </a>
+              </div>
+
+              <!-- الشريحة الرابعة (بدون active) -->
+              <div
+                class="card carousel-item rounded-0 d-flex justify-content-center"
+                style="height: 360px; background-color: #21211d;"
+              >
+                <a href="./awrad.html" class="text-decoration-none">
+                  <img src="./awrad.png" class="w-75 ca-w" alt="Fourth slide" />
+                  <h6 class="fw-bolder text-center mt-3 gold">الأوراد</h6>
+                </a>
+              </div>
+
+              <!-- الشريحة الخامسة (بدون active) -->
+              <div
+                class="card carousel-item rounded-0 d-flex justify-content-center"
+                style="height: 360px; background-color: #21211d;"
+              >
+                <a href="./adiya.html" class="text-decoration-none">
+                  <img src="./adeya.png" class="w-75 ca-w" alt="Fifth slide" />
+                  <h6 class="fw-bolder text-center mt-3 gold">الأدعية</h6>
+                </a>
+              </div>
+
+              <!-- الشريحة السادسة (بدون active) -->
+              <div
+                class="card carousel-item rounded-0 d-flex justify-content-center"
+                style="height: 360px; background-color: #21211d;"
+              >
+                <a href="./matwaf.html" class="text-decoration-none">
+                  <img
+                    src="./mutawef.png"
+                    class="w-75 ca-w"
+                    alt="Sixth slide"
+                  />
+                  <h6 class="fw-bolder text-center mt-3 gold">المطوف</h6>
+                </a>
+              </div>
+            </div>
+
+            <!-- زر السابق -->
+            <button
+              class="carousel-control-prev"
+              type="button"
+              data-bs-target="#carouselId"
+              data-bs-slide="prev"
+            >
+              <span
+                style="
+                  color: var(--gold-accent);
+                  font-size: 2.5rem;
+                  font-weight: bold;
+                "
+                aria-hidden="true"
+                >&#10094;</span
+              >
+              <span class="visually-hidden">السابق</span>
+            </button>
+
+            <!-- زر التالي -->
+            <button
+              class="carousel-control-next"
+              type="button"
+              data-bs-target="#carouselId"
+              data-bs-slide="next"
+            >
+              <span
+                style="
+                  color: var(--gold-accent);
+                  font-size: 2.5rem;
+                  font-weight: bold;
+                "
+                aria-hidden="true"
+                >&#10095;</span
+              >
+              <span class="visually-hidden">التالي</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
     <!-- قسم تحميل وتثبيت التطبيق على الأجهزة -->
     <section class="pwa-download-section py-5 mt-5">
       <div class="container">
-        <div class="text-center mb-4">
-          <span class="badge badge-gold mb-2"
+        <div class="text-center mb-3">
+          <span class="badge badge-gold mb-4"
             ><i class="bi bi-phone me-1"></i> تطبيق إشراق</span
           >
           <h3 class="gold fw-bold">حَمِّلْ إشراق على جِهَازِك</h3>
@@ -650,9 +920,9 @@
           </p>
         </div>
 
-        <div class="row g-4 justify-content-center">
+        <div class="row g-4 justify-content-center mt-3">
           <!-- كارت أندرويد Android -->
-          <div class="col-md-4 col-sm-6">
+          <div class="col-4">
             <div
               class="download-card text-center p-4 rounded-4 h-100 d-flex flex-column justify-content-between"
             >
@@ -675,7 +945,7 @@
           </div>
 
           <!-- كارت آيفون iOS -->
-          <div class="col-md-4 col-sm-6">
+          <div class="col-4">
             <div
               class="download-card text-center p-4 rounded-4 h-100 d-flex flex-column justify-content-between"
             >
@@ -699,7 +969,7 @@
           </div>
 
           <!-- كارت ويندوز Windows -->
-          <div class="col-md-4 col-sm-6">
+          <div class="col-4">
             <div
               class="download-card text-center p-4 rounded-4 h-100 d-flex flex-column justify-content-between"
             >
@@ -716,7 +986,7 @@
                 id="btn-install-windows"
                 class="btn btn-gold-solid w-100 rounded-pill py-2 fw-bold"
               >
-                <i class="bi bi-laptop me-1"></i> تثبيت للكمبيوتر
+                <i class="bi bi-laptop me-1"></i> تثبيت الآن
               </button>
             </div>
           </div>
@@ -768,15 +1038,15 @@
 
         <!-- زر المطوف -->
         <!-- زر المطوف (باستخدام أيقونة تعبر عن السعي والحركة) -->
-<a
-  href="matwaf.html"
-  class="nav-item-bottom text-center text-decoration-none"
-  data-page="matwaf"
->
-  <i class="bi bi-person-walking fs-5 d-block"></i>
-  <i class="bi bi-person-walking fs-5 d-block active-icon"></i>
-  <span class="small">المطوف</span>
-</a>
+        <a
+          href="matwaf.html"
+          class="nav-item-bottom text-center text-decoration-none"
+          data-page="matwaf"
+        >
+          <i class="bi bi-person-walking fs-5 d-block"></i>
+          <i class="bi bi-person-walking fs-5 d-block active-icon"></i>
+          <span class="small">المطوف</span>
+        </a>
 
         <!-- زر الإعدادات -->
         <a
@@ -790,7 +1060,7 @@
         </a>
       </div>
     </nav>
-    
+
     <!-- Bootstrap JavaScript Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>

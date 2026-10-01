@@ -59,6 +59,12 @@ document.addEventListener("DOMContentLoaded", () => {
   let activeCategoryId = categories[0].id;
   let currentFontSize = parseFloat(localStorage.getItem("eshraq_font_size")) || 1.6;
 
+  function getFontFamilyCss() {
+    return localStorage.getItem("eshraq_font_family") === "uthmani"
+      ? "'Amiri Quran', 'Traditional Arabic', serif"
+      : "'Amiri', 'Traditional Arabic', serif";
+  }
+
   function todayKey() {
     return new Date().toDateString();
   }
@@ -115,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
               ${isDone ? '<i class="bi bi-check-lg"></i>' : remaining}
             </button>
             <div class="flex-grow-1">
-              <p class="zikr-text mb-2" style="font-size: ${currentFontSize}rem;">${item.text}</p>
+              <p class="zikr-text mb-2" style="font-size: ${currentFontSize}rem; font-family: ${getFontFamilyCss()};">${item.text}</p>
               ${item.source ? `<div class="zikr-source gold mb-2"><i class="bi bi-info-circle me-1"></i>${item.source}</div>` : ""}
               <div class="zikr-actions d-flex gap-2">
                 <button type="button" class="btn btn-sm btn-outline-light border-0 copy-btn" data-index="${index}" title="نسخ">

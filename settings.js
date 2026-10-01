@@ -1,4 +1,3 @@
-
 // ===================================================================
 // إعدادات التطبيق - إشراق
 // ===================================================================
@@ -271,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // القارئ الافتراضي
     const reciterSelect = document.getElementById('reciterSelect');
     if (reciterSelect) {
-        reciterSelect.value = localStorage.getItem('eshraq_reciter') || 'ar.alafasy';
+        reciterSelect.value = localStorage.getItem('eshraq_reciter') || 'afs';
     }
 
     // صوت السبحة
@@ -285,9 +284,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // 17. تثبيت التطبيق (PWA Install Prompt)
+let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
-    window.ishraqDeferredPrompt = e;
+    deferredPrompt = e;
     const installRow = document.getElementById('installRow');
     if (installRow) {
         installRow.style.display = 'flex';
@@ -300,11 +300,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (installAppBtn) {
         installAppBtn.addEventListener('click', async () => {
-            if (window.ishraqDeferredPrompt) {
-                window.ishraqDeferredPrompt.prompt();
-                const { outcome } = await window.ishraqDeferredPrompt.userChoice;
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
                 console.log(`نتيجة التثبيت: ${outcome}`);
-                window.ishraqDeferredPrompt = null;
+                deferredPrompt = null;
                 if (installRow) installRow.style.display = 'none';
             } else {
                 alert("لتثبيت التطبيق على هاتفك:\n- أندرويد (متصفح كروم): اضغط على نقاط القائمة الثلاث في المتصفح ثم اختر 'تثبيت التطبيق' أو 'إضافة إلى الشاشة الرئيسية'.\n- آيفون (متصفح سفاري): اضغط زر المشاركة ثم اختر 'إضافة إلى الشاشة الرئيسية'.");

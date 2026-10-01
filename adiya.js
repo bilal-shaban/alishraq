@@ -147,6 +147,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let activeCategoryId = categories[0].id;
   let currentFontSize = parseFloat(localStorage.getItem("eshraq_font_size")) || 1.6;
+
+  function getFontFamilyCss() {
+    return localStorage.getItem("eshraq_font_family") === "uthmani"
+      ? "'Amiri Quran', 'Traditional Arabic', serif"
+      : "'Amiri', 'Traditional Arabic', serif";
+  }
   let activeLengthFilter = "all";
   let searchQuery = "";
 
@@ -208,7 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
           </button>
           <div class="flex-grow-1">
             ${showCatBadge ? `<span class="badge rounded-pill mb-2" style="background: rgba(237,206,160,0.15); color:#edcea0;">${catTitle}</span>` : ""}
-            <p class="zikr-text mb-2" style="font-size: ${currentFontSize}rem;">${item.text}</p>
+            <p class="zikr-text mb-2" style="font-size: ${currentFontSize}rem; font-family: ${getFontFamilyCss()};">${item.text}</p>
             ${item.source ? `
               <div class="zikr-source gold mb-2">
                 <i class="bi bi-info-circle me-1"></i>${item.source}
@@ -427,6 +433,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     dailyDuaText.textContent = dailyItem.text;
     dailyDuaText.dataset.fullText = dailyItem.text;
+    dailyDuaText.style.fontFamily = getFontFamilyCss();
   }
   renderDailyDua();
 

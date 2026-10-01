@@ -589,12 +589,27 @@ function bindEvents() {
     body.innerHTML = `<div class="text-center py-3"><div class="spinner-border text-gold" style="color:#edcea0;"></div></div>`;
     modal.show();
 
-    try {
-      const response = await fetch(`https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir/editions/ar-tafsir-muyassar/${surahNumber}/${ayahNum}.json`);
+    async function tryFetchTafsir(editionSlug) {
+      const response = await fetch(`https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir/${editionSlug}/${surahNumber}/${ayahNum}.json`);
+      if (!response.ok) throw new Error("not ok");
       const data = await response.json();
-      const tafsirText = data?.text || data?.data?.text;
+      // الشكل الدقيق للاستجابة قد يختلف قليلاً، نتعامل معه بمرونة
+      return data?.text || data?.data?.text || (typeof data === "string" ? data : null);
+    }
+
+    try {
+      let tafsirText = null;
+      let sourceLabel = "التفسير الميسر";
+      try {
+        tafsirText = await tryFetchTafsir("ar-tafsir-muyassar");
+      } catch (e) {
+        // خطة بديلة: لو تفسير الميسر غير متوفر لهذه الآية تحديداً، نجرب تفسير ابن كثير
+        tafsirText = await tryFetchTafsir("ar-tafsir-ibn-kathir");
+        sourceLabel = "تفسير ابن كثير";
+      }
+
       body.innerHTML = tafsirText
-        ? `<p class="zikr-text" style="font-size: 1.1rem;">${tafsirText}</p><div class="zikr-source gold mt-2">التفسير الميسر - مجمع الملك فهد</div>`
+        ? `<p class="zikr-text" style="font-size: 1.1rem;">${tafsirText}</p><div class="zikr-source gold mt-2">${sourceLabel}</div>`
         : `<p class="text-center text-light opacity-75">تعذر العثور على تفسير لهذه الآية.</p>`;
     } catch (error) {
       body.innerHTML = `<p class="text-center text-danger">تعذر تحميل التفسير، تحقق من الاتصال بالإنترنت.</p>`;

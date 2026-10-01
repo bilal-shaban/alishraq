@@ -910,3 +910,30 @@ html[data-night-mode="true"] h6 {
   background-color: #21211D !important; /* لون أسود مطفأ وأعمق، أو فيك تحطه #1a1a17 لدرجة أفتح شوي */
   border: 1px solid rgba(237, 206, 160, 0.3) !important; /* لون الحدود الذهبية الخفيفة */
 }
+/* إلغاء الأيقونة الأصلية تماماً واستبدالها بسهم جاهز ملون بلونك */
+#carouselId .carousel-control-prev-icon,
+#carouselId .carousel-control-next-icon {
+    background-image: none !important;
+    color: none !important;
+    width: 2.5rem;
+    height: 2.5rem;
+}
+.ca-w{
+  margin-right: 2.75rem !important;
+}
+
+/* وضع السهم السابق بلونك المخصص */
+#carouselId .carousel-control-prev-icon::after {
+    content: "‹";
+    font-size: 3rem;
+    font-weight: bold;
+    color: var(--gold-color);
+}
+
+/* وضع السهم التالي بلونك المخصص */
+#carouselId .carousel-control-next-icon::after {
+    content: "›";
+    font-size: 3rem;
+    font-weight: bold;
+    color: var(--gold-accent);
+}
