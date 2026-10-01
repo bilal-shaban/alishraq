@@ -1,3 +1,4 @@
+
 // ===================================================================
 // إعدادات التطبيق - إشراق
 // ===================================================================
@@ -284,10 +285,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // 17. تثبيت التطبيق (PWA Install Prompt)
-let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
-    deferredPrompt = e;
+    window.ishraqDeferredPrompt = e;
     const installRow = document.getElementById('installRow');
     if (installRow) {
         installRow.style.display = 'flex';
@@ -300,11 +300,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (installAppBtn) {
         installAppBtn.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
+            if (window.ishraqDeferredPrompt) {
+                window.ishraqDeferredPrompt.prompt();
+                const { outcome } = await window.ishraqDeferredPrompt.userChoice;
                 console.log(`نتيجة التثبيت: ${outcome}`);
-                deferredPrompt = null;
+                window.ishraqDeferredPrompt = null;
                 if (installRow) installRow.style.display = 'none';
             } else {
                 alert("لتثبيت التطبيق على هاتفك:\n- أندرويد (متصفح كروم): اضغط على نقاط القائمة الثلاث في المتصفح ثم اختر 'تثبيت التطبيق' أو 'إضافة إلى الشاشة الرئيسية'.\n- آيفون (متصفح سفاري): اضغط زر المشاركة ثم اختر 'إضافة إلى الشاشة الرئيسية'.");

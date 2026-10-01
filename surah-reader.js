@@ -112,6 +112,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+  // ===== تسجيل آخر 5 سور تمت قراءتها (لعرضها بصفحة فهرس القرآن) =====
+  function recordRecentSurah(number, name) {
+    let recent = JSON.parse(localStorage.getItem("eshraq_recent_surahs")) || [];
+    recent = recent.filter(r => r.number != number); // إزالة التكرار إن وجد
+    recent.unshift({ number, name });
+    recent = recent.slice(0, 5);
+    localStorage.setItem("eshraq_recent_surahs", JSON.stringify(recent));
+  }
+
+  // ===== تتبع الختمة: تسجيل الآية كمقروءة (لمرة واحدة فقط لكل آية) =====
+  function markAyahAsRead(surahNum, ayahNum) {
+    const key = `${surahNum}:${ayahNum}`;
+    let readAyahs = JSON.parse(localStorage.getItem("eshraq_read_ayahs")) || [];
+    if (readAyahs.includes(key)) return; // مُسجّلة سابقاً، لا نكررها بالإحصائية
+
+    readAyahs.push(key);
+    localStorage.setItem("eshraq_read_ayahs", JSON.stringify(readAyahs));
+
+    const monthKey = new Date().toISOString().slice(0, 7);
+    let monthlyLog = JSON.parse(localStorage.getItem("eshraq_monthly_read_log")) || {};
+    monthlyLog[monthKey] = (monthlyLog[monthKey] || 0) + 1;
+    localStorage.setItem("eshraq_monthly_read_log", JSON.stringify(monthlyLog));
+  }
+
+  // ===== الرابط المباشر لآية معينة (?ayah=N) =====
+  function handleDeepLinkAyah() {
+    const targetAyah = urlParams.get("ayah");
+    if (!targetAyah) return;
+    setTimeout(() => {
+      const target = document.querySelector(`[data-ayahnum="${targetAyah}"]`);
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+        target.classList.add("active-ayah");
+        setTimeout(() => target.classList.remove("active-ayah"), 3000);
+      }
+      hasAutoScrolled = true; // نمنع السكرول التلقائي لآخر موضع محفوظ من مزاحمة هذا الرابط المباشر
+    }, 300);
+  }
+
   async function fetchSurahData() {
 
     try {
@@ -143,6 +182,9 @@ document.addEventListener("DOMContentLoaded", () => {
         renderAyahs();
 
         localStorage.setItem("eshraq_last_surah", JSON.stringify({ number: surahNumber, name: surah.name }));
+
+        recordRecentSurah(surahNumber, surah.name);
+        handleDeepLinkAyah();
 
        
 
@@ -267,6 +309,24 @@ function getCleanAyahText(ayah, index) {
 
             </button>
 
+            <button type="button" class="btn btn-sm btn-outline-light border-0 opacity-75 bookmark-btn" data-index="${index}" title="إضافة علامة مرجعية">
+
+              <i class="bi bi-bookmark-plus"></i> علامة
+
+            </button>
+
+            <button type="button" class="btn btn-sm btn-outline-light border-0 opacity-75 tafsir-btn" data-index="${index}" title="عرض تفسير مختصر">
+
+              <i class="bi bi-chat-square-text"></i> تفسير
+
+            </button>
+
+            <button type="button" class="btn btn-sm btn-outline-light border-0 opacity-75 link-btn" data-index="${index}" title="نسخ رابط هذه الآية">
+
+              <i class="bi bi-link-45deg"></i> رابط
+
+            </button>
+
           </div>
 
         </div>
@@ -352,6 +412,8 @@ function getCleanAyahText(ayah, index) {
             localStorage.setItem(`eshraq_surah_scroll_${surahNumber}`, ayahNum);
 
             saveReadingProgress(surahNumber, currentSurahName, ayahNum);
+
+            markAyahAsRead(surahNumber, ayahNum);
 
           }, 600);
 
@@ -477,6 +539,66 @@ function bindEvents() {
 
     });
 
+    document.querySelectorAll(".bookmark-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const index = e.currentTarget.getAttribute("data-index");
+        const ayah = ayahsList[index];
+        const text = getCleanAyahText(ayah, parseInt(index));
+        addBookmark(surahNumber, currentSurahName, ayah.numberInSurah, text);
+      });
+    });
+
+    document.querySelectorAll(".tafsir-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const index = e.currentTarget.getAttribute("data-index");
+        const ayah = ayahsList[index];
+        showTafsir(ayah.numberInSurah);
+      });
+    });
+
+    document.querySelectorAll(".link-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const index = e.currentTarget.getAttribute("data-index");
+        const ayah = ayahsList[index];
+        const url = `${window.location.origin}${window.location.pathname}?surah=${surahNumber}&ayah=${ayah.numberInSurah}`;
+        navigator.clipboard.writeText(url).then(() => alert("تم نسخ رابط الآية بنجاح!"));
+      });
+    });
+  }
+
+  // ===== علامة مرجعية =====
+  function addBookmark(surahNum, surahName, ayahNum, text) {
+    let bookmarks = JSON.parse(localStorage.getItem("eshraq_bookmarks")) || [];
+    const exists = bookmarks.some(b => b.surahNumber == surahNum && b.ayahNum === ayahNum);
+    if (exists) {
+      alert("هذه الآية محفوظة بالفعل ضمن علاماتك المرجعية.");
+      return;
+    }
+    bookmarks.push({ surahNumber: surahNum, surahName, ayahNum, text, date: new Date().toLocaleDateString('ar-EG') });
+    localStorage.setItem("eshraq_bookmarks", JSON.stringify(bookmarks));
+    alert("تمت إضافة علامة مرجعية بنجاح! 🔖");
+  }
+
+  // ===== تفسير مختصر (التفسير الميسر) =====
+  async function showTafsir(ayahNum) {
+    const modalElement = document.getElementById("tafsir-modal");
+    const body = document.getElementById("tafsir-modal-body");
+    if (!modalElement || !body) return;
+
+    const modal = new bootstrap.Modal(modalElement);
+    body.innerHTML = `<div class="text-center py-3"><div class="spinner-border text-gold" style="color:#edcea0;"></div></div>`;
+    modal.show();
+
+    try {
+      const response = await fetch(`https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir/editions/ar-tafsir-muyassar/${surahNumber}/${ayahNum}.json`);
+      const data = await response.json();
+      const tafsirText = data?.text || data?.data?.text;
+      body.innerHTML = tafsirText
+        ? `<p class="zikr-text" style="font-size: 1.1rem;">${tafsirText}</p><div class="zikr-source gold mt-2">التفسير الميسر - مجمع الملك فهد</div>`
+        : `<p class="text-center text-light opacity-75">تعذر العثور على تفسير لهذه الآية.</p>`;
+    } catch (error) {
+      body.innerHTML = `<p class="text-center text-danger">تعذر تحميل التفسير، تحقق من الاتصال بالإنترنت.</p>`;
+    }
   }
 
 
@@ -597,18 +719,20 @@ function bindEvents() {
 
 
 
-  // ===== تشغيل تلاوة السورة كاملة مع اختيار القارئ (شريط تقدم واحد للسورة كاملة) =====
+  // ===== تشغيل تلاوة السورة كاملة مع اختيار القارئ =====
+  // ملاحظة مهمة: المصدر السابق (cdn.islamic.network) تبيّن أنه غير موثوق لأغلب
+  // القراء (ملفات ناقصة لبعضهم رغم ظهوره بالفهرس). استبدلناه بمكتبة mp3quran.net
+  // وهي المصدر الأساسي الرسمي والأكثر اعتمادية، وتم التحقق يدوياً من كل رابط قارئ.
   const RECITERS = [
-    { id: "ar.alafasy", name: "مشاري العفاسي" },
-    { id: "ar.mahermuaiqly", name: "ماهر المعيقلي" },
-    { id: "ar.abdurrahmaansudais", name: "عبدالرحمن السديس" },
-    { id: "ar.yasseraldossari", name: "ياسر الدوسري" }
+    { id: "afs", name: "مشاري العفاسي", server: "https://server8.mp3quran.net/afs/" },
+    { id: "maher", name: "ماهر المعيقلي", server: "https://server12.mp3quran.net/maher/" },
+    { id: "sds", name: "عبدالرحمن السديس", server: "https://server11.mp3quran.net/sds/" },
+    { id: "yasser", name: "ياسر الدوسري", server: "https://server11.mp3quran.net/yasser/" }
   ];
 
   const audioEl = document.getElementById("surah-audio");
   const audioPlayBtn = document.getElementById("audio-play-btn");
   const audioProgressWrap = document.getElementById("audio-progress-wrap");
-  const audioAyahIndicator = document.getElementById("audio-ayah-indicator");
   const audioReciterLabel = document.getElementById("audio-reciter-label");
   const audioStopBtn = document.getElementById("audio-stop-btn");
   const audioSeek = document.getElementById("audio-seek");
@@ -618,8 +742,11 @@ function bindEvents() {
   const reciterSelect = document.getElementById("reciter-select");
 
   let isAudioPlaying = false;
-  let selectedReciterId = localStorage.getItem("eshraq_reciter") || "ar.alafasy";
-  let loadedReciterId = null; // القارئ اللي محمّل حالياً بعنصر الصوت (لمعرفة هل نكمّل أو نحمّل من جديد)
+  // معرّف القارئ المخزّن سابقاً قد يكون بصيغة قديمة (مثل ar.alafasy) من نسخة سابقة من التطبيق،
+  // لذلك نطابقه بأمان مع القائمة الجديدة، ونرجع للعفاسي كافتراضي إن لم نجده
+  const savedReciterRaw = localStorage.getItem("eshraq_reciter") || "afs";
+  let selectedReciterId = RECITERS.some(r => r.id === savedReciterRaw) ? savedReciterRaw : "afs";
+  let loadedReciterId = null; // القارئ المحمّل فعلياً بعنصر الصوت حالياً
   let loadedSurahNumber = null;
 
   function getSelectedReciter() {
@@ -638,16 +765,44 @@ function bindEvents() {
     });
   }
 
-  // تشغيل ملف السورة كاملة من البداية (يُستدعى فقط عند أول تشغيل أو تغيير القارئ/السورة)
   function loadAndPlayFullSurah() {
     if (!audioEl) return;
-    audioEl.src = `https://cdn.islamic.network/quran/audio-surah/128/${selectedReciterId}/${surahNumber}.mp3`;
+    const reciter = getSelectedReciter();
+    const surahPadded = String(surahNumber).padStart(3, "0");
+    const audioUrl = `${reciter.server}${surahPadded}.mp3`;
+    audioEl.src = audioUrl;
     loadedReciterId = selectedReciterId;
     loadedSurahNumber = surahNumber;
     audioEl.play();
-    if (audioAyahIndicator) {
-      audioAyahIndicator.textContent = `تلاوة السورة كاملة`;
+
+    const downloadLink = document.getElementById("download-audio-link");
+    if (downloadLink) {
+      downloadLink.href = audioUrl;
+      downloadLink.download = `${currentSurahName || 'سورة'}-${reciter.name}.mp3`;
+      downloadLink.classList.remove("d-none");
     }
+  }
+
+  // ===== التشغيل التلقائي المتسلسل (Playlist) للانتقال تلقائياً للسورة التالية =====
+  const autoAdvanceBtn = document.getElementById("auto-advance-btn");
+  let autoAdvanceEnabled = localStorage.getItem("eshraq_auto_advance") === "true";
+
+  function updateAutoAdvanceButton() {
+    if (!autoAdvanceBtn) return;
+    autoAdvanceBtn.innerHTML = autoAdvanceEnabled
+      ? `<i class="bi bi-skip-forward-fill"></i> تشغيل تلقائي: يعمل`
+      : `<i class="bi bi-skip-forward"></i> تشغيل تلقائي: متوقف`;
+    autoAdvanceBtn.classList.toggle("btn-gold-solid", autoAdvanceEnabled);
+    autoAdvanceBtn.classList.toggle("btn-gold-outline", !autoAdvanceEnabled);
+  }
+  updateAutoAdvanceButton();
+
+  if (autoAdvanceBtn) {
+    autoAdvanceBtn.addEventListener("click", () => {
+      autoAdvanceEnabled = !autoAdvanceEnabled;
+      localStorage.setItem("eshraq_auto_advance", autoAdvanceEnabled);
+      updateAutoAdvanceButton();
+    });
   }
 
   function stopAudioPlayback() {
@@ -661,8 +816,8 @@ function bindEvents() {
     if (audioProgressWrap) audioProgressWrap.classList.add("d-none");
     if (audioPlayBtn) audioPlayBtn.innerHTML = `<i class="bi bi-play-fill"></i> استماع للسورة`;
     if (audioSeek) audioSeek.value = 0;
-    if (audioCurrentTime) audioCurrentTime.textContent = "٠٠:٠٠";
-    if (audioTotalTime) audioTotalTime.textContent = "٠٠:٠٠";
+    if (audioCurrentTime) audioCurrentTime.textContent = "00:00";
+    if (audioTotalTime) audioTotalTime.textContent = "00:00";
   }
 
   if (audioPlayBtn && audioEl) {
@@ -697,13 +852,19 @@ function bindEvents() {
     });
 
     audioEl.addEventListener("ended", () => {
-      stopAudioPlayback();
+      if (autoAdvanceEnabled && surahNumber < 114) {
+        const nextSurah = parseInt(surahNumber) + 1;
+        localStorage.setItem("eshraq_auto_advance_continue", "true");
+        window.location.href = `surah-reader.html?surah=${nextSurah}`;
+      } else {
+        stopAudioPlayback();
+      }
     });
 
     audioEl.addEventListener("error", () => {
       if (!audioEl.src) return;
       stopAudioPlayback();
-      alert("تعذر تحميل التلاوة الصوتية بصوت هذا القارئ لهذه السورة. قد لا تتوفر تلاوة كاملة للسورة بصوت هذا القارئ تحديداً - جرّب قارئاً آخر.");
+      alert("تعذر تحميل التلاوة الصوتية، تحقق من الاتصال بالإنترنت.");
     });
   }
 
@@ -793,7 +954,13 @@ function bindEvents() {
 
 
 
-  fetchSurahData();
+  fetchSurahData().then(() => {
+    if (localStorage.getItem("eshraq_auto_advance_continue") === "true") {
+      localStorage.removeItem("eshraq_auto_advance_continue");
+      if (audioProgressWrap) audioProgressWrap.classList.remove("d-none");
+      loadAndPlayFullSurah();
+    }
+  });
 
 });
 
