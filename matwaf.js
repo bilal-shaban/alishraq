@@ -125,9 +125,15 @@
           <div class="text-center py-3">
             <h4 class="gold fw-bold mb-3"><i class="bi bi-person-heart me-1"></i> الإحرام والنية من الميقات</h4>
             <p class="text-light opacity-85 px-3 mb-3" style="font-size: ${currentFontSize}px;">تُنوي الإحرام بالعمرة قائلًا:</p>
-            <div class="supplication-box p-3 rounded-3 mb-3 text-center">
-              <p class="text-gold fw-bold mb-0" style="font-size: ${currentFontSize + 4}px;">«لَبِّيكَ اللَّهُمَّ عُمْرَةً»</p>
+            <div class="supplication-box p-3 rounded-3 mb-3 text-center ">
+              <p class="text-gold fw-bold mb-0 mt-5" style="height: 350px; font-size: ${currentFontSize + 4}px;">« اللهم إني نويت العمرة وأحرمت بها لله تعالى عن <span class="text-warning">نفسي</span> <br> فإن حبسني حابس فمحلي حيث حبستني <br> لَبِّيكَ اللَّهُمَّ عُمْرَةً »</p>
             </div>
+            <div class="mb-3 ">
+              <button class="btn btn-sm btn-outline-warning me-3" data-bs-toggle="modal" data-bs-target="#extraAdiyaMODAL"><i class="bi bi-book me-1"></i> صيغة التلبية</button>
+            
+              <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#extraAdiyaMODALL"><i class="bi bi-book me-1"></i>  أدعية إضافية</button>
+            </div>
+            
             <button onclick="nextStage()" class="btn btn-gold-solid rounded-pill px-5 py-2 fw-bold shadow">أتممت الإحرام <i class="bi bi-chevron-left ms-1"></i></button>
           </div>
         `;
@@ -160,6 +166,12 @@
           <div class="text-center py-3">
             <h4 class="gold fw-bold mb-3"><i class="bi bi-award me-1"></i> ركعتا سنة الطواف وزمزم</h4>
             <p class="text-light opacity-85 px-2 mb-3" style="font-size: ${currentFontSize}px;">صلِ ركعتين خلف مقام سيدنا ابراهيم واشرب من ماء زمزم.</p>
+            <div class="mb-3">
+              <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#extraAdiyaMODal"><i class="bi bi-book me-1"></i> دعاء مقام سيدنا ابراهيم عليه السلام  </button>
+            </div>
+            <div class="mb-3">
+              <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#extraAdiyaMODAl"><i class="bi bi-book me-1"></i> دعاء الشرب من ماء زمزم </button>
+            </div>
             <button onclick="nextStage()" class="btn btn-gold-solid rounded-pill px-5 py-2 fw-bold shadow">التالي إلى السعي <i class="bi bi-chevron-left ms-1"></i></button>
           </div>
         `;
