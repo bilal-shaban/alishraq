@@ -556,6 +556,117 @@ body.focus-reading-mode .reader-toolbar {
   background-color: #edcea0 !important;
 }
 
+/* ===== بطاقات "تعرّف على الأقسام" بالصفحة الرئيسية ===== */
+.inspire-card {
+  background: linear-gradient(145deg, #262621, #1d1d19);
+  border: 1px solid rgba(237, 206, 160, 0.18);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.inspire-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 70px;
+  height: 70px;
+  background: radial-gradient(circle, rgba(237, 206, 160, 0.15), transparent 70%);
+  border-radius: 50%;
+  transform: translate(20px, -20px);
+}
+.inspire-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(237, 206, 160, 0.3);
+  border-color: rgba(237, 206, 160, 0.5);
+}
+.inspire-card .inspire-icon {
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(237, 206, 160, 0.12);
+  color: #edcea0;
+  font-size: 1.3rem;
+  margin-bottom: 0.75rem;
+}
+.inspire-card .inspire-title {
+  color: #edcea0;
+  font-weight: bold;
+  font-size: 1.15rem;
+  margin-bottom: 0.6rem;
+}
+.inspire-card .inspire-ayah {
+  font-family: 'Amiri', 'Traditional Arabic', serif;
+  font-size: 1.05rem;
+  line-height: 1.9;
+  color: #f8f9fa;
+  margin-bottom: 0.5rem;
+  flex-grow: 1;
+}
+.inspire-card .inspire-ayah-source {
+  font-size: 0.72rem;
+  opacity: 0.6;
+  margin-bottom: 0.75rem;
+}
+.inspire-card .inspire-phrase {
+  color: #edcea0;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  opacity: 0.9;
+}
+.inspire-card .btn {
+  margin-top: auto;
+}
+
+/* ===== كاروسيل الوصول السريع ===== */
+.quick-carousel-wrap {
+  max-width: 420px;
+  margin: 0 auto;
+}
+.quick-carousel-slide {
+  background: linear-gradient(145deg, #262621, #1d1d19);
+  border: 1px solid rgba(237, 206, 160, 0.2);
+  border-radius: 1.25rem;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  transition: border-color 0.3s ease;
+}
+.quick-carousel-slide:hover {
+  border-color: rgba(237, 206, 160, 0.6);
+}
+.quick-carousel-slide .quick-icon {
+  font-size: 2.2rem;
+  color: #edcea0;
+  margin-bottom: 0.75rem;
+}
+.quick-carousel-slide .quick-title {
+  color: #edcea0;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+#quickAccessCarousel .carousel-control-prev,
+#quickAccessCarousel .carousel-control-next {
+  width: 10%;
+  filter: invert(84%) sepia(15%) saturate(500%) hue-rotate(345deg);
+}
+#quickAccessCarousel .carousel-indicators [data-bs-target] {
+  background-color: #edcea0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
 /* ===== صفحة الإعدادات الجديدة ===== */
 .settings-section-title {
   color: #edcea0;
@@ -909,31 +1020,4 @@ html[data-night-mode="true"] h6 {
   margin-top: -6rem;
   background-color: #21211D !important; /* لون أسود مطفأ وأعمق، أو فيك تحطه #1a1a17 لدرجة أفتح شوي */
   border: 1px solid rgba(237, 206, 160, 0.3) !important; /* لون الحدود الذهبية الخفيفة */
-}
-/* إلغاء الأيقونة الأصلية تماماً واستبدالها بسهم جاهز ملون بلونك */
-#carouselId .carousel-control-prev-icon,
-#carouselId .carousel-control-next-icon {
-    background-image: none !important;
-    color: none !important;
-    width: 2.5rem;
-    height: 2.5rem;
-}
-.ca-w{
-  margin-right: 2.75rem !important;
-}
-
-/* وضع السهم السابق بلونك المخصص */
-#carouselId .carousel-control-prev-icon::after {
-    content: "‹";
-    font-size: 3rem;
-    font-weight: bold;
-    color: var(--gold-color);
-}
-
-/* وضع السهم التالي بلونك المخصص */
-#carouselId .carousel-control-next-icon::after {
-    content: "›";
-    font-size: 3rem;
-    font-weight: bold;
-    color: var(--gold-accent);
 }
