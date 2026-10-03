@@ -27,6 +27,15 @@
     <link rel="manifest" href="./manifest.json" />
     <meta name="theme-color" content="#21211D" />
     <link rel="icon" href="data:,">
+    <style>
+  html.auth-checking body {
+    visibility: hidden;
+  }
+</style>
+<script type="module" src="./auth.js"></script>
+<script>
+  document.documentElement.classList.add("auth-checking");
+</script>
   </head>
 
   <body>
@@ -989,6 +998,7 @@
     <script src="./prayer.js"></script>
     <script src="./qibla.js"></script>
     <script src="./adiya.js"></script>
+
     <!-- <script>
   document.addEventListener("DOMContentLoaded", () => {
     const continueContainer = document.getElementById("continue-reading-container");

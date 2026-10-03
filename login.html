@@ -1,0 +1,1028 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-bs-theme="dark">
+
+<head>
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <meta
+    name="theme-color"
+    content="#21211D"
+  />
+
+  <title>الإشراق | تسجيل الدخول</title>
+
+  <!-- Bootstrap RTL -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css"
+    rel="stylesheet"
+  />
+
+  <!-- Bootstrap Icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+  />
+
+  <!-- Google Fonts -->
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  />
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@300;400;500;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Main Website Style -->
+  <link
+    rel="stylesheet"
+    href="./style.css"
+  />
+
+  <style>
+
+    /* ==================================================
+       Al-Ishraq Login Page
+       ================================================== */
+
+    :root {
+      --gold-accent: #EDCEA0;
+      --gold-color: #c5a059;
+      --desc-text-color: #D3D3C7;
+
+      --ishraq-bg: #21211D;
+      --ishraq-card: rgba(31, 30, 26, 0.82);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+    }
+
+    body {
+      font-family: "Tajawal", sans-serif;
+      background:
+        radial-gradient(
+          circle at 50% 15%,
+          rgba(197, 160, 89, 0.10),
+          transparent 32%
+        ),
+        radial-gradient(
+          circle at 10% 90%,
+          rgba(237, 206, 160, 0.045),
+          transparent 30%
+        ),
+        var(--ishraq-bg);
+
+      color: #fff;
+
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ==================================================
+       Islamic Geometric Background
+       ================================================== */
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+
+      pointer-events: none;
+
+      opacity: 0.16;
+
+      background-image:
+        linear-gradient(
+          30deg,
+          transparent 24%,
+          rgba(237, 206, 160, 0.08) 25%,
+          rgba(237, 206, 160, 0.08) 26%,
+          transparent 27%,
+          transparent 74%,
+          rgba(237, 206, 160, 0.08) 75%,
+          rgba(237, 206, 160, 0.08) 76%,
+          transparent 77%
+        ),
+        linear-gradient(
+          150deg,
+          transparent 24%,
+          rgba(237, 206, 160, 0.08) 25%,
+          rgba(237, 206, 160, 0.08) 26%,
+          transparent 27%,
+          transparent 74%,
+          rgba(237, 206, 160, 0.08) 75%,
+          rgba(237, 206, 160, 0.08) 76%,
+          transparent 77%
+        );
+
+      background-size: 110px 190px;
+      background-position: center;
+    }
+
+    /* ==================================================
+       Ambient Light
+       ================================================== */
+
+    body::after {
+      content: "";
+      position: fixed;
+
+      width: 520px;
+      height: 520px;
+
+      top: -240px;
+      left: 50%;
+
+      transform: translateX(-50%);
+
+      background:
+        radial-gradient(
+          circle,
+          rgba(197, 160, 89, 0.12) 0%,
+          rgba(197, 160, 89, 0.04) 35%,
+          transparent 70%
+        );
+
+      pointer-events: none;
+    }
+
+    /* ==================================================
+       Page Wrapper
+       ================================================== */
+
+    .login-page {
+      min-height: 100vh;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 35px 18px;
+
+      position: relative;
+      z-index: 1;
+    }
+
+    .login-wrapper {
+      width: 100%;
+      max-width: 430px;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ==================================================
+       Brand
+       ================================================== */
+
+    .brand-area {
+      text-align: center;
+
+      margin-bottom: 26px;
+
+      animation: brandAppear 0.8s ease both;
+    }
+
+    .brand-symbol {
+      width: 74px;
+      height: 74px;
+
+      margin: 0 auto 16px;
+
+      border-radius: 50%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border: 1px solid rgba(237, 206, 160, 0.42);
+
+      background:
+        radial-gradient(
+          circle at 35% 30%,
+          rgba(237, 206, 160, 0.18),
+          rgba(197, 160, 89, 0.035) 65%
+        );
+
+      box-shadow:
+        0 0 0 7px rgba(197, 160, 89, 0.025),
+        0 0 35px rgba(197, 160, 89, 0.10);
+    }
+
+  .brand-symbol img {
+  width: 54px;
+  height: 54px;
+
+  object-fit: contain;
+
+  display: block;
+
+  filter:
+    drop-shadow(
+      0 0 10px rgba(237, 206, 160, 0.20)
+    );
+}
+
+    .brand-name {
+      font-family: "Amiri", serif;
+
+      font-size: clamp(2.7rem, 10vw, 3.5rem);
+
+      line-height: 1;
+
+      color: var(--gold-accent);
+
+      margin: 0;
+
+      letter-spacing: 0.5px;
+
+      text-shadow:
+        0 2px 18px rgba(197, 160, 89, 0.12);
+    }
+
+    .brand-subtitle {
+      margin: 12px 0 0;
+
+      color: var(--desc-text-color);
+
+      font-size: 0.94rem;
+
+      font-weight: 300;
+
+      letter-spacing: 0.15px;
+    }
+
+    /* ==================================================
+       Gold Divider
+       ================================================== */
+
+    .gold-divider {
+      width: 90px;
+      height: 1px;
+
+      margin: 17px auto 0;
+
+      background:
+        linear-gradient(
+          90deg,
+          transparent,
+          var(--gold-color),
+          transparent
+        );
+
+      position: relative;
+    }
+
+    .gold-divider::after {
+      content: "✦";
+
+      position: absolute;
+
+      left: 50%;
+      top: 50%;
+
+      transform:
+        translate(-50%, -50%);
+
+      padding: 0 7px;
+
+      background: var(--ishraq-bg);
+
+      color: var(--gold-accent);
+
+      font-size: 11px;
+    }
+
+    /* ==================================================
+       Login Card
+       ================================================== */
+
+    .login-card {
+      width: 100%;
+
+      padding: 31px 27px 27px;
+
+      border-radius: 25px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(52, 50, 43, 0.78),
+          rgba(27, 27, 23, 0.88)
+        );
+
+      border: 1px solid rgba(237, 206, 160, 0.14);
+
+      box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.035);
+
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+
+      animation: cardAppear 0.8s 0.08s ease both;
+    }
+
+    .card-heading {
+      text-align: center;
+
+      margin-bottom: 26px;
+    }
+
+    .card-heading h1 {
+      font-size: 1.25rem;
+
+      font-weight: 500;
+
+      margin: 0 0 7px;
+
+      color: #fff;
+    }
+
+    .card-heading p {
+      margin: 0;
+
+      color: #aaa99f;
+
+      font-size: 0.84rem;
+
+      font-weight: 300;
+    }
+
+    /* ==================================================
+       Form
+       ================================================== */
+
+    .form-label {
+      color: #d8d6cc;
+
+      font-size: 0.86rem;
+
+      margin-bottom: 8px;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+
+      top: 50%;
+      right: 16px;
+
+      transform: translateY(-50%);
+
+      color: var(--gold-color);
+
+      font-size: 1rem;
+
+      pointer-events: none;
+
+      z-index: 2;
+    }
+
+    .ishraq-input {
+      width: 100%;
+
+      min-height: 52px;
+
+      padding:
+        10px 48px 10px 15px;
+
+      border-radius: 14px;
+
+      border: 1px solid rgba(237, 206, 160, 0.13);
+
+      background:
+        rgba(10, 10, 9, 0.38);
+
+      color: #fff;
+
+      font-family: "Tajawal", sans-serif;
+
+      transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
+    }
+
+    .ishraq-input::placeholder {
+      color: #77766e;
+    }
+
+    .ishraq-input:focus {
+      outline: none;
+
+      border-color:
+        rgba(197, 160, 89, 0.58);
+
+      background:
+        rgba(10, 10, 9, 0.54);
+
+      box-shadow:
+        0 0 0 3px rgba(197, 160, 89, 0.08);
+    }
+
+    .password-toggle {
+      position: absolute;
+
+      left: 15px;
+      top: 50%;
+
+      transform: translateY(-50%);
+
+      border: 0;
+
+      background: transparent;
+
+      color: #8e8c83;
+
+      padding: 4px;
+
+      cursor: pointer;
+
+      transition: color 0.2s ease;
+    }
+
+    .password-toggle:hover {
+      color: var(--gold-accent);
+    }
+
+    /* ==================================================
+       Login Button
+       ================================================== */
+
+    .login-button {
+      width: 100%;
+
+      min-height: 53px;
+
+      margin-top: 24px;
+
+      border: 0;
+
+      border-radius: 15px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #d9bb7e,
+          #b68b3f
+        );
+
+      color: #201f1a;
+
+      font-family: "Tajawal", sans-serif;
+
+      font-size: 0.98rem;
+
+      font-weight: 700;
+
+      box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.28);
+
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        filter 0.2s ease;
+    }
+
+    .login-button:hover {
+      transform: translateY(-2px);
+
+      filter: brightness(1.06);
+
+      box-shadow:
+        0 13px 30px rgba(0, 0, 0, 0.34);
+    }
+
+    .login-button:active {
+      transform: translateY(0);
+    }
+
+    .login-button:disabled {
+      opacity: 0.72;
+
+      cursor: not-allowed;
+
+      transform: none;
+    }
+
+    .login-button i {
+      margin-left: 7px;
+    }
+
+    /* ==================================================
+       Error Message
+       ================================================== */
+
+    .login-error {
+      display: none;
+
+      margin-top: 16px;
+
+      padding: 11px 13px;
+
+      border-radius: 12px;
+
+      background:
+        rgba(150, 65, 65, 0.12);
+
+      border:
+        1px solid rgba(190, 90, 90, 0.20);
+
+      color: #e7b5b5;
+
+      font-size: 0.82rem;
+
+      line-height: 1.6;
+
+      text-align: center;
+    }
+
+    .login-error.show {
+      display: block;
+    }
+
+    /* ==================================================
+       Footer
+       ================================================== */
+
+    .login-footer {
+      text-align: center;
+
+      margin-top: 25px;
+
+      color: #77766f;
+
+      font-size: 0.76rem;
+
+      line-height: 1.8;
+    }
+
+    .login-footer .gold {
+      color: var(--gold-color);
+    }
+
+    /* ==================================================
+       Animations
+       ================================================== */
+
+    @keyframes brandAppear {
+      from {
+        opacity: 0;
+        transform: translateY(-12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes cardAppear {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ==================================================
+       Mobile
+       ================================================== */
+
+    @media (max-width: 480px) {
+
+      .login-page {
+        padding:
+          28px 15px;
+      }
+
+      .brand-area {
+        margin-bottom: 22px;
+      }
+
+      .brand-symbol {
+        width: 66px;
+        height: 66px;
+      }
+
+.brand-symbol img {
+  width: 48px;
+  height: 48px;
+}
+
+      .brand-name {
+        font-size: 2.8rem;
+      }
+
+      .brand-subtitle {
+        font-size: 0.88rem;
+      }
+
+      .login-card {
+        padding:
+          27px 20px 22px;
+
+        border-radius: 22px;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <main class="login-page">
+
+    <div class="login-wrapper">
+
+      <!-- ================================
+           Brand
+           ================================ -->
+
+      <section class="brand-area">
+
+    <div class="brand-symbol">
+  <img
+    src="./5b862b4281f64fd884b11984846f0e97.png"
+    alt="شعار الإشراق"
+  />
+</div>
+
+        <h2 class="brand-name">
+          الإشراق
+        </h2>
+
+        <p class="brand-subtitle">
+          نشرق بروحك ونسمو بقلبك
+        </p>
+
+        <div class="gold-divider"></div>
+
+      </section>
+
+
+      <!-- ================================
+           Login Card
+           ================================ -->
+
+      <section class="login-card">
+
+        <div class="card-heading">
+
+          <h1>
+            مرحبًا بك في الإشراق
+          </h1>
+
+          <p>
+            سجّل دخولك وتابع رحلتك الإيمانية
+          </p>
+
+        </div>
+
+
+        <!-- Login Form -->
+
+        <form id="loginForm">
+
+          <!-- Email -->
+
+          <div class="mb-3">
+
+            <label
+              for="email"
+              class="form-label"
+            >
+              البريد الإلكتروني
+            </label>
+
+            <div class="input-wrapper">
+
+              <i class="bi bi-envelope input-icon"></i>
+
+              <input
+                type="email"
+                id="email"
+                class="ishraq-input"
+                placeholder="أدخل بريدك الإلكتروني"
+                autocomplete="email"
+                required
+              />
+
+            </div>
+
+          </div>
+
+
+          <!-- Password -->
+
+          <div>
+
+            <label
+              for="password"
+              class="form-label"
+            >
+              كلمة المرور
+            </label>
+
+            <div class="input-wrapper">
+
+              <i class="bi bi-lock input-icon"></i>
+
+              <input
+                type="password"
+                id="password"
+                class="ishraq-input"
+                placeholder="أدخل كلمة المرور"
+                autocomplete="current-password"
+                required
+              />
+
+              <button
+                type="button"
+                id="togglePassword"
+                class="password-toggle"
+                aria-label="إظهار كلمة المرور"
+              >
+                <i class="bi bi-eye"></i>
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <!-- Error -->
+
+          <div
+            id="loginError"
+            class="login-error"
+          ></div>
+
+
+          <!-- Login Button -->
+
+          <button
+            type="submit"
+            id="loginButton"
+            class="login-button"
+          >
+            <i class="bi bi-box-arrow-in-left"></i>
+            تسجيل الدخول
+          </button>
+
+        </form>
+
+      </section>
+
+
+      <!-- ================================
+           Footer
+           ================================ -->
+
+      <footer class="login-footer">
+
+        <div>
+          <span class="gold">الإشراق</span>
+          — خيرٌ يمتد ونورٌ يُشرق
+        </div>
+
+        <div>
+          صدقة جارية... وأثرٌ طيب
+        </div>
+
+      </footer>
+
+    </div>
+
+  </main>
+
+
+  <!-- Bootstrap -->
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+  </script>
+
+
+  <!-- =====================================
+       Firebase Login
+       ===================================== -->
+
+  <script type="module">
+
+    import {
+      initializeApp
+    } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+
+    import {
+      getAuth,
+      signInWithEmailAndPassword
+    } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+
+
+    // Firebase Configuration
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD3RQ2jrXcJOUqmhUrGuBQ6R8kZ2sSLOr0",
+      authDomain: "alishraq-fe305.firebaseapp.com",
+      projectId: "alishraq-fe305",
+      storageBucket: "alishraq-fe305.firebasestorage.app",
+      messagingSenderId: "816905605188",
+      appId: "1:816905605188:web:639252ce9ef899bd622c11",
+      measurementId: "G-X6NV8MT549"
+    };
+
+
+    // Initialize Firebase
+
+    const app = initializeApp(firebaseConfig);
+
+    const auth = getAuth(app);
+
+
+    // Elements
+
+    const loginForm =
+      document.getElementById("loginForm");
+
+    const emailInput =
+      document.getElementById("email");
+
+    const passwordInput =
+      document.getElementById("password");
+
+    const loginButton =
+      document.getElementById("loginButton");
+
+    const loginError =
+      document.getElementById("loginError");
+
+    const togglePassword =
+      document.getElementById("togglePassword");
+
+
+    // =====================================
+    // Show / Hide Password
+    // =====================================
+
+    togglePassword.addEventListener(
+      "click",
+      () => {
+
+        const isPassword =
+          passwordInput.type === "password";
+
+        passwordInput.type =
+          isPassword ? "text" : "password";
+
+        togglePassword.innerHTML =
+          isPassword
+            ? '<i class="bi bi-eye-slash"></i>'
+            : '<i class="bi bi-eye"></i>';
+
+      }
+    );
+
+
+    // =====================================
+    // Login
+    // =====================================
+
+    loginForm.addEventListener(
+      "submit",
+      async (event) => {
+
+        event.preventDefault();
+
+        loginError.classList.remove("show");
+        loginError.textContent = "";
+
+        const email =
+          emailInput.value.trim();
+
+        const password =
+          passwordInput.value;
+
+
+        // Loading state
+
+        loginButton.disabled = true;
+
+        loginButton.innerHTML =
+          '<span class="spinner-border spinner-border-sm ms-2"></span> جارٍ تسجيل الدخول...';
+
+
+        try {
+
+          await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+
+          // نجاح تسجيل الدخول
+
+          window.location.replace(
+            "./index.html"
+          );
+
+        } catch (error) {
+
+          console.error(
+            "Login error:",
+            error
+          );
+
+
+          let message =
+            "تعذر تسجيل الدخول. تأكد من البريد الإلكتروني وكلمة المرور.";
+
+
+          if (
+            error.code ===
+            "auth/invalid-credential"
+          ) {
+
+            message =
+              "البريد الإلكتروني أو كلمة المرور غير صحيحة.";
+
+          } else if (
+            error.code ===
+            "auth/invalid-email"
+          ) {
+
+            message =
+              "يرجى إدخال بريد إلكتروني صحيح.";
+
+          } else if (
+            error.code ===
+            "auth/user-disabled"
+          ) {
+
+            message =
+              "هذا الحساب تم تعطيله.";
+
+          } else if (
+            error.code ===
+            "auth/too-many-requests"
+          ) {
+
+            message =
+              "تمت محاولات كثيرة. حاول مرة أخرى بعد قليل.";
+
+          }
+
+
+          loginError.textContent =
+            message;
+
+          loginError.classList.add(
+            "show"
+          );
+
+
+          // Restore button
+
+          loginButton.disabled = false;
+
+          loginButton.innerHTML =
+            '<i class="bi bi-box-arrow-in-left"></i> تسجيل الدخول';
+
+        }
+
+      }
+    );
+
+  </script>
+
+</body>
+
+</html>
