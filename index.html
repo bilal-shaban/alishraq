@@ -15,7 +15,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&family=Amiri+Quran&display=swap"
       rel="stylesheet"
     />
     <link
@@ -450,10 +450,10 @@
           <h4 class="gold fw-bold"><i class="bi bi-stars me-2"></i>تعرّف على أقسامنا</h4>
         </div>
         <div class="row g-4 mb-5">
+          <!-- 1. القرآن — اقتباس كلاسيكي -->
           <div class="col-md-4 col-sm-6">
-            <div class="inspire-card">
-              <div class="inspire-icon"><i class="bi bi-book-fill"></i></div>
-              <div class="inspire-title">القرآن الكريم</div>
+            <div class="inspire-card inspire-card-1">
+              <div class="inspire-title"><i class="bi bi-book-fill me-2"></i>القرآن الكريم</div>
               <p class="inspire-ayah">إِنَّ الَّذِينَ يَتْلُونَ كِتَابَ اللَّهِ وَأَقَامُوا الصَّلَاةَ وَأَنفَقُوا مِمَّا رَزَقْنَاهُمْ سِرًّا وَعَلَانِيَةً يَرْجُونَ تِجَارَةً لَّن تَبُورَ</p>
               <div class="inspire-ayah-source">سورة فاطر - 29</div>
               <div class="inspire-phrase">اجعل القرآن رفيقك اليومي ونور قلبك</div>
@@ -463,10 +463,11 @@
             </div>
           </div>
 
+          <!-- 2. الحديث — شارة مائلة وشريط علوي -->
           <div class="col-md-4 col-sm-6">
-            <div class="inspire-card">
-              <div class="inspire-icon"><i class="bi bi-journal-text"></i></div>
-              <div class="inspire-title">الحديث النبوي</div>
+            <div class="inspire-card inspire-card-2">
+              <span class="inspire-badge">ﷺ</span>
+              <div class="inspire-title"><i class="bi bi-journal-text me-2"></i>الحديث النبوي</div>
               <p class="inspire-ayah">لَقَدْ كَانَ لَكُمْ فِي رَسُولِ اللَّهِ أُسْوَةٌ حَسَنَةٌ</p>
               <div class="inspire-ayah-source">سورة الأحزاب - 21</div>
               <div class="inspire-phrase">اقتفِ خطى الحبيب ﷺ بقولك وفعلك</div>
@@ -476,9 +477,10 @@
             </div>
           </div>
 
+          <!-- 3. الأذكار — تمركز بهالة مضيئة -->
           <div class="col-md-4 col-sm-6">
-            <div class="inspire-card">
-              <div class="inspire-icon"><i class="bi bi-moon-stars-fill"></i></div>
+            <div class="inspire-card inspire-card-3">
+              <div class="inspire-icon-ring"><i class="bi bi-moon-stars-fill"></i></div>
               <div class="inspire-title">الأذكار</div>
               <p class="inspire-ayah">أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ</p>
               <div class="inspire-ayah-source">سورة الرعد - 28</div>
@@ -489,35 +491,42 @@
             </div>
           </div>
 
+          <!-- 4. الأوراد — تخطيط أفقي بفاصل عمودي -->
           <div class="col-md-4 col-sm-6">
-            <div class="inspire-card">
-              <div class="inspire-icon"><i class="bi bi-book-half"></i></div>
-              <div class="inspire-title">الأوراد</div>
-              <p class="inspire-ayah">أَحَبُّ الْأَعْمَالِ إِلَى اللَّهِ أَدْوَمُهَا وَإِنْ قَلَّ</p>
-              <div class="inspire-ayah-source">متفق عليه</div>
-              <div class="inspire-phrase">واظب على وردك ولو قلّ</div>
-              <a href="./awrad.html" class="btn btn-gold-solid rounded-pill">
-                <i class="bi bi-arrow-left me-1"></i> أورادي
-              </a>
+            <div class="inspire-card inspire-card-4">
+              <div class="inspire-row">
+                <div class="inspire-title">الأوراد</div>
+                <div class="inspire-divider"></div>
+                <div class="flex-grow-1 d-flex flex-column">
+                  <p class="inspire-ayah mb-2"><i class="bi bi-book-half me-1"></i> أَحَبُّ الْأَعْمَالِ إِلَى اللَّهِ أَدْوَمُهَا وَإِنْ قَلَّ</p>
+                  <div class="inspire-ayah-source">متفق عليه</div>
+                  <div class="inspire-phrase">واظب على وردك ولو قلّ</div>
+                  <a href="./awrad.html" class="btn btn-gold-solid rounded-pill">
+                    <i class="bi bi-arrow-left me-1"></i> أورادي
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
 
+          <!-- 5. الأدعية — بطاقة داخل بطاقة -->
           <div class="col-md-4 col-sm-6">
-            <div class="inspire-card">
-              <div class="inspire-icon"><i class="bi bi-hands-praying"></i></div>
-              <div class="inspire-title">الأدعية</div>
-              <p class="inspire-ayah">وَقَالَ رَبُّكُمُ ادْعُونِي أَسْتَجِبْ لَكُمْ</p>
-              <div class="inspire-ayah-source">سورة غافر - 60</div>
-              <div class="inspire-phrase">ادعُ ربك فهو القريب المجيب</div>
+            <div class="inspire-card inspire-card-5">
+              <div class="inspire-title"><i class="bi bi-hands-praying me-2"></i>الأدعية</div>
+              <div class="inspire-inset">
+                <p class="inspire-ayah mb-1">وَقَالَ رَبُّكُمُ ادْعُونِي أَسْتَجِبْ لَكُمْ</p>
+                <div class="inspire-ayah-source mb-0">سورة غافر - 60</div>
+              </div>
+              <div class="inspire-phrase mt-3">ادعُ ربك فهو القريب المجيب</div>
               <a href="./adiya.html" class="btn btn-gold-solid rounded-pill">
                 <i class="bi bi-arrow-left me-1"></i> الأدعية
               </a>
             </div>
           </div>
 
+          <!-- 6. المطوف — حدود متقطعة وأيقونة سفلية -->
           <div class="col-md-4 col-sm-6">
-            <div class="inspire-card">
-              <div class="inspire-icon"><i class="bi bi-person-walking"></i></div>
+            <div class="inspire-card inspire-card-6">
               <div class="inspire-title">المطوف</div>
               <p class="inspire-ayah">الْعُمْرَةُ إِلَى الْعُمْرَةِ كَفَّارَةٌ لِمَا بَيْنَهُمَا</p>
               <div class="inspire-ayah-source">متفق عليه</div>
@@ -525,6 +534,7 @@
               <a href="./matwaf.html" class="btn btn-gold-solid rounded-pill">
                 <i class="bi bi-arrow-left me-1"></i> المطوف الرقمي
               </a>
+              <div class="inspire-footer-icon"><i class="bi bi-person-walking"></i></div>
             </div>
           </div>
         </div>

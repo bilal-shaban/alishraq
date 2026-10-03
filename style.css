@@ -556,57 +556,27 @@ body.focus-reading-mode .reader-toolbar {
   background-color: #edcea0 !important;
 }
 
-/* ===== بطاقات "تعرّف على الأقسام" بالصفحة الرئيسية ===== */
+/* ===== بطاقات "تعرّف على الأقسام" بالصفحة الرئيسية (تصميم مختلف لكل بطاقة) ===== */
 .inspire-card {
-  background: linear-gradient(145deg, #262621, #1d1d19);
-  border: 1px solid rgba(237, 206, 160, 0.18);
-  border-radius: 1.25rem;
-  padding: 1.5rem;
   height: 100%;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  border-radius: 1.25rem;
+  padding: 1.5rem;
   position: relative;
   overflow: hidden;
-}
-.inspire-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 70px;
-  height: 70px;
-  background: radial-gradient(circle, rgba(237, 206, 160, 0.15), transparent 70%);
-  border-radius: 50%;
-  transform: translate(20px, -20px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  background: #262621;
+  border: 1px solid rgba(237, 206, 160, 0.18);
 }
 .inspire-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(237, 206, 160, 0.3);
-  border-color: rgba(237, 206, 160, 0.5);
-}
-.inspire-card .inspire-icon {
-  width: 46px;
-  height: 46px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: rgba(237, 206, 160, 0.12);
-  color: #edcea0;
-  font-size: 1.3rem;
-  margin-bottom: 0.75rem;
-}
-.inspire-card .inspire-title {
-  color: #edcea0;
-  font-weight: bold;
-  font-size: 1.15rem;
-  margin-bottom: 0.6rem;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45);
 }
 .inspire-card .inspire-ayah {
-  font-family: 'Amiri', 'Traditional Arabic', serif;
+  font-family: 'Amiri Quran', 'Amiri', 'Traditional Arabic', serif;
   font-size: 1.05rem;
-  line-height: 1.9;
+  line-height: 2.1;
   color: #f8f9fa;
   margin-bottom: 0.5rem;
   flex-grow: 1;
@@ -617,14 +587,132 @@ body.focus-reading-mode .reader-toolbar {
   margin-bottom: 0.75rem;
 }
 .inspire-card .inspire-phrase {
-  color: #edcea0;
   font-weight: 600;
   font-size: 0.9rem;
   margin-bottom: 1rem;
-  opacity: 0.9;
 }
 .inspire-card .btn {
   margin-top: auto;
+}
+
+/* 1. القرآن — اقتباس كلاسيكي بحد ذهبي جانبي وعلامة تنصيص ضخمة */
+.inspire-card-1 {
+  background: linear-gradient(165deg, #262621 60%, #2c2a22);
+  border-right: 4px solid #edcea0;
+  border-radius: 0.5rem 1.5rem 1.5rem 0.5rem;
+}
+.inspire-card-1::before {
+  content: "\201D";
+  position: absolute;
+  top: -20px;
+  left: 10px;
+  font-size: 7rem;
+  color: rgba(237, 206, 160, 0.08);
+  font-family: Georgia, serif;
+  line-height: 1;
+}
+.inspire-card-1 .inspire-title { color: #edcea0; font-weight: bold; font-size: 1.2rem; margin-bottom: 0.75rem; }
+.inspire-card-1 .inspire-phrase { color: #edcea0; }
+
+/* 2. الحديث — شريط علوي متدرج + شارة مائلة */
+.inspire-card-2 {
+  border-radius: 1.25rem;
+  border-top: none;
+}
+.inspire-card-2::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #edcea0, #8a6d3b, #edcea0);
+}
+.inspire-card-2 .inspire-badge {
+  position: absolute;
+  top: 14px;
+  left: -32px;
+  background: #edcea0;
+  color: #21211d;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 3px 36px;
+  transform: rotate(-45deg);
+}
+.inspire-card-2 .inspire-title { color: #f8f9fa; font-weight: bold; font-size: 1.2rem; margin: 0.5rem 0 0.75rem; }
+.inspire-card-2 .inspire-phrase { color: #edcea0; }
+
+/* 3. الأذكار — دائرة توهّج مركزية ومحتوى متمركز */
+.inspire-card-3 {
+  text-align: center;
+  background: radial-gradient(circle at top, #2d2b24, #1d1d19 75%);
+  border-radius: 1.5rem;
+}
+.inspire-card-3 .inspire-icon-ring {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  margin: 0 auto 0.75rem;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(237, 206, 160, 0.1);
+  box-shadow: 0 0 0 1px rgba(237, 206, 160, 0.3), 0 0 18px rgba(237, 206, 160, 0.25);
+  color: #edcea0;
+  font-size: 1.5rem;
+}
+.inspire-card-3 .inspire-title { color: #edcea0; font-weight: bold; font-size: 1.2rem; margin-bottom: 0.75rem; }
+.inspire-card-3 .inspire-phrase { color: #edcea0; }
+.inspire-card-3 .btn { margin-left: auto; margin-right: auto; }
+
+/* 4. الأوراد — تخطيط أفقي بفاصل عمودي */
+.inspire-card-4 {
+  border-radius: 1.25rem;
+  background: #221f1a;
+}
+.inspire-card-4 .inspire-row { display: flex; gap: 1rem; flex-grow: 1; }
+.inspire-card-4 .inspire-divider {
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, #edcea0, transparent);
+  flex-shrink: 0;
+}
+.inspire-card-4 .inspire-title { color: #edcea0; font-weight: bold; font-size: 1.05rem; writing-mode: vertical-rl; text-orientation: mixed; margin: 0; }
+.inspire-card-4 .inspire-phrase { color: #edcea0; }
+
+/* 5. الأدعية — بطاقة داخل بطاقة بهالة مضيئة */
+.inspire-card-5 {
+  border-radius: 1.5rem;
+  background: #262621;
+}
+.inspire-card-5::before {
+  content: "";
+  position: absolute;
+  width: 140px; height: 140px;
+  background: radial-gradient(circle, rgba(237, 206, 160, 0.18), transparent 70%);
+  top: -40px; right: -40px;
+  border-radius: 50%;
+}
+.inspire-card-5 .inspire-inset {
+  background: rgba(0,0,0,0.25);
+  border: 1px dashed rgba(237, 206, 160, 0.35);
+  border-radius: 1rem;
+  padding: 1rem;
+  flex-grow: 1;
+}
+.inspire-card-5 .inspire-title { color: #edcea0; font-weight: bold; font-size: 1.2rem; margin-bottom: 0.75rem; }
+.inspire-card-5 .inspire-phrase { color: #edcea0; }
+
+/* 6. المطوف — تخطيط معكوس (الأيقونة بالأسفل) بحدود متقطعة توحي برحلة */
+.inspire-card-6 {
+  border: 2px dashed rgba(237, 206, 160, 0.4);
+  background: #21211d;
+  border-radius: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+.inspire-card-6 .inspire-title { color: #edcea0; font-weight: bold; font-size: 1.2rem; margin-bottom: 0.75rem; }
+.inspire-card-6 .inspire-phrase { color: #edcea0; }
+.inspire-card-6 .inspire-footer-icon {
+  font-size: 2rem;
+  color: #edcea0;
+  text-align: center;
+  margin-top: 0.75rem;
+  opacity: 0.8;
 }
 
 /* ===== كاروسيل الوصول السريع ===== */
