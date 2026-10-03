@@ -153,6 +153,19 @@
           </p>
         </div>
 
+        <!-- بطاقة "ما الجديد" الفخمة -->
+        <div class="whats-new-card mb-4" data-bs-toggle="modal" data-bs-target="#whatsNewModal">
+          <div class="whats-new-glow"></div>
+          <div class="d-flex align-items-center justify-content-between position-relative">
+            <div>
+              <span class="whats-new-version">V1.0</span>
+              <div class="whats-new-title mt-2"><i class="bi bi-gift-fill me-2"></i>ما الجديد في إشراق</div>
+              <div class="whats-new-sub">تصفّح كل ما يقدمه لك التطبيق من ميزات</div>
+            </div>
+            <i class="bi bi-chevron-left whats-new-arrow"></i>
+          </div>
+        </div>
+
         <!-- ============== قسم العبادة والإشعارات ============== -->
         <div class="settings-section-title"><i class="bi bi-bell-fill"></i> العبادة والإشعارات</div>
         <div class="settings-card">
@@ -394,6 +407,85 @@
         </a>
       </div>
     </nav>
+
+    <!-- نافذة "ما الجديد في إشراق" -->
+    <div class="modal fade" id="whatsNewModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content bg-dark border border-gold-subtle">
+          <div class="modal-header border-bottom border-gold-subtle">
+            <h5 class="modal-title gold fw-bold">
+              <i class="bi bi-gift-fill me-2"></i>ما الجديد — إشراق <span class="badge bg-gold text-dark ms-1">V1.0</span>
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+
+            <div class="whats-new-section">
+              <div class="whats-new-section-title"><i class="bi bi-book-fill me-2"></i>القرآن الكريم</div>
+              <ul class="whats-new-list">
+                <li>قراءة جميع السور بعرض عادي أو عرض المصحف المتصل، مع تكبير/تصغير الخط والرسم العثماني</li>
+                <li>استماع لتلاوة السورة كاملة بأربعة قراء، مع شريط تقدم وتحكم بالصوت وتنزيل للاستماع أوفلاين</li>
+                <li>تشغيل تلقائي متسلسل بين السور (Playlist)</li>
+                <li>حفظ آخر موضع قراءة والعودة له تلقائياً، وأرشيف لآخر 5 سور مقروءة</li>
+                <li>فهرسة حسب الجزء، وبحث صوتي، ورابط مباشر لأي آية</li>
+                <li>تفسير مختصر فوري لكل آية، وعلامات مرجعية متعددة، ومتتبع للختمة</li>
+                <li>وضع القراءة المركزة (ملء الشاشة) بشريط أدوات ثابت أثناء التمرير</li>
+              </ul>
+            </div>
+
+            <div class="whats-new-section">
+              <div class="whats-new-section-title"><i class="bi bi-moon-stars-fill me-2"></i>الأذكار والأوراد والأدعية</div>
+              <ul class="whats-new-list">
+                <li>أذكار الصباح والمساء والنوم والاستيقاظ وبعد الصلاة، وأذكار متفرقة</li>
+                <li>أوراد النووي والبحر والنصر</li>
+                <li>أدعية من القرآن والسنة، ورمضان، والسفر، والجمعة، والمريض، وتفريج الهمّ، والحمل والولادة، والزواج</li>
+                <li>عدّاد تفاعلي لكل ذكر ودعاء، و"دعاء اليوم" يتغير تلقائياً</li>
+                <li>بحث نصي شامل، وفرز حسب الطول، وإضافة أدعية شخصية خاصة بك</li>
+                <li>مشاركة أي دعاء كصورة مصممة جاهزة للمشاركة</li>
+              </ul>
+            </div>
+
+            <div class="whats-new-section">
+              <div class="whats-new-section-title"><i class="bi bi-circle me-2"></i>السبحة</div>
+              <ul class="whats-new-list">
+                <li>عدّاد تفاعلي بأصوات نقر متعددة (خشبي/معدني/صامت) واهتزاز بأنماط مختلفة</li>
+                <li>أهداف يومية ورسم بياني أسبوعي لتسبيحك</li>
+                <li>التسبيح بالسحب، والتسبيح بأسماء الله الحسنى مع شرح كل اسم</li>
+                <li>تحدي الأصدقاء، وتذكير مسائي لطيف إذا نسيت التسبيح</li>
+              </ul>
+            </div>
+
+            <div class="whats-new-section">
+              <div class="whats-new-section-title"><i class="bi bi-compass-fill me-2"></i>القبلة والمطوف</div>
+              <ul class="whats-new-list">
+                <li>بوصلة قبلة دقيقة ومعايرة بالكامل لجميع الأجهزة</li>
+                <li>دليل تفاعلي خطوة بخطوة للعمرة والحج مع عدّاد أشواط</li>
+                <li>أرشيف لإنجازاتك (عُمَراتي وحجّاتي) وأدعية إضافية ودعاء دخول مكة</li>
+              </ul>
+            </div>
+
+            <div class="whats-new-section">
+              <div class="whats-new-section-title"><i class="bi bi-bell-fill me-2"></i>الإشعارات والمفضلة</div>
+              <ul class="whats-new-list">
+                <li>تنبيه فوري بدخول وقت الصلاة من أي صفحة بالتطبيق، مع اختيار طريقة الحساب</li>
+                <li>تذكيرات أسبوعية (الجمعة) ويومية (السبحة) قابلة للتخصيص</li>
+                <li>صفحة مفضلة موحدة تجمع كل ما أضفته من القرآن والأذكار والأوراد والأدعية بمكان واحد</li>
+              </ul>
+            </div>
+
+            <div class="whats-new-section">
+              <div class="whats-new-section-title"><i class="bi bi-gear-fill me-2"></i>الإعدادات والهوية</div>
+              <ul class="whats-new-list">
+                <li>تحكم كامل بالقارئ الافتراضي وحجم الخط والرسم العثماني من مكان واحد</li>
+                <li>نسخ احتياطي لبياناتك واستعادتها، وتحديث ذاكرة التخزين المؤقت</li>
+                <li>الوضع الليلي، ودعم العمل بدون إنترنت (PWA)، وتصميم متجاوب بالكامل على كل الأجهزة</li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- JavaScript الخاص بالإعدادات -->
     

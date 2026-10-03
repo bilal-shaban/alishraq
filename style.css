@@ -697,6 +697,96 @@ body.focus-reading-mode .reader-toolbar {
 .inspire-card-5 .inspire-title { color: #edcea0; font-weight: bold; font-size: 1.2rem; margin-bottom: 0.75rem; }
 .inspire-card-5 .inspire-phrase { color: #edcea0; }
 
+/* 7. المفضلة — بطاقة "مميزة" بإطار متوهج متحرك وشارة VIP */
+.inspire-card-favorites {
+  border-radius: 1.5rem;
+  padding: 2px;
+  background: linear-gradient(135deg, #edcea0, #8a6d3b, #edcea0, #fff6e0, #edcea0);
+  background-size: 300% 300%;
+  animation: favoritesShimmer 6s ease infinite;
+  position: relative;
+  height: 100%;
+}
+@keyframes favoritesShimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.inspire-card-favorites-inner {
+  background: radial-gradient(circle at 15% 50%, #332f23, #19191600 60%), #1a1a16;
+  border-radius: calc(1.5rem - 2px);
+  padding: 1.75rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  position: relative;
+  overflow: hidden;
+}
+.inspire-card-favorites .inspire-ribbon {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.68rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  color: #21211d;
+  background: #edcea0;
+  padding: 3px 14px;
+  border-radius: 999px;
+  box-shadow: 0 0 12px rgba(237, 206, 160, 0.6);
+}
+.inspire-card-favorites .inspire-star-burst {
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: #edcea0;
+  background: radial-gradient(circle, rgba(237, 206, 160, 0.25), transparent 70%);
+  box-shadow: 0 0 25px rgba(237, 206, 160, 0.4);
+}
+.inspire-card-favorites .inspire-text-block {
+  flex-grow: 1;
+  min-width: 200px;
+  text-align: right;
+}
+.inspire-card-favorites .inspire-title {
+  color: #fff6e0;
+  font-weight: bold;
+  font-size: 1.3rem;
+  margin-bottom: 0.35rem;
+  text-shadow: 0 0 14px rgba(237, 206, 160, 0.5);
+}
+.inspire-card-favorites .inspire-phrase {
+  color: #edcea0;
+  font-size: 0.92rem;
+  opacity: 0.9;
+  margin-bottom: 0;
+}
+.inspire-card-favorites .btn {
+  flex-shrink: 0;
+  background: linear-gradient(90deg, #edcea0, #fff6e0, #edcea0);
+  background-size: 200% auto;
+  color: #21211d;
+  font-weight: bold;
+  border: none;
+  transition: background-position 0.4s ease;
+  padding: 0.6rem 1.5rem;
+}
+.inspire-card-favorites .btn:hover {
+  background-position: right center;
+  color: #21211d;
+}
+@media (max-width: 576px) {
+  .inspire-card-favorites-inner { flex-direction: column; text-align: center; }
+  .inspire-card-favorites .inspire-text-block { text-align: center; }
+}
+
 /* 6. المطوف — تخطيط معكوس (الأيقونة بالأسفل) بحدود متقطعة توحي برحلة */
 .inspire-card-6 {
   border: 2px dashed rgba(237, 206, 160, 0.4);
@@ -753,6 +843,80 @@ body.focus-reading-mode .reader-toolbar {
   width: 8px;
   height: 8px;
   border-radius: 50%;
+}
+
+/* ===== بطاقة "ما الجديد" الفخمة ===== */
+.whats-new-card {
+  position: relative;
+  background: linear-gradient(135deg, #2a271e, #1a1a16 70%);
+  border: 1px solid rgba(237, 206, 160, 0.3);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+.whats-new-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(237, 206, 160, 0.6);
+}
+.whats-new-glow {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  background: radial-gradient(circle, rgba(237, 206, 160, 0.2), transparent 70%);
+  top: -60px;
+  left: -40px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.whats-new-version {
+  display: inline-block;
+  background: #edcea0;
+  color: #21211d;
+  font-weight: bold;
+  font-size: 0.75rem;
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+.whats-new-title {
+  color: #fff6e0;
+  font-weight: bold;
+  font-size: 1.15rem;
+}
+.whats-new-sub {
+  color: #edcea0;
+  font-size: 0.82rem;
+  opacity: 0.85;
+}
+.whats-new-arrow {
+  color: #edcea0;
+  font-size: 1.3rem;
+}
+.whats-new-section {
+  margin-bottom: 1.5rem;
+}
+.whats-new-section:last-child {
+  margin-bottom: 0;
+}
+.whats-new-section-title {
+  color: #edcea0;
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(237, 206, 160, 0.2);
+}
+.whats-new-list {
+  padding-right: 1.1rem;
+  margin-bottom: 0;
+}
+.whats-new-list li {
+  color: #f8f9fa;
+  font-size: 0.88rem;
+  line-height: 1.8;
+  margin-bottom: 0.4rem;
+  opacity: 0.9;
 }
 
 /* ===== صفحة الإعدادات الجديدة ===== */
