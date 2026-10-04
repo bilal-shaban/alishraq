@@ -13,15 +13,24 @@
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
     <script src="./firebase-config.js"></script>
     <script>
+      function revealPage() {
+        // نتحقق إن كان body موجود فعلاً بالصفحة قبل محاولة إظهاره
+        if (document.body) {
+          document.body.style.visibility = "visible";
+        } else {
+          // body لسا ما انحمّل (حالة نادرة لو تأكد الدخول جاء سريعاً جداً)
+          document.addEventListener("DOMContentLoaded", () => {
+            document.body.style.visibility = "visible";
+          });
+        }
+      }
+
       firebase.auth().onAuthStateChanged((user) => {
         if (!user) {
           // غير مسجّل دخول: تحويل فوري لصفحة الدخول قبل أي ظهور لمحتوى الصفحة الرئيسية
           window.location.replace("login.html");
         } else {
-          document.documentElement.style.visibility = "";
-          document.addEventListener("DOMContentLoaded", () => {
-            document.body.style.visibility = "visible";
-          });
+          revealPage();
         }
       });
     </script>
