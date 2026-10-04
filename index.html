@@ -51,6 +51,19 @@
 <meta name="theme-color" content="#21211D" />
 
 <link rel="icon" href="data:,">
+  
+<style>
+  html.auth-checking body {
+    visibility: hidden;
+  }
+</style>
+
+<script>
+  document.documentElement.classList.add("auth-checking");
+</script>
+
+<script type="module" src="./auth.js"></script>
+  
 
   </head>  <body>   <header><nav
 
