@@ -501,6 +501,40 @@
     <script src="./firebase-config.js"></script>
     <script src="./settings.js"></script>
     <script src="./main.js"></script>
+    <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+  import {
+    getAuth,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD3RQ2jrXcJOUqmhUrGuBQ6R8kZ2sSLOr0",
+    authDomain: "alishraq-fe305.firebaseapp.com",
+    projectId: "alishraq-fe305",
+    storageBucket: "alishraq-fe305.firebasestorage.app",
+    messagingSenderId: "816905605188",
+    appId: "1:816905605188:web:639252ce9ef899bd622c11",
+    measurementId: "G-X6NV8MT549"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const logoutButton = document.getElementById("logoutButton");
+
+  if (logoutButton) {
+    logoutButton.addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+        window.location.replace("./login.html");
+      } catch (error) {
+        console.error("Logout error:", error);
+        alert("تعذر تسجيل الخروج، حاول مرة أخرى.");
+      }
+    });
+  }
+    </script>
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
