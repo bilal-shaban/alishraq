@@ -5,6 +5,27 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+    <!-- ===== حماية الصفحة: نخفي المحتوى فوراً ولا نظهره إلا بعد التأكد من تسجيل الدخول ===== -->
+    <style>
+      body { visibility: hidden; }
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+    <script src="./firebase-config.js"></script>
+    <script>
+      firebase.auth().onAuthStateChanged((user) => {
+        if (!user) {
+          // غير مسجّل دخول: تحويل فوري لصفحة الدخول قبل أي ظهور لمحتوى الصفحة الرئيسية
+          window.location.replace("login.html");
+        } else {
+          document.documentElement.style.visibility = "";
+          document.addEventListener("DOMContentLoaded", () => {
+            document.body.style.visibility = "visible";
+          });
+        }
+      });
+    </script>
+
     <!-- Bootstrap CSS RTL v5.3.3 -->
     <link
       rel="stylesheet"
@@ -27,15 +48,6 @@
     <link rel="manifest" href="./manifest.json" />
     <meta name="theme-color" content="#21211D" />
     <link rel="icon" href="data:,">
-    <style>
-  html.auth-checking body {
-    visibility: hidden;
-  }
-</style>
-<script type="module" src="./auth.js"></script>
-<script>
-  document.documentElement.classList.add("auth-checking");
-</script>
   </head>
 
   <body>
@@ -58,6 +70,16 @@
           >
             نُشرِقُ برُوحِك.. ونَسْمُو بِقَلْبِك
           </div>
+
+          <button
+            type="button"
+            class="btn btn-sm btn-gold-outline rounded-circle ms-2"
+            style="width: 38px; height: 38px;"
+            title="تسجيل الخروج"
+            onclick="logoutUser()"
+          >
+            <i class="bi bi-box-arrow-right"></i>
+          </button>
 
           <button
             class="navbar-toggler"
@@ -998,7 +1020,6 @@
     <script src="./prayer.js"></script>
     <script src="./qibla.js"></script>
     <script src="./adiya.js"></script>
-
     <!-- <script>
   document.addEventListener("DOMContentLoaded", () => {
     const continueContainer = document.getElementById("continue-reading-container");

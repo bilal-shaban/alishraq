@@ -12,6 +12,7 @@ const assetsToCache = [
   './awrad.html',
   './adiya.html',
   './favorites.html',
+  './login.html',
   './style.css',
   './manifest.json',
   './main.js',
@@ -26,6 +27,8 @@ const assetsToCache = [
   './awrad.js',
   './adiya.js',
   './favorites.js',
+  './login.js',
+  './firebase-config.js',
   './app-icon.png',
   './5b862b4281f64fd884b11984846f0e97.png'
 ];
