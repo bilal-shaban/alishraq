@@ -370,4 +370,3 @@ function addAzkarFavorite(category, text) {
   localStorage.setItem("eshraq_azkar_favorites", JSON.stringify(favorites));
 }
 
-
