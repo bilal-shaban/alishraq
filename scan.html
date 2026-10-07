@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-bs-theme="dark">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>تسجيل الحضور — المشرف</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#21211D">
+<style>
+body{background:#21211d;font-family:'Tajawal',sans-serif}
+.box{background:#1b1b18;border:1px solid rgba(237,206,160,.25);border-radius:16px;padding:1.1rem}
+.gold{color:#edcea0}
+.u-in{background:#21211d!important;border:1px solid rgba(237,206,160,.3)!important;color:#f8f9fa!important}
+.btn-gold{background:#edcea0;color:#21211d;font-weight:700;border:0}
+.btn-gold:hover{background:#e3c088;color:#21211d}
+#reader{border-radius:14px;overflow:hidden}
+#res{min-height:120px;border-radius:14px;display:grid;place-items:center;text-align:center;padding:1rem;font-weight:700;font-size:1.3rem;background:#21211d;border:1px dashed rgba(237,206,160,.3);color:#d3d3c7}
+#res.ok{background:#14532d;border:0;color:#fff}
+#res.dup{background:#7a5b00;border:0;color:#fff}
+#res.bad{background:#7f1d1d;border:0;color:#fff}
+#res small{font-weight:400;opacity:.85}
+</style>
+</head>
+<body>
+<main class="container py-4" style="max-width:560px">
+  <h1 class="gold fw-bold h4 text-center mb-3">تسجيل حضور الباص</h1>
+
+  <div class="box mb-3">
+    <input id="key" type="password" class="form-control u-in mb-2" placeholder="رمز المشرف" autocomplete="off">
+    <input id="label" class="form-control u-in mb-2" placeholder="اسم الباص أو النشاط (مثال: باص 3 — الحرم)" autocomplete="off">
+    <button id="go" class="btn btn-gold w-100">بدء المسح</button>
+  </div>
+
+  <div id="reader" class="mb-3 d-none"></div>
+  <div id="res">وجّه الكاميرا نحو رمز المعتمر بعد بدء المسح</div>
+  <div class="text-center mt-3 gold">تم تسجيل: <span id="cnt" class="fw-bold">0</span></div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbxBSrv8Rwlre9Vy3LQguKKwsOfpFSKYPpKd5HYlyoSJwijtF6cyGFm2nGnbva7bcceKLg/exec';
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const show = (cls, html) => { $('res').className = cls; $('res').innerHTML = html; };
+
+$('key').value = sessionStorage.getItem('sup_key') || '';
+$('label').value = localStorage.getItem('sup_label') || '';
+
+let scanner = null, busy = false, last = '', lastAt = 0, count = 0;
+
+async function onScan(text) {
+  const now = Date.now();
+  if (busy || (text === last && now - lastAt < 4000)) return; // تجاهل التكرار السريع لنفس الرمز
+  last = text; lastAt = now;
+  if (!/^UMRAH:/i.test(text)) return show('bad', '❌ رمز غير صالح');
+  busy = true; navigator.vibrate?.(80);
+  const label = $('label').value.trim();
+  try {
+    const r = await fetch(API, { method: 'POST', body: JSON.stringify({
+      action: 'checkin', key: $('key').value.trim(), label, pilgrimNo: text.slice(6)
+    }) }).then(r => r.json());
+    if (!r.ok) show('bad', r.error === 'key' ? '🔒 رمز المشرف غير صحيح' : r.error === 'notfound' ? '❌ معتمر غير موجود' : '❌ تعذّر التسجيل');
+    else if (r.dup) show('dup', `⚠️ ${esc(r.name)}<br><small>مسجّل مسبقًا في «${esc(label)}»</small>`);
+    else { count++; $('cnt').textContent = count; show('ok', `✅ ${esc(r.name)}<br><small>رقم ${esc(r.pilgrimNo)}</small>`); }
+  } catch {
+    show('bad', '📶 تعذّر الاتصال — أعد المسح'); last = '';
+  } finally { busy = false; }
+}
+
+$('go').onclick = async () => {
+  if (scanner) { // إيقاف
+    await scanner.stop().catch(() => {}); scanner = null;
+    $('reader').classList.add('d-none'); $('go').textContent = 'بدء المسح'; return;
+  }
+  if (!$('key').value.trim() || !$('label').value.trim()) return show('bad', 'أدخل رمز المشرف واسم الباص أولًا');
+  sessionStorage.setItem('sup_key', $('key').value.trim());
+  localStorage.setItem('sup_label', $('label').value.trim());
+  $('reader').classList.remove('d-none');
+  scanner = new Html5Qrcode('reader');
+  try {
+    await scanner.start({ facingMode: 'environment' }, { fps: 10, qrbox: { width: 240, height: 240 } }, onScan, () => {});
+    $('go').textContent = 'إيقاف المسح'; show('', 'وجّه الكاميرا نحو رمز المعتمر');
+  } catch {
+    scanner = null; $('reader').classList.add('d-none');
+    show('bad', 'تعذّر تشغيل الكاميرا — اسمح بالوصول إليها (الصفحة تتطلب HTTPS)');
+  }
+};
+</script>
+</body>
+</html>
