@@ -35,20 +35,50 @@ body{background:#21211d;font-family:'Tajawal',sans-serif}
   <div id="reader" class="mb-3 d-none"></div>
   <div id="res">وجّه الكاميرا نحو رمز المعتمر بعد بدء المسح</div>
   <div class="text-center mt-3 gold">تم تسجيل: <span id="cnt" class="fw-bold">0</span></div>
+
+  <div id="listBox" class="box mt-3 d-none">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <b class="gold">المسجّلون في هذه الجلسة</b>
+      <button id="clr" type="button" class="btn btn-sm btn-outline-light">قائمة جديدة</button>
+    </div>
+    <ol id="lst" class="mb-0 small"></ol>
+  </div>
+  <button id="pdf" type="button" class="btn btn-gold w-100 mt-3 d-none">إنهاء المسح وتصدير تقرير PDF</button>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
 const API = 'https://script.google.com/macros/s/AKfycbxBSrv8Rwlre9Vy3LQguKKwsOfpFSKYPpKd5HYlyoSJwijtF6cyGFm2nGnbva7bcceKLg/exec';
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const show = (cls, html) => { $('res').className = cls; $('res').innerHTML = html; };
+const call = body => fetch(API, { method: 'POST', body: JSON.stringify(body) }).then(r => r.json());
 
 $('key').value = sessionStorage.getItem('sup_key') || '';
 $('label').value = localStorage.getItem('sup_label') || '';
 
-let scanner = null, busy = false, last = '', lastAt = 0, count = 0;
+let scanner = null, busy = false, last = '', lastAt = 0, list = [];
 
+/* ---------- قائمة المسجّلين (محفوظة لكل نشاط) ---------- */
+const lk = () => 'scanlist:' + $('label').value.trim();
+function renderList() {
+  $('lst').innerHTML = list.map(x => `<li>${esc(x.name)} <span class="text-secondary">(${esc(x.no)})</span></li>`).join('');
+  $('cnt').textContent = list.length;
+  $('listBox').classList.toggle('d-none', !list.length);
+  $('pdf').classList.toggle('d-none', !list.length);
+}
+function loadList() { try { list = JSON.parse(localStorage.getItem(lk())) || []; } catch { list = []; } renderList(); }
+function addToList(no, name) {
+  if (list.some(x => x.no === no)) return;
+  list.push({ no, name, time: new Date().toLocaleTimeString('ar-SA-u-ca-gregory', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Riyadh' }) });
+  localStorage.setItem(lk(), JSON.stringify(list)); renderList();
+}
+$('label').onchange = loadList;
+$('clr').onclick = () => { if (confirm('بدء قائمة جديدة لهذا النشاط؟ سيُمسح عرض القائمة هنا فقط، أما الشيت فلا يتأثر.')) { list = []; localStorage.removeItem(lk()); renderList(); } };
+loadList();
+
+/* ---------- المسح ---------- */
 async function onScan(text) {
   const now = Date.now();
   if (busy || (text === last && now - lastAt < 4000)) return; // تجاهل التكرار السريع لنفس الرمز
@@ -57,32 +87,32 @@ async function onScan(text) {
   busy = true; navigator.vibrate?.(80);
   const label = $('label').value.trim();
   try {
-    const r = await fetch(API, { method: 'POST', body: JSON.stringify({
-      action: 'checkin', key: $('key').value.trim(), label, pilgrimNo: text.slice(6)
-    }) }).then(r => r.json());
+    const r = await call({ action: 'checkin', key: $('key').value.trim(), label, pilgrimNo: text.slice(6) });
     if (!r.ok) show('bad', r.error === 'key' ? '🔒 رمز المشرف غير صحيح' : r.error === 'notfound' ? '❌ معتمر غير موجود' : '❌ تعذّر التسجيل');
-    else if (r.dup) show('dup', `⚠️ ${esc(r.name)}<br><small>مسجّل مسبقًا في «${esc(label)}»</small>`);
-    else { count++; $('cnt').textContent = count; show('ok', `✅ ${esc(r.name)}<br><small>رقم ${esc(r.pilgrimNo)}</small>`); }
+    else if (r.dup) { addToList(r.pilgrimNo, r.name); show('dup', `⚠️ ${esc(r.name)}<br><small>مسجّل مسبقًا في «${esc(label)}»</small>`); }
+    else { addToList(r.pilgrimNo, r.name); show('ok', `✅ ${esc(r.name)}<br><small>رقم ${esc(r.pilgrimNo)}</small>`); }
   } catch {
     show('bad', '📶 تعذّر الاتصال — أعد المسح'); last = '';
   } finally { busy = false; }
 }
-
+async function stopScan() {
+  if (!scanner) return;
+  await scanner.stop().catch(() => {}); scanner = null;
+  $('reader').classList.add('d-none'); $('go').textContent = 'بدء المسح';
+}
 $('go').onclick = async () => {
-  if (scanner) { // إيقاف
-    await scanner.stop().catch(() => {}); scanner = null;
-    $('reader').classList.add('d-none'); $('go').textContent = 'بدء المسح'; return;
-  }
+  if (scanner) return stopScan();
   if (!$('key').value.trim() || !$('label').value.trim()) return show('bad', 'أدخل رمز المشرف واسم الباص أولًا');
   // التحقق من رمز المشرف على الخادم قبل تشغيل الكاميرا
   $('go').disabled = true; show('', 'جارٍ التحقق من الرمز...');
   try {
-    const v = await fetch(API, { method: 'POST', body: JSON.stringify({ action: 'verify', key: $('key').value.trim() }) }).then(r => r.json());
+    const v = await call({ action: 'verify', key: $('key').value.trim() });
     if (!v.ok) { sessionStorage.removeItem('sup_key'); return show('bad', '🔒 رمز المشرف غير صحيح'); }
   } catch { return show('bad', '📶 تعذّر الاتصال، حاول مرة أخرى'); }
   finally { $('go').disabled = false; }
   sessionStorage.setItem('sup_key', $('key').value.trim());
   localStorage.setItem('sup_label', $('label').value.trim());
+  loadList();
   $('reader').classList.remove('d-none');
   scanner = new Html5Qrcode('reader');
   try {
@@ -93,6 +123,64 @@ $('go').onclick = async () => {
     show('bad', 'تعذّر تشغيل الكاميرا — اسمح بالوصول إليها (الصفحة تتطلب HTTPS)');
   }
 };
+
+/* ---------- تقرير PDF (تُرسم الصفحات على Canvas ليظهر العربي سليمًا) ---------- */
+$('pdf').onclick = async () => {
+  const b = $('pdf'); b.disabled = true;
+  try { await stopScan(); await makePdf(); show('ok', '✅ تم إنشاء التقرير'); }
+  catch { show('bad', '❌ تعذّر إنشاء التقرير'); }
+  finally { b.disabled = false; }
+};
+async function makePdf() {
+  try { await Promise.all([document.fonts.load('700 30px Tajawal'), document.fonts.load('400 22px Tajawal')]); } catch {}
+  const W = 794, H = 1123, S = 2, M = 50, RH = 44, FF = 'Tajawal, sans-serif';
+  const label = $('label').value.trim(), now = new Date();
+  const when = now.toLocaleString('ar-SA-u-ca-gregory', { dateStyle: 'full', timeStyle: 'short', timeZone: 'Asia/Riyadh' });
+  const topFirst = 300, topNext = 90, bottom = 70;
+  const capFirst = Math.floor((H - topFirst - RH - bottom) / RH), capNext = Math.floor((H - topNext - RH - bottom) / RH);
+  const pagesN = list.length <= capFirst ? 1 : 1 + Math.ceil((list.length - capFirst) / capNext);
+  const doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4', compress: true });
+  let idx = 0;
+  for (let p = 0; p < pagesN; p++) {
+    const c = document.createElement('canvas'); c.width = W * S; c.height = H * S;
+    const x = c.getContext('2d'); x.scale(S, S); x.direction = 'rtl'; x.textBaseline = 'middle';
+    x.fillStyle = '#fff'; x.fillRect(0, 0, W, H);
+    const txt = (s, px, py, size, weight, color, align) => { x.font = `${weight} ${size}px ${FF}`; x.fillStyle = color; x.textAlign = align; x.fillText(s, px, py); };
+    const fit = (s, w) => { if (x.measureText(s).width <= w) return s; while (s.length > 1 && x.measureText(s + '…').width > w) s = s.slice(0, -1); return s + '…'; };
+    x.fillStyle = '#21211d'; x.fillRect(0, 0, W, 14); x.fillStyle = '#edcea0'; x.fillRect(0, 14, W, 4);
+    let y;
+    if (p === 0) {
+      txt('تقرير حضور', W / 2, 80, 36, 700, '#21211d', 'center');
+      txt('حملة الإشراق', W / 2, 122, 22, 400, '#8a6d2f', 'center');
+      x.font = `700 24px ${FF}`;
+      txt(fit('النشاط / الباص:  ' + label, W - 2 * M), W - M, 175, 24, 700, '#21211d', 'right');
+      txt('التاريخ:  ' + when, W - M, 212, 20, 400, '#444', 'right');
+      txt('عدد المسجّلين:  ' + list.length, W - M, 246, 20, 400, '#444', 'right');
+      y = topFirst;
+    } else y = topNext;
+    // رأس الجدول — حدود الأعمدة من اليمين: 744 | 684 | 354 | 224 | 50
+    x.fillStyle = '#edcea0'; x.fillRect(M, y, W - 2 * M, RH);
+    txt('#', 714, y + RH / 2, 20, 700, '#21211d', 'center');
+    txt('اسم المعتمر', 674, y + RH / 2, 20, 700, '#21211d', 'right');
+    txt('رقم المعتمر', 289, y + RH / 2, 20, 700, '#21211d', 'center');
+    txt('وقت المسح', 137, y + RH / 2, 20, 700, '#21211d', 'center');
+    const cap = p === 0 ? capFirst : capNext;
+    for (let i = 0; i < cap && idx < list.length; i++, idx++) {
+      const it = list[idx], ry = y + RH * (i + 1), cy = ry + RH / 2;
+      x.fillStyle = i % 2 ? '#fff' : '#f7f2e6'; x.fillRect(M, ry, W - 2 * M, RH);
+      x.fillStyle = '#e4dcc6'; x.fillRect(M, ry + RH - 1, W - 2 * M, 1);
+      txt(String(idx + 1), 714, cy, 18, 400, '#444', 'center');
+      x.font = `400 20px ${FF}`;
+      txt(fit(it.name, 320), 674, cy, 20, 400, '#21211d', 'right');
+      txt(String(it.no), 289, cy, 18, 400, '#21211d', 'center');
+      txt(it.time || '', 137, cy, 18, 400, '#21211d', 'center');
+    }
+    txt(`صفحة ${p + 1} من ${pagesN}`, W / 2, H - 35, 16, 400, '#888', 'center');
+    if (p) doc.addPage();
+    doc.addImage(c.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, 210, 297);
+  }
+  doc.save('attendance-' + now.toISOString().slice(0, 16).replace(/[:T]/g, '-') + '.pdf');
+}
 </script>
 </body>
 </html>

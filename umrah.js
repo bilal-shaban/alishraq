@@ -5,15 +5,24 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const toast = (t, ms = 3000) => { const e = $('toast'); e.textContent = t; e.classList.remove('d-none'); clearTimeout(toast.h); toast.h = setTimeout(() => e.classList.add('d-none'), ms); };
 const post = body => fetch(API, { method: 'POST', body: JSON.stringify(body) }).then(r => r.json()); // text/plain: بلا CORS preflight
+const phoneHref = p => 'tel:' + String(p || '').replace(/[^\d+]/g, '');
+const isUrl = s => /^https?:/i.test(s || '');
+const plain = s => (s && !isUrl(s) ? s : ''); // الروابط لا تفيد داخل الصورة
+const STATUS_CLS = { 'جديد': 'bg-secondary', 'قيد المعالجة': 'bg-warning text-dark', 'تم الرد': 'bg-success' };
+async function copyText(t) {
+  try { await navigator.clipboard.writeText(t); }
+  catch { const i = document.createElement('textarea'); i.value = t; document.body.appendChild(i); i.select(); document.execCommand('copy'); i.remove(); }
+  toast('تم النسخ');
+}
 
 /* ---------- الجلسة (تُحفظ محليًا لتعمل البطاقة بدون إنترنت) ---------- */
 const KEY = 'umrah_session';
 localStorage.removeItem('umrah_me'); // مفتاح النسخة القديمة
 const loadSession = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; } };
-let { code = '', pilgrim: me = null, banner = '', events: raw = [] } = loadSession();
+let { code = '', role = 'pilgrim', pilgrim: me = null, banner = '', events: raw = [], inq = [], lost = null, seen = {} } = loadSession();
 if (!code) me = null;
 let events = [];
-const save = () => localStorage.setItem(KEY, JSON.stringify({ code, pilgrim: me, banner, events: raw }));
+const save = () => localStorage.setItem(KEY, JSON.stringify({ code, role, pilgrim: me, banner, events: raw, inq, lost, seen }));
 
 /* ---------- الجدول والعداد ---------- */
 const DEFAULT_MIN = 60; // مدة النشاط (بالدقائق) إن لم يوجد عمود End_Time أو كان فارغًا
@@ -21,6 +30,16 @@ const ICONS = [['تهجد','bi-moon-stars'],['عمرة','bi-stars'],['مزار',
 const icon = c => (ICONS.find(([k]) => (c || '').includes(k)) || [0, 'bi-calendar-event'])[1];
 const when = s => new Date(String(s).trim().replace(' ', 'T') + ':00+03:00'); // توقيت السعودية
 const fmt = d => d.toLocaleString('ar-SA', { weekday: 'long', day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Riyadh' });
+// يوم وتاريخ ميلادي لدخول/مغادرة الفندق من نص مثل 2026-10-07 أو 2026-10-07 14:00
+function fmtDay(s) {
+  s = String(s || '').trim();
+  const m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:[ T](\d{1,2}):(\d{2}))?/);
+  if (!m) return s;
+  const d = new Date(`${m[1]}-${m[2].padStart(2, '0')}-${m[3].padStart(2, '0')}T${(m[4] || '12').padStart(2, '0')}:${m[5] || '00'}:00+03:00`);
+  if (isNaN(d)) return s;
+  return d.toLocaleDateString('ar-SA-u-ca-gregory', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Riyadh' })
+    + (m[4] ? ' — ' + d.toLocaleTimeString('ar-SA-u-ca-gregory', { hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Riyadh' }) : '');
+}
 
 // وقت انتهاء النشاط: End_Time كامل، أو وقت فقط (يُؤخذ تاريخ البداية)، أو بداية + المدة الافتراضية
 function endOf(e, t) {
@@ -32,19 +51,22 @@ function endOf(e, t) {
   if (timeOnly && end <= t) end = new Date(end.getTime() + 864e5); // ينتهي بعد منتصف الليل
   return end;
 }
-const prep = list => list.map(e => { const t = when(e.Date_Time); return { ...e, t, end: endOf(e, t) }; }).sort((a, b) => a.t - b.t);
-const live = () => events.filter(e => e.end > Date.now()); // المنتهية تختفي تلقائيًا
+const evKey = e => e.Event_ID || (e.Title + '|' + e.Category);
+const prep = list => list.map(e => { const t = when(e.Date_Time); return { ...e, t, end: endOf(e, t), key: evKey(e), rev: e.Modified_At || '' }; }).sort((a, b) => a.t - b.t);
+const live = () => events.filter(e => e.end > Date.now());
+const finished = () => events.filter(e => e.end <= Date.now()).sort((a, b) => b.end - a.end);
+const changed = e => e.key in seen && seen[e.key] !== e.rev; // تغيّر منذ أول مرة رآه المعتمر
 
 let lastKey = '';
 function renderEvents(force) {
-  const now = Date.now(), list = live();
-  const key = list.map(e => events.indexOf(e) + (e.t <= now ? 'n' : '')).join();
+  const now = Date.now(), list = live(), dn = finished();
+  const key = list.map(e => events.indexOf(e) + (e.t <= now ? 'n' : '')).join() + '|' + dn.length;
   if (!force && key === lastKey) return;
   lastKey = key;
   $('events').innerHTML = list.length ? list.map(e => `
     <div class="ev"><div class="ic"><i class="bi ${icon(e.Category)}"></i></div>
       <div class="flex-grow-1"><div class="fw-bold text-light">${esc(e.Title)}</div>
-        <div>${e.t <= now ? '<span class="badge bg-success ms-2">جارٍ الآن</span>' : ''}<small class="gold">${esc(e.Category)}</small></div>
+        <div>${e.t <= now ? '<span class="badge bg-success ms-1">جارٍ الآن</span>' : ''}${changed(e) ? '<span class="badge bg-warning text-dark ms-1">تم التعديل</span>' : ''}<small class="gold">${esc(e.Category)}</small></div>
         <div><small><i class="bi bi-clock ms-1"></i>${fmt(e.t)}</small></div>
         ${e.Location ? `<div><small><i class="bi bi-pin-map ms-1"></i>${esc(e.Location)}</small></div>` : ''}
         ${e.Notes ? `<div class="note">${esc(e.Notes)}</div>` : ''}
@@ -53,6 +75,18 @@ function renderEvents(force) {
           <button type="button" class="btn btn-sm btn-gold-outline rounded-pill" data-act="img" data-i="${events.indexOf(e)}"><i class="bi bi-image ms-1"></i>حفظ كصورة</button>
         </div></div></div>`).join('')
     : '<p class="desc-text">لا توجد أنشطة معلنة حاليًا.</p>';
+  renderDone(dn);
+}
+function renderDone(dn) {
+  const b = $('doneBox');
+  b.classList.toggle('d-none', !dn.length);
+  if (!dn.length) return;
+  const wasOpen = !!b.querySelector('.collapse.show');
+  b.innerHTML = `<h2 class="gold h5 fw-bold mb-3" role="button" style="cursor:pointer" data-bs-toggle="collapse" data-bs-target="#doneList">
+      <i class="bi bi-check2-circle ms-2"></i>النشاطات المنجزة <span class="badge bg-secondary">${dn.length}</span><i class="bi bi-chevron-down float-start"></i></h2>
+    <div id="doneList" class="collapse${wasOpen ? ' show' : ''}">${dn.map(e => `
+      <div class="ev" style="opacity:.8;border-inline-start-color:#198754"><div class="ic" style="color:#198754"><i class="bi bi-check-lg"></i></div>
+        <div><div class="fw-bold text-light">${esc(e.Title)}</div><small>${esc(e.Category)}${e.Category ? ' · ' : ''}${fmt(e.t)}</small></div></div>`).join('')}</div>`;
 }
 
 function tick() {
@@ -68,7 +102,6 @@ setInterval(tick, 1000);
 
 /* ---------- مشاركة النشاط وحفظه كصورة ---------- */
 const shareText = e => `*${e.Title}*\n${e.Category ? e.Category + '\n' : ''}🕒 ${fmt(e.t)}\n${e.Location ? '📍 ' + e.Location + '\n' : ''}${e.Notes ? '📝 ' + e.Notes + '\n' : ''}\n— حملة الإشراق`;
-const plain = s => (s && !/^https?:/i.test(s) ? s : ''); // الروابط لا تفيد داخل الصورة
 
 $('events').onclick = e => {
   const b = e.target.closest('button[data-act]'); if (!b) return;
@@ -154,7 +187,7 @@ const askConfirm = (title, body, yes) => new Promise(res => {
   m.show();
 });
 
-/* ---------- بطاقة المعتمر ---------- */
+/* ---------- بطاقة المعتمر / المشرف ---------- */
 const qrURL = () => { try { const q = qrcode(0, 'M'); q.addData('UMRAH:' + me.PilgrimNo); q.make(); return q.createDataURL(10, 0); } catch { return null; } };
 
 function renderMe() {
@@ -162,7 +195,17 @@ function renderMe() {
   const t = $('ticket');
   if (!me) { t.innerHTML = ''; $('loginForm').classList.remove('d-none'); return; }
   $('loginForm').classList.add('d-none');
-  const city = (h, r, l) => `<p><b>${h[0]}</b>${esc(h[1])} — غرفة ${esc(r)}</p>${l ? `<p class="small">${/^https?:/.test(l) ? `<a href="${esc(l)}" target="_blank" rel="noopener" class="text-dark fw-bold"><i class="bi bi-map ms-1"></i>افتح الموقع على الخريطة</a>` : esc(l)}</p>` : ''}`;
+  if (role === 'admin') {
+    t.innerHTML = `<div class="ticket mt-2">
+      <div class="head d-flex justify-content-between align-items-center"><div><small>مشرف إداري</small><div class="h5 fw-bold mb-0">${esc(me.Name)}</div></div><i class="bi bi-shield-check" style="font-size:2.2rem"></i></div>
+      <div class="perf"></div>
+      <div class="body"><div class="d-grid gap-2">
+        <a class="btn btn-dark" href="./scan.html"><i class="bi bi-qr-code-scan ms-1"></i>صفحة مسح الحضور</a>
+        <button type="button" class="btn btn-outline-dark" id="logout">تسجيل خروج</button></div></div></div>`;
+    $('logout').onclick = logout;
+    return;
+  }
+  const city = (h, r, l) => `<p><b>${h[0]}</b>${esc(h[1])} — غرفة ${esc(r)}</p>${l ? `<p class="small">${isUrl(l) ? `<a href="${esc(l)}" target="_blank" rel="noopener" class="text-dark fw-bold"><i class="bi bi-map ms-1"></i>افتح الموقع على الخريطة</a>` : esc(l)}</p>` : ''}`;
   t.innerHTML = `<div class="ticket mt-2">
     <div class="head d-flex justify-content-between align-items-center"><div><small>أهلًا بك</small><div class="h5 fw-bold mb-0">${esc(me.Name)}</div></div>
       <div class="text-center"><small>رقم المعتمر</small><div class="no">${esc(me.PilgrimNo)}</div></div></div>
@@ -176,7 +219,7 @@ function renderMe() {
       </div></div></div>`;
   const q = qrURL();
   if (q) $('qrBox').innerHTML = `<img src="${q}" width="180" height="180" alt="رمز الحضور" style="display:block">`; else $('qrWrap').remove();
-  $('lostBtn').onclick = lost;
+  $('lostBtn').onclick = lostPress;
   $('saveCard').onclick = e => saveCardImage(e.currentTarget);
   $('logout').onclick = logout;
 }
@@ -184,51 +227,166 @@ function renderMe() {
 async function saveCardImage(btn) {
   btn.disabled = true;
   try {
-    const hotel = (n, r, l) => `${n || '—'} — غرفة ${r || '—'}${plain(l) ? '\n' + l : ''}`;
+    const hotel = (n, r, l, w, ci, co) => [`${n || '—'} — غرفة ${r || '—'}`, ci && 'دخول: ' + fmtDay(ci), co && 'مغادرة: ' + fmtDay(co), w && 'واي فاي: ' + w, plain(l)].filter(Boolean).join('\n');
     const rows = [
-      ['فندق مكة المكرمة', hotel(me.Makkah_Hotel, me.Makkah_Room, me.Makkah_Location)],
-      ['فندق المدينة المنورة', hotel(me.Madinah_Hotel, me.Madinah_Room, me.Madinah_Location)]
+      ['فندق مكة المكرمة', hotel(me.Makkah_Hotel, me.Makkah_Room, me.Makkah_Location, me.Makkah_WiFi, me.Makkah_CheckIn, me.Makkah_CheckOut)],
+      ['فندق المدينة المنورة', hotel(me.Madinah_Hotel, me.Madinah_Room, me.Madinah_Location, me.Madinah_WiFi, me.Madinah_CheckIn, me.Madinah_CheckOut)]
     ];
+    const bus = [me.Bus_Title, me.Bus_No && 'رقم ' + me.Bus_No].filter(Boolean).join(' — ');
+    if (bus) rows.push(['باص الرحلة', bus]);
+    if (me.Supervisor_Name || me.Supervisor_Phone) rows.push(['المشرف', [me.Supervisor_Name, me.Supervisor_Phone].filter(Boolean).join(' — ')]);
     const qr = await loadImg(qrURL());
     const c = await makeImage({ title: me.Name, sub: 'رقم المعتمر: ' + me.PilgrimNo, rows, qr, qrNote: 'رمز الحضور — اعرضه للمشرف عند صعود الباص' });
     await saveCanvas(c, `ishraq-card-${me.PilgrimNo}.png`);
   } catch { toast('تعذّر حفظ البطاقة'); } finally { btn.disabled = false; }
 }
 
-/* ---------- أنا تائه ---------- */
+/* ---------- باص الرحلة وفنادق الإقامة ---------- */
+function renderBus() {
+  const b = $('busBox'), ok = me && role === 'pilgrim' && (me.Bus_Title || me.Bus_No || me.Supervisor_Name || me.Supervisor_Phone);
+  b.classList.toggle('d-none', !ok);
+  if (!ok) return;
+  const row = (k, v) => v ? `<div class="mb-2"><small class="d-block" style="color:#d3d3c7">${k}</small><div class="text-light fw-bold">${v}</div></div>` : '';
+  b.innerHTML = `<h2><i class="bi bi-bus-front ms-2"></i>باص الرحلة</h2>
+    ${row('عنوان الباص', esc(me.Bus_Title))}${row('رقم الباص', esc(me.Bus_No))}
+    ${row('موقع الباص', isUrl(me.Bus_Location) ? `<a href="${esc(me.Bus_Location)}" target="_blank" rel="noopener" class="gold"><i class="bi bi-map ms-1"></i>افتح الموقع على الخريطة</a>` : esc(me.Bus_Location))}
+    ${row('المشرف', esc(me.Supervisor_Name))}
+    ${me.Supervisor_Phone ? `<a class="btn btn-gold-solid w-100 mt-1" href="${phoneHref(me.Supervisor_Phone)}"><i class="bi bi-telephone-fill ms-1"></i>اتصل بالمشرف <span dir="ltr">${esc(me.Supervisor_Phone)}</span></a>` : ''}`;
+}
+function renderHotels() {
+  const b = $('hotelBox'), f = ['Makkah', 'Madinah'].map(c => ({ c, h: me?.[c + '_Hotel'], r: me?.[c + '_Room'], w: me?.[c + '_WiFi'], i: me?.[c + '_CheckIn'], o: me?.[c + '_CheckOut'], l: me?.[c + '_Location'] }));
+  const ok = me && role === 'pilgrim' && f.some(x => x.h || x.w || x.i || x.o);
+  b.classList.toggle('d-none', !ok);
+  if (!ok) return;
+  const block = (title, x) => (x.h || x.w || x.i || x.o) ? `<div class="mb-3"><div class="gold fw-bold mb-1"><i class="bi bi-building ms-1"></i>${title}</div>
+    <div class="text-light">${esc(x.h || '—')}${x.r ? ' — غرفة ' + esc(x.r) : ''}</div>
+    ${x.w ? `<div class="mt-1"><small>كلمة مرور الواي فاي:</small> <code class="text-warning fs-6" dir="ltr">${esc(x.w)}</code> <button type="button" class="btn btn-sm btn-gold-outline rounded-pill py-0" data-copy="${esc(x.w)}"><i class="bi bi-clipboard"></i></button></div>` : ''}
+    ${x.i ? `<div><small><i class="bi bi-box-arrow-in-left ms-1"></i>الدخول: ${esc(fmtDay(x.i))}</small></div>` : ''}
+    ${x.o ? `<div><small><i class="bi bi-box-arrow-right ms-1"></i>المغادرة: ${esc(fmtDay(x.o))}</small></div>` : ''}
+    ${isUrl(x.l) ? `<a href="${esc(x.l)}" target="_blank" rel="noopener" class="gold small"><i class="bi bi-map ms-1"></i>الموقع على الخريطة</a>` : ''}</div>` : '';
+  b.innerHTML = `<h2><i class="bi bi-buildings ms-2"></i>معلومات الفنادق</h2>${block('فندق مكة المكرمة', f[0])}${block('فندق المدينة المنورة', f[1])}`;
+}
+$('hotelBox').onclick = e => { const b = e.target.closest('[data-copy]'); if (b) copyText(b.dataset.copy); };
+
+/* ---------- أنا تائه + ردّ المشرف ---------- */
 const getPos = () => new Promise(res => navigator.geolocation
   ? navigator.geolocation.getCurrentPosition(p => res(p.coords), () => res(null), { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 })
   : res(null));
 
-async function lost() {
+async function lostPress() {
   if (!await askConfirm('هل أنت تائه فعلًا؟', 'سيصل مشرفي الحملة اسمك ورقمك وفندقك وموقعك الحالي.', 'نعم، أنا تائه')) return;
   const btn = $('lostBtn'); btn.disabled = true; toast('جارٍ تحديد موقعك...', 12000);
   const c = await getPos();
   try {
     const r = await post({ action: 'lost', code, lat: c?.latitude, lng: c?.longitude, acc: c ? Math.round(c.accuracy) : undefined });
     if (!r.ok) throw 0;
-    toast(c ? 'وصل موقعك للمشرفين، ابقَ في مكانك وسيصلون إليك' : 'وصل نداؤك للمشرفين لكن تعذّر تحديد موقعك. فعّل خدمة الموقع وأعد المحاولة', 9000);
+    lost = { id: r.id, status: 'open' }; save(); renderLost();
+    $('lostBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    toast(c ? 'وصل موقعك للمشرفين، ابقَ في مكانك' : 'وصل نداؤك للمشرفين لكن تعذّر تحديد موقعك. فعّل خدمة الموقع وأعد المحاولة', 9000);
   } catch { toast('تعذّر الإرسال، تحقق من الاتصال وحاول مرة أخرى', 6000); }
   finally { btn.disabled = false; }
 }
+function renderLost() {
+  const b = $('lostBox');
+  if (role !== 'pilgrim' || !me || !lost) { b.classList.add('d-none'); return; }
+  b.classList.remove('d-none');
+  b.innerHTML = lost.status === 'responding'
+    ? `<h2 class="text-danger"><i class="bi bi-life-preserver ms-2"></i>ردّ المشرف</h2>
+       <div class="h5 text-light mb-1">${esc(lost.reply || 'نحن في طريقنا إليك')}</div>
+       <small class="d-block mb-2" style="color:#d3d3c7">${esc(lost.by || '')}</small>
+       ${lost.phone ? `<a class="btn btn-danger fw-bold w-100" href="${phoneHref(lost.phone)}"><i class="bi bi-telephone-fill ms-1"></i>اتصل بالمشرف</a>` : ''}`
+    : `<h2 class="text-danger"><i class="bi bi-broadcast ms-2"></i>تم إرسال ندائك</h2>
+       <div class="text-light">وصل نداؤك للمشرفين وبانتظار ردّهم، ابقَ في مكانك.</div>`;
+}
 
-/* ---------- الدخول والخروج ---------- */
-function render() {
-  renderMe();
-  $('app').classList.toggle('d-none', !me);
+/* ---------- استفساراتي وردّ الحملة ---------- */
+const qKey = q => q.id || (q.time + q.message);
+function renderInq() {
+  $('myInq').innerHTML = inq.length ? `<hr class="border-secondary"><div class="gold fw-bold mb-2">استفساراتي</div>` + inq.map(q => `
+    <div class="ev" style="flex-direction:column;gap:.4rem">
+      <div class="d-flex justify-content-between"><small>${esc(q.time)}</small><span class="badge ${STATUS_CLS[q.status] || 'bg-secondary'}">${esc(q.status)}</span></div>
+      <div class="text-light">${esc(q.message)}</div>
+      ${q.reply ? `<div class="note"><b class="gold">ردّ الحملة:</b> ${esc(q.reply)}</div>` : ''}</div>`).join('') : '';
+}
+
+/* ---------- تنبيهات التعديلات والمزامنة ---------- */
+function notify(msgs) {
+  if (!msgs.length) return;
+  toast(msgs.join(' • '), 8000); navigator.vibrate?.(150);
+  if ('Notification' in window && Notification.permission === 'granted')
+    msgs.forEach(m => { try { new Notification('حملة الإشراق', { body: m, tag: m, icon: './5b862b4281f64fd884b11984846f0e97.png' }); } catch {} });
+}
+function updateNotifyBar() { $('notifyBar').classList.toggle('d-none', !(me && 'Notification' in window && Notification.permission === 'default')); }
+$('notifyBtn').onclick = () => Notification.requestPermission().then(updateNotifyBar).catch(() => {});
+
+function track(list) { // يقارن بآخر نسخة رآها المعتمر ويعيد رسائل التنبيه
+  const prev = new Map(raw.map(e => [evKey(e), e.Modified_At || '']));
+  const first = !seen.__init, msgs = [];
+  list.forEach(e => {
+    const k = evKey(e), rev = e.Modified_At || '';
+    if (!(k in seen)) { seen[k] = rev; if (!first) msgs.push('نشاط جديد: ' + e.Title); }
+    else if (prev.has(k) && prev.get(k) !== rev) msgs.push('تم تعديل: ' + e.Title);
+  });
+  seen.__init = 1;
+  return msgs;
+}
+let syncing = false;
+async function sync(forceInq) {
+  if (!me || syncing || document.hidden) return;
+  syncing = true;
+  try {
+    const r = await post({ action: 'sync', code, inq: role === 'pilgrim' && (forceInq === true || inq.some(q => !q.reply)), lostId: lost?.id });
+    if (r.ok === false) return logout();
+    const msgs = [];
+    if (JSON.stringify([r.banner || '', r.events || []]) !== JSON.stringify([banner, raw])) {
+      msgs.push(...track(r.events || [])); banner = r.banner || ''; raw = r.events || [];
+      applyBanner(); applySchedule();
+    }
+    if (r.inquiries) {
+      r.inquiries.forEach(q => { const o = inq.find(x => qKey(x) === qKey(q)); if (o && !o.reply && q.reply) msgs.push('ردّ الحملة على استفسارك'); });
+      inq = r.inquiries; renderInq();
+    }
+    if (r.lost !== undefined && lost) {
+      const was = lost.status;
+      lost = r.lost && r.lost.status !== 'closed' ? { id: lost.id, ...r.lost } : null;
+      if (lost?.status === 'responding' && was !== 'responding') msgs.push('ردّ المشرف: ' + (lost.reply || 'نحن في طريقنا إليك'));
+      renderLost();
+    }
+    save(); notify(msgs);
+  } catch {} finally { syncing = false; }
+}
+let tickN = 0;
+setInterval(() => { tickN++; if (lost?.id || tickN % 6 === 0) sync(); }, 20000); // كل دقيقتين، وكل 20 ثانية أثناء نداء تائه
+document.addEventListener('visibilitychange', () => { if (!document.hidden) sync(); });
+
+/* ---------- العرض العام والدخول والخروج ---------- */
+function applyBanner() {
   const b = $('banner');
   if (me && banner) { b.textContent = banner; b.classList.remove('d-none'); } else b.classList.add('d-none');
-  events = me ? prep(raw) : [];
-  renderEvents(true); tick();
+}
+function applySchedule() { events = me ? prep(raw) : []; renderEvents(true); tick(); }
+function render() {
+  const adm = role === 'admin';
+  $('boxTitle').textContent = adm ? 'بطاقة المشرف' : 'بطاقة المعتمر';
+  renderMe();
+  $('app').classList.toggle('d-none', !me);
+  ['rateBox', 'askBox'].forEach(i => $(i).classList.toggle('d-none', adm));
+  $('adminBox').classList.toggle('d-none', !(me && adm));
+  applyBanner(); renderBus(); renderHotels(); renderLost(); renderInq(); updateNotifyBar();
+  applySchedule();
+  if (me && adm && typeof adminRender === 'function') adminRender();
 }
 async function enter(c) {
   const r = await post({ action: 'login', code: c });
   if (!r.ok) return false;
-  code = c; me = r.pilgrim; banner = r.banner || ''; raw = r.events || [];
-  save(); render(); return true;
+  if (c !== code) { seen = {}; raw = []; } // مستخدم جديد: لا تنبيهات ولا أوسمة سابقة
+  const msgs = track(r.events || []);
+  code = c; role = r.role || 'pilgrim'; me = r.pilgrim; banner = r.banner || ''; raw = r.events || [];
+  inq = r.inquiries || []; lost = r.lost || null;
+  save(); render(); notify(msgs); return true;
 }
 function logout() {
-  me = null; code = ''; banner = ''; raw = []; events = [];
+  me = null; code = ''; role = 'pilgrim'; banner = ''; raw = []; events = []; inq = []; lost = null; seen = {};
   localStorage.removeItem(KEY); render(); window.scrollTo(0, 0);
 }
 $('loginForm').onsubmit = async e => {
@@ -251,7 +409,7 @@ function fillWho() {
 }
 const who = f => ({ name: f.querySelector('.wn').value.trim(), phone: f.querySelector('.wp').value.trim() });
 
-/* ---------- التقييم ---------- */
+/* ---------- التقييم والاستفسار ---------- */
 const PH = ['نأسف لذلك، وسنعمل على الأفضل', 'نتطلع لتحسين تجربتك', 'جيدة، ونطمح لما هو أفضل', 'رائعة، شكرًا لثقتك بنا', 'بارك الله فيك، أسعدتنا رحلتك'];
 let rating = 0;
 $('stars').innerHTML = [1,2,3,4,5].map(i => `<button type="button" data-i="${i}" aria-label="${i} نجوم"><i class="bi bi-star-fill"></i></button>`).join('');
@@ -269,7 +427,10 @@ $('rateForm').onsubmit = async e => {
   e.preventDefault(); if (!rating) return toast('اختر عدد النجوم أولًا');
   if (await send(e.target, { action: 'rating', code, ...who(e.target), stars: rating, message: $('rateMsg').value }, 'شكرًا لتقييمك 🌙')) { rating = 0; $('starText').textContent = ''; $('stars').querySelectorAll('button').forEach(x => x.classList.remove('on')); }
 };
-$('askForm').onsubmit = e => { e.preventDefault(); send(e.target, { action: 'inquiry', code, ...who(e.target), message: $('askMsg').value }, 'وصلت رسالتك، سنرد عليك قريبًا'); };
+$('askForm').onsubmit = async e => {
+  e.preventDefault();
+  if (await send(e.target, { action: 'inquiry', code, ...who(e.target), message: $('askMsg').value }, 'وصلت رسالتك، سنرد عليك قريبًا')) sync(true);
+};
 
 /* ---------- البدء ---------- */
 render();
