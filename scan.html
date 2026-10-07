@@ -74,6 +74,13 @@ $('go').onclick = async () => {
     $('reader').classList.add('d-none'); $('go').textContent = 'بدء المسح'; return;
   }
   if (!$('key').value.trim() || !$('label').value.trim()) return show('bad', 'أدخل رمز المشرف واسم الباص أولًا');
+  // التحقق من رمز المشرف على الخادم قبل تشغيل الكاميرا
+  $('go').disabled = true; show('', 'جارٍ التحقق من الرمز...');
+  try {
+    const v = await fetch(API, { method: 'POST', body: JSON.stringify({ action: 'verify', key: $('key').value.trim() }) }).then(r => r.json());
+    if (!v.ok) { sessionStorage.removeItem('sup_key'); return show('bad', '🔒 رمز المشرف غير صحيح'); }
+  } catch { return show('bad', '📶 تعذّر الاتصال، حاول مرة أخرى'); }
+  finally { $('go').disabled = false; }
   sessionStorage.setItem('sup_key', $('key').value.trim());
   localStorage.setItem('sup_label', $('label').value.trim());
   $('reader').classList.remove('d-none');
