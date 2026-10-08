@@ -227,10 +227,10 @@ function renderMe() {
 async function saveCardImage(btn) {
   btn.disabled = true;
   try {
-    const hotel = (n, r, l, w, ci, co) => [`${n || '—'} — غرفة ${r || '—'}`, ci && 'دخول: ' + fmtDay(ci), co && 'مغادرة: ' + fmtDay(co), w && 'واي فاي: ' + w, plain(l)].filter(Boolean).join('\n');
+    const hotel = (n, r, l) => [`${n || '—'} — غرفة ${r || '—'}`, plain(l)].filter(Boolean).join('\n'); // بدون كلمة الواي فاي ولا تواريخ الدخول والمغادرة
     const rows = [
-      ['فندق مكة المكرمة', hotel(me.Makkah_Hotel, me.Makkah_Room, me.Makkah_Location, me.Makkah_WiFi, me.Makkah_CheckIn, me.Makkah_CheckOut)],
-      ['فندق المدينة المنورة', hotel(me.Madinah_Hotel, me.Madinah_Room, me.Madinah_Location, me.Madinah_WiFi, me.Madinah_CheckIn, me.Madinah_CheckOut)]
+      ['فندق مكة المكرمة', hotel(me.Makkah_Hotel, me.Makkah_Room, me.Makkah_Location)],
+      ['فندق المدينة المنورة', hotel(me.Madinah_Hotel, me.Madinah_Room, me.Madinah_Location)]
     ];
     const bus = [me.Bus_Title, me.Bus_No && 'رقم ' + me.Bus_No].filter(Boolean).join(' — ');
     if (bus) rows.push(['باص الرحلة', bus]);
@@ -359,6 +359,21 @@ let tickN = 0;
 setInterval(() => { tickN++; if (lost?.id || tickN % 6 === 0) sync(); }, 20000); // كل دقيقتين، وكل 20 ثانية أثناء نداء تائه
 document.addEventListener('visibilitychange', () => { if (!document.hidden) sync(); });
 
+/* ---------- علامات التبويب ---------- */
+let curTab = 'all';
+const TABS = [['all', 'الكل'], ['bus', 'باص الرحلة'], ['hotel', 'معلومات الفنادق'], ['prog', 'برنامج الرحلة'], ['ask', 'ملاحظات واستفسارات'], ['rate', 'تقييم الرحلة']];
+function renderTabs() {
+  const on = me && role === 'pilgrim';
+  $('tabsBar').classList.toggle('d-none', !on);
+  if (!on) { document.querySelectorAll('[data-sec]').forEach(el => el.classList.remove('tab-off')); return; }
+  const has = { bus: !$('busBox').classList.contains('d-none'), hotel: !$('hotelBox').classList.contains('d-none') };
+  if (curTab !== 'all' && has[curTab] === false) curTab = 'all';
+  $('tabs').innerHTML = TABS.filter(([k]) => has[k] !== false).map(([k, l]) =>
+    `<li class="nav-item"><button type="button" class="nav-link${k === curTab ? ' active' : ''}" data-t="${k}">${l}</button></li>`).join('');
+  document.querySelectorAll('[data-sec]').forEach(el => el.classList.toggle('tab-off', curTab !== 'all' && el.dataset.sec !== curTab));
+}
+$('tabs').onclick = e => { const b = e.target.closest('[data-t]'); if (b) { curTab = b.dataset.t; renderTabs(); } };
+
 /* ---------- العرض العام والدخول والخروج ---------- */
 function applyBanner() {
   const b = $('banner');
@@ -372,21 +387,21 @@ function render() {
   $('app').classList.toggle('d-none', !me);
   ['rateBox', 'askBox'].forEach(i => $(i).classList.toggle('d-none', adm));
   $('adminBox').classList.toggle('d-none', !(me && adm));
-  applyBanner(); renderBus(); renderHotels(); renderLost(); renderInq(); updateNotifyBar();
+  applyBanner(); renderBus(); renderHotels(); renderLost(); renderInq(); updateNotifyBar(); renderTabs();
   applySchedule();
   if (me && adm && typeof adminRender === 'function') adminRender();
 }
 async function enter(c) {
   const r = await post({ action: 'login', code: c });
   if (!r.ok) return false;
-  if (c !== code) { seen = {}; raw = []; } // مستخدم جديد: لا تنبيهات ولا أوسمة سابقة
+  if (c !== code) { seen = {}; raw = []; curTab = 'all'; } // مستخدم جديد: لا تنبيهات ولا أوسمة سابقة
   const msgs = track(r.events || []);
   code = c; role = r.role || 'pilgrim'; me = r.pilgrim; banner = r.banner || ''; raw = r.events || [];
   inq = r.inquiries || []; lost = r.lost || null;
   save(); render(); notify(msgs); return true;
 }
 function logout() {
-  me = null; code = ''; role = 'pilgrim'; banner = ''; raw = []; events = []; inq = []; lost = null; seen = {};
+  curTab = 'all'; me = null; code = ''; role = 'pilgrim'; banner = ''; raw = []; events = []; inq = []; lost = null; seen = {};
   localStorage.removeItem(KEY); render(); window.scrollTo(0, 0);
 }
 $('loginForm').onsubmit = async e => {
