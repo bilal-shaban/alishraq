@@ -339,7 +339,7 @@ async function sync(forceInq) {
     if (r.ok === false) return logout();
     const msgs = [];
     if (JSON.stringify([r.banner || '', r.events || []]) !== JSON.stringify([banner, raw])) {
-      msgs.push(...track(r.events || [])); banner = r.banner || ''; raw = r.events || [];
+      msgs.push(...track(r.events || [])); if (r.banner && r.banner !== banner) msgs.push('خبر عاجل: ' + r.banner); banner = r.banner || ''; raw = r.events || [];
       applyBanner(); applySchedule();
     }
     if (r.inquiries) {

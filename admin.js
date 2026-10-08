@@ -1,5 +1,5 @@
 // لوحة المشرف الإداري — تعتمد على متغيرات umrah.js ($, esc, post, code, role, me, toast, phoneHref, STATUS_CLS, when, endOf, loadImg, askConfirm)
-let admTab = 'today', admLabel = '', admData = null, cntCtx = null, pplData = null, schedData = [], schedAll = false, impRows = null, auditData = [];
+let admTab = 'today', admLabel = '', admData = null, optsData = null, pplData = null, schedData = [], schedAll = false, impRows = null, auditData = [];
 
 const JSPDF = 'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js';
 const XLSX_URL = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
@@ -9,8 +9,9 @@ const admPost = (action, extra = {}) => post({ action, code, ...extra }).then(r 
 const admRefresh = tab => `<button type="button" class="btn btn-sm btn-gold-outline mb-3" data-tab="${tab}"><i class="bi bi-arrow-clockwise ms-1"></i>تحديث</button>`;
 const fmtMin = m => m == null ? '—' : m < 60 ? Math.round(m) + ' د' : Math.floor(m / 60) + ' س ' + Math.round(m % 60) + ' د';
 const busName = b => b === 'بدون باص' ? b : 'باص ' + b;
-const ADM_TABS = [['today', 'اليوم', 'bi-speedometer2'], ['att', 'الحضور', 'bi-bus-front'], ['count', 'العدّ', 'bi-123'], ['ppl', 'المعتمرون', 'bi-people'],
-  ['sched', 'الجدول', 'bi-calendar-event'], ['rate', 'التقييمات', 'bi-star'], ['inq', 'الاستفسارات', 'bi-chat-dots'], ['lost', 'التائهون', 'bi-exclamation-triangle'], ['audit', 'السجل', 'bi-journal-text']];
+const ADM_TABS = [['today', 'اليوم', 'bi-speedometer2'], ['att', 'الحضور', 'bi-bus-front'], ['ppl', 'المعتمرون', 'bi-people'], ['hotels', 'الفنادق', 'bi-buildings'],
+  ['buses', 'الباصات', 'bi-bus-front-fill'], ['sched', 'الجدول', 'bi-calendar-event'], ['news', 'الأخبار', 'bi-megaphone'], ['rate', 'التقييمات', 'bi-star'],
+  ['inq', 'الاستفسارات', 'bi-chat-dots'], ['lost', 'التائهون', 'bi-exclamation-triangle'], ['audit', 'السجل', 'bi-journal-text']];
 
 function adminRender() {
   const box = $('adm');
@@ -29,7 +30,7 @@ async function admGo(tab) {
   admTab = tab;
   document.querySelectorAll('#admTabs [data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   $('admBody').innerHTML = '<div class="text-center desc-text py-4">جارٍ التحميل...</div>';
-  try { await ({ today: admToday, att: admAtt, count: admCount, ppl: admPpl, sched: admSched, rate: admRate, inq: admInq, lost: admLost, audit: admAudit })[tab](); }
+  try { await ({ today: admToday, att: admAtt, ppl: admPpl, hotels: admHotels, buses: admBuses, news: admNews, sched: admSched, rate: admRate, inq: admInq, lost: admLost, audit: admAudit })[tab](); }
   catch (e) { $('admBody').innerHTML = `<div class="text-center py-3"><div class="text-danger mb-2">تعذّر التحميل</div>${admRefresh(tab)}</div>`; }
 }
 
@@ -86,34 +87,6 @@ function admCsv(lines, name) {
 }
 const attLines = rows => [['الوقت', 'رقم المعتمر', 'الاسم', 'النشاط/الباص', 'المسجِّل'], ...rows.map(r => [r.time, r.no, r.name, r.label, r.by])];
 
-/* ---------- عدّاد التعداد السريع ---------- */
-const cntKey = () => 'adm_cnt:' + cntCtx.label + ':' + cntCtx.bus;
-const cntVal = () => +localStorage.getItem(cntKey()) || 0;
-function cntSet(n) { localStorage.setItem(cntKey(), Math.max(0, n)); cntPaint(); navigator.vibrate?.(25); }
-function cntPaint() {
-  const b = cntCtx.buses.find(x => x.bus === cntCtx.bus), exp = b ? b.total : 0, sc = b ? b.present.length : 0, n = cntVal();
-  $('cntN').textContent = n;
-  $('cntBar').style.width = (exp ? Math.min(100, n / exp * 100) : 0) + '%';
-  $('cntBar').className = 'progress-bar ' + (n === exp ? 'bg-success' : n > exp ? 'bg-danger' : 'bg-warning');
-  $('cntInfo').innerHTML = `المتوقع: <b>${exp}</b> · المسجَّلون بالمسح: <b>${sc}</b>${exp ? ` · الفرق: <b class="${n === exp ? 'text-success' : 'text-warning'}">${n - exp > 0 ? '+' : ''}${n - exp}</b>` : ''}`;
-}
-async function admCount() {
-  const r = await admPost('adm_att', { label: '' });
-  if (!r.buses.length) { $('admBody').innerHTML = '<p class="desc-text">لا يوجد معتمرون في الشيت.</p>'; return; }
-  cntCtx = { label: r.label, buses: r.buses, bus: cntCtx && r.buses.some(b => b.bus === cntCtx.bus) ? cntCtx.bus : r.buses[0].bus };
-  $('admBody').innerHTML = `
-    <div class="small mb-2" style="color:#d3d3c7">آخر نشاط/باص مسجَّل بالمسح: <b class="gold">${esc(r.label || '—')}</b></div>
-    <select id="cntSel" class="form-select u-in mb-3">${r.buses.map(b => `<option value="${esc(b.bus)}"${b.bus === cntCtx.bus ? ' selected' : ''}>${esc(busName(b.bus))}</option>`).join('')}</select>
-    <div class="text-center my-3"><div id="cntN" class="gold fw-bold" style="font-size:5rem;line-height:1">0</div></div>
-    <div class="progress mb-2" style="height:8px"><div id="cntBar" class="progress-bar bg-warning" style="width:0"></div></div>
-    <div id="cntInfo" class="text-center small mb-3"></div>
-    <div class="d-flex gap-2 mb-2"><button type="button" class="btn btn-success btn-lg flex-grow-1" style="font-size:1.8rem" data-act="c-plus">+1</button>
-      <button type="button" class="btn btn-outline-danger btn-lg" style="font-size:1.8rem;min-width:32%" data-act="c-minus">−1</button></div>
-    <div class="d-flex gap-2"><button type="button" class="btn btn-gold-solid flex-grow-1" data-act="c-save">حفظ العدّ في السجل</button>
-      <button type="button" class="btn btn-outline-light" data-act="c-reset">تصفير</button></div>`;
-  cntPaint();
-}
-
 /* ---------- إدارة المعتمرين ---------- */
 const PFIELDS = [['Code', 'الرقم السري للدخول'], ['PilgrimNo', 'رقم المعتمر'], ['Name', 'الاسم'], ['Phone', 'الهاتف'], ['Bus_No', 'رقم الباص'], ['Bus_Title', 'عنوان الباص'],
   ['Supervisor_Name', 'اسم المشرف'], ['Supervisor_Phone', 'هاتف المشرف'], ['Makkah_Hotel', 'فندق مكة'], ['Makkah_Room', 'غرفة مكة'], ['Madinah_Hotel', 'فندق المدينة'], ['Madinah_Room', 'غرفة المدينة']];
@@ -134,13 +107,62 @@ async function pplLoad(q) {
     <button type="button" class="btn btn-sm btn-gold-outline py-0" data-act="p-edit" data-i="${i}" aria-label="تعديل"><i class="bi bi-pencil"></i></button></div>
     <small>رقم ${esc(p.PilgrimNo)}${p.Bus_No ? ' · باص ' + esc(p.Bus_No) : ''}${p.Makkah_Room ? ' · مكة غرفة ' + esc(p.Makkah_Room) : ''}${p.Madinah_Room ? ' · المدينة غرفة ' + esc(p.Madinah_Room) : ''}</small></div>`).join('') || '<p class="desc-text">لا نتائج.</p>';
 }
-function pForm(p) {
-  const hs = pplData.headers;
+async function pForm(p) {
+  try { optsData = await admPost('adm_opts'); } catch { optsData = optsData || { makkah: [], madinah: [], buses: [] }; }
+  const hs = pplData.headers, o = optsData, hasBus = o.buses.length > 0;
+  const opt = (v, cur, label) => `<option value="${esc(v)}"${v === cur ? ' selected' : ''}>${esc(label ?? v)}</option>`;
+  const field = (k, l) => {
+    const v = p ? String(p[k] ?? '') : '';
+    let ctl;
+    if ((k === 'Makkah_Hotel' && o.makkah.length) || (k === 'Madinah_Hotel' && o.madinah.length)) {
+      const arr = k === 'Makkah_Hotel' ? o.makkah : o.madinah, all = v && !arr.includes(v) ? [v, ...arr] : arr;
+      ctl = `<select class="form-select form-select-sm u-in" data-k="${k}"><option value="">— اختر —</option>${all.map(n => opt(n, v)).join('')}</select>`;
+    } else if (k === 'Bus_No' && hasBus) {
+      const bs = v && !o.buses.some(b => b.no === v) ? [{ no: v, title: '' }, ...o.buses] : o.buses;
+      ctl = `<select class="form-select form-select-sm u-in" data-k="Bus_No"><option value="">— اختر —</option>${bs.map(b => opt(b.no, v, 'باص ' + b.no + (b.title ? ' — ' + b.title : ''))).join('')}</select>`;
+    } else if (k === 'Code' && !p) {
+      ctl = `<div class="input-group input-group-sm"><input class="form-control u-in" data-k="Code" inputmode="numeric" maxlength="12"><button type="button" class="btn btn-gold-outline" data-act="p-gen" aria-label="توليد رقم عشوائي"><i class="bi bi-dice-5"></i></button></div>`;
+    } else ctl = `<input class="form-control u-in form-control-sm" data-k="${k}" value="${esc(v)}" ${p && k === 'PilgrimNo' ? 'readonly' : ''}>`;
+    return `<div class="col-6"><label class="small">${k === 'Bus_No' && hasBus ? 'الباص' : l}</label>${ctl}</div>`;
+  };
+  const nw = p ? 0 : 1;
   $('pBox').innerHTML = `<div class="u-box mb-3" style="border-color:#edcea0"><div class="gold fw-bold mb-2">${p ? 'تعديل معتمر' : 'إضافة معتمر'}</div><div class="row g-2">
-    ${PFIELDS.filter(([k]) => hs.includes(k)).map(([k, l]) => `<div class="col-6"><label class="small">${l}</label><input class="form-control u-in form-control-sm" data-k="${k}" value="${esc(p ? p[k] : '')}" ${p && k === 'PilgrimNo' ? 'readonly' : ''}></div>`).join('')}</div>
-    <div class="d-flex gap-2 mt-3"><button type="button" class="btn btn-gold-solid flex-grow-1" data-act="p-save" data-new="${p ? 0 : 1}">حفظ</button>
+    ${PFIELDS.filter(([k]) => hs.includes(k) && !(k === 'Bus_Title' && hasBus)).map(([k, l]) => field(k, l)).join('')}</div>
+    ${!o.makkah.length || !o.madinah.length || !hasBus ? '<small class="d-block mt-2" style="color:#d3d3c7">لتفعيل القوائم المنسدلة أضف الفنادق والباصات من تبويبَي «الفنادق» و«الباصات».</small>' : ''}
+    <div class="d-flex gap-2 mt-3 flex-wrap"><button type="button" class="btn btn-gold-solid flex-grow-1" data-act="p-save" data-new="${nw}">حفظ</button>
+      <button type="button" class="btn btn-success flex-grow-1" data-act="p-save" data-send="1" data-new="${nw}"><i class="bi bi-whatsapp ms-1"></i>حفظ وإرسال</button>
       <button type="button" class="btn btn-outline-light" data-act="p-cancel">إلغاء</button></div></div>`;
   $('pBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  if (!p) await pGen();
+}
+async function pGen() { // رقم من 6 خانات محجوز على الخادم فلا يُعطى لغيره
+  try { const r = await admPost('adm_gen_code'), i = $('pBox').querySelector('[data-k="Code"]'); if (i) i.value = r.code; }
+  catch (e) { toast(e.message || 'تعذّر توليد الرقم'); }
+}
+// قيمة الباص تُخزَّن برقمه، ويُشتقّ عنوانه من قائمة الباصات
+function pCollect() {
+  const d = collect($('pBox'));
+  if (optsData?.buses.length && 'Bus_No' in d) { const b = optsData.buses.find(x => x.no === d.Bus_No); if (b) d.Bus_Title = b.title; else if (!d.Bus_No) d.Bus_Title = ''; }
+  return d;
+}
+/* ---------- إرسال بيانات المعتمر عبر واتساب ---------- */
+function waNumber(p) {
+  let n = String(p || '').replace(/[^\d+]/g, '');
+  if (n[0] === '+') n = n.slice(1); else if (n.startsWith('00')) n = n.slice(2); else if (n[0] === '0') return '';
+  return /^\d{8,15}$/.test(n) ? n : '';
+}
+function waSend(d, win) {
+  const num = waNumber(d.Phone);
+  if (!num) { win?.close(); toast('تم الحفظ، لكن اكتب الهاتف بصيغة دولية (مثل +9665…) لإرسال واتساب', 7000); return; }
+  const link = location.href.split('#')[0].split('?')[0];
+  const msg = [`السلام عليكم ${d.Name || ''}`, 'أهلًا بك في حملة الإشراق 🌙', '',
+    d.Code ? `🔑 رقمك السري للدخول: ${d.Code}` : null, d.PilgrimNo ? `🔢 رقم المعتمر: ${d.PilgrimNo}` : null,
+    d.Bus_No ? `🚌 باص رقم: ${d.Bus_No}${d.Bus_Title ? ' — ' + d.Bus_Title : ''}` : null,
+    d.Makkah_Hotel ? `🕋 فندق مكة: ${d.Makkah_Hotel}${d.Makkah_Room ? ' — غرفة ' + d.Makkah_Room : ''}` : null,
+    d.Madinah_Hotel ? `🕌 فندق المدينة: ${d.Madinah_Hotel}${d.Madinah_Room ? ' — غرفة ' + d.Madinah_Room : ''}` : null,
+    '', `🌐 رابط الصفحة: ${link}`, 'أدخل رقمك السري في الصفحة لعرض برنامج رحلتك.'].filter(x => x !== null).join('\n');
+  const url = `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
+  if (win && !win.closed) win.location.href = url; else window.open(url, '_blank');
 }
 function pImportBox() {
   $('pBox').innerHTML = `<div class="u-box mb-3" style="border-color:#edcea0"><div class="gold fw-bold mb-2">استيراد من Excel</div>
@@ -214,6 +236,41 @@ function sForm(e) {
     <select class="form-select u-in mb-3" data-k="Status"><option value="Active"${!e || isActive(e) ? ' selected' : ''}>فعّال</option><option value="Inactive"${e && !isActive(e) ? ' selected' : ''}>ملغي</option></select>
     <div class="d-flex gap-2"><button type="button" class="btn btn-gold-solid flex-grow-1" data-act="s-save">حفظ</button><button type="button" class="btn btn-outline-light" data-act="s-cancel">إلغاء</button></div></div>`;
   $('sBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+/* ---------- الفنادق والباصات (خيارات القوائم المنسدلة) ---------- */
+const delBtn = (attrs) => `<button type="button" class="btn btn-sm btn-outline-danger py-0" ${attrs} aria-label="حذف"><i class="bi bi-trash"></i></button>`;
+async function admHotels() {
+  optsData = await admPost('adm_opts');
+  const box = (kind, title, arr) => `<div class="u-box mb-3"><div class="gold fw-bold mb-2">${title}</div>
+    <div class="d-flex gap-2 mb-2"><input class="form-control u-in" placeholder="اسم الفندق" maxlength="100"><button type="button" class="btn btn-gold-solid" data-act="h-add" data-kind="${kind}" aria-label="إضافة"><i class="bi bi-plus-lg"></i></button></div>
+    ${arr.map(n => `<div class="d-flex justify-content-between align-items-center border-bottom border-secondary py-2"><span class="text-light">${esc(n)}</span>${delBtn(`data-act="h-del" data-kind="${kind}" data-name="${esc(n)}"`)}</div>`).join('') || '<small class="desc-text">لا فنادق مضافة بعد.</small>'}</div>`;
+  $('admBody').innerHTML = `<p class="small" style="color:#d3d3c7">الأسماء هنا تظهر في قائمة منسدلة عند إضافة معتمر أو تعديله. حذف اسم لا يغيّر المعتمرين المسجَّلين مسبقًا.</p>`
+    + box('makkah', 'فنادق مكة المكرمة', optsData.makkah) + box('madinah', 'فنادق المدينة المنورة', optsData.madinah);
+}
+async function admBuses() {
+  optsData = await admPost('adm_opts');
+  $('admBody').innerHTML = `<p class="small" style="color:#d3d3c7">تظهر الباصات في قائمة منسدلة عند إضافة معتمر أو تعديله، ويُحفظ رقم الباص وعنوانه معًا.</p>
+    <div class="u-box mb-3"><div class="gold fw-bold mb-2">إضافة باص</div>
+      <input id="bNo" class="form-control u-in mb-2" placeholder="رقم الباص" maxlength="30">
+      <input id="bTitle" class="form-control u-in mb-2" placeholder="عنوان الباص (مثال: باص الشركة — بوابة 3)" maxlength="100">
+      <button type="button" class="btn btn-gold-solid w-100" data-act="b-add"><i class="bi bi-plus-lg ms-1"></i>إضافة</button></div>
+    ${optsData.buses.map(b => `<div class="ev" style="display:block"><div class="d-flex justify-content-between align-items-center"><b class="text-light">باص ${esc(b.no)}</b>${delBtn(`data-act="b-del" data-no="${esc(b.no)}"`)}</div>
+      <small>${esc(b.title) || '—'}</small></div>`).join('') || '<p class="desc-text">لا باصات مضافة بعد.</p>'}`;
+}
+
+/* ---------- شريط الأخبار العاجل ---------- */
+async function admNews() {
+  const r = await admPost('adm_news_get'), exp = r.expires, expired = exp && Date.now() > exp, on = r.text && !expired;
+  const when = exp ? new Date(exp).toLocaleString('ar-SA-u-ca-gregory', { weekday: 'long', hour: 'numeric', minute: '2-digit', day: 'numeric', month: 'long', timeZone: 'Asia/Riyadh' }) : '';
+  $('admBody').innerHTML = `${admRefresh('news')}
+    <div class="gold fw-bold mb-2">شريط الأخبار العاجل</div>
+    <div class="small mb-2">${on ? `<span class="text-success">ظاهر للمعتمرين الآن</span>${exp ? ' حتى ' + esc(when) : ' (بدون انتهاء تلقائي)'}` : '<span class="text-secondary">لا يوجد خبر ظاهر</span>'}</div>
+    <textarea id="newsTxt" class="form-control u-in mb-2" rows="3" maxlength="300" placeholder="اكتب الخبر العاجل…">${esc(on ? r.text : '')}</textarea>
+    <select id="newsH" class="form-select u-in mb-3"><option value="0">بدون انتهاء تلقائي</option><option value="1">يختفي بعد ساعة</option><option value="3">بعد 3 ساعات</option><option value="6">بعد 6 ساعات</option><option value="12">بعد 12 ساعة</option><option value="24">بعد 24 ساعة</option></select>
+    <div class="d-flex gap-2"><button type="button" class="btn btn-gold-solid flex-grow-1" data-act="news-save"><i class="bi bi-megaphone ms-1"></i>نشر الخبر</button>
+      <button type="button" class="btn btn-outline-danger" data-act="news-clear">إزالة الشريط</button></div>
+    <div class="small mt-2" style="color:#d3d3c7">يصل المعتمرين تنبيه خلال دقيقة إلى دقيقتين إن كانت صفحتهم مفتوحة.</div>`;
 }
 
 /* ---------- التقييمات ---------- */
@@ -373,7 +430,6 @@ function admInput(e) {
 function admChange(e) {
   const t = e.target;
   if (t.id === 'admLabel') admAtt(t.value).catch(() => toast('تعذّر التحميل'));
-  else if (t.id === 'cntSel') { cntCtx.bus = t.value; cntPaint(); }
   else if (t.id === 'sAll') { schedAll = t.checked; paintSched(); }
   else if (t.id === 'pFile' && t.files[0]) pParse(t.files[0]);
 }
@@ -383,10 +439,7 @@ async function admClick(e) {
   const t = e.target.closest('[data-tab]'); if (t) return admGo(t.dataset.tab);
   const b = e.target.closest('[data-act]'); if (!b) return;
   const act = b.dataset.act, card = b.closest('[data-id]'), id = card?.dataset.id;
-  // العدّاد سريع: بلا تعطيل للزر
-  if (act === 'c-plus') return cntSet(cntVal() + 1);
-  if (act === 'c-minus') return cntSet(cntVal() - 1);
-  if (act === 'c-reset') { if (await askConfirm('تصفير العدّاد؟', 'سيعود العدّ إلى صفر لهذا الباص.', 'نعم، صفّر')) cntSet(0); return; }
+  if (act === 'p-gen') return pGen();
   if (act === 'p-edit') return pForm(pplData.items[+b.dataset.i]);
   if (act === 'p-add') return pForm(null);
   if (act === 'p-import') return pImportBox();
@@ -401,13 +454,34 @@ async function admClick(e) {
     if (act === 'csv-one') admCsv(attLines(admData.rows), 'attendance.csv');
     else if (act === 'csv-all') admCsv(attLines((await admPost('adm_att', { label: '*' })).rows), 'attendance-all.csv');
     else if (act === 'report') { toast('جارٍ إعداد التقرير...', 4000); await admReportPdf(); }
-    else if (act === 'c-save') {
-      const bus = cntCtx.buses.find(x => x.bus === cntCtx.bus);
-      await admPost('adm_count_save', { label: cntCtx.label, bus: cntCtx.bus, count: cntVal(), expected: bus.total, scanned: bus.present.length }); toast('تم حفظ العدّ');
-    }
     else if (act === 'p-save') {
-      await admPost('adm_p_save', { isNew: b.dataset.new === '1', data: collect($('pBox')) });
+      const send = b.dataset.send === '1', data = pCollect();
+      const win = send ? window.open('', '_blank') : null; // يُفتح فورًا مع الضغطة كي لا يحجبه المتصفح
+      try { await admPost('adm_p_save', { isNew: b.dataset.new === '1', data }); } catch (er) { win?.close(); throw er; }
       toast('تم الحفظ'); $('pBox').innerHTML = ''; await pplLoad($('pQ').value.trim());
+      if (send) waSend(data, win);
+    }
+    else if (act === 'h-add') {
+      const name = b.closest('.u-box').querySelector('input').value.trim();
+      await admPost('adm_opt_add', { kind: b.dataset.kind, name }); toast('تمت الإضافة'); await admHotels();
+    }
+    else if (act === 'h-del') {
+      if (!await askConfirm('حذف الفندق؟', b.dataset.name, 'نعم، احذف')) return;
+      await admPost('adm_opt_del', { kind: b.dataset.kind, name: b.dataset.name }); toast('تم الحذف'); await admHotels();
+    }
+    else if (act === 'b-add') { await admPost('adm_opt_add', { kind: 'bus', no: $('bNo').value, title: $('bTitle').value }); toast('تمت الإضافة'); await admBuses(); }
+    else if (act === 'b-del') {
+      if (!await askConfirm('حذف الباص؟', 'باص ' + b.dataset.no, 'نعم، احذف')) return;
+      await admPost('adm_opt_del', { kind: 'bus', no: b.dataset.no }); toast('تم الحذف'); await admBuses();
+    }
+    else if (act === 'news-save') {
+      const text = $('newsTxt').value.trim();
+      if (!text) { toast('اكتب الخبر أولًا'); return; }
+      await admPost('adm_news_set', { text, hours: $('newsH').value }); toast('تم نشر الخبر'); await admNews();
+    }
+    else if (act === 'news-clear') {
+      if (!await askConfirm('إزالة الشريط؟', 'سيختفي الخبر من صفحات المعتمرين.', 'نعم، أزل')) return;
+      await admPost('adm_news_set', { text: '', hours: 0 }); toast('تمت الإزالة'); await admNews();
     }
     else if (act === 'p-do-import') await pDoImport();
     else if (act === 'p-do-print') {
