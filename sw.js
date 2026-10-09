@@ -2,6 +2,7 @@ const CACHE_NAME = 'ishraq-cache-v4';
 const assetsToCache = [
   './',
   './index.html',
+  './umrah.html',
   './quran.html',
   './surah-reader.html',
   './tasbeeh.html',
@@ -16,6 +17,7 @@ const assetsToCache = [
   './style.css',
   './manifest.json',
   './main.js',
+  './umrah.js',
   './prayer.js',
   './qibla.js',
   './quran.js',

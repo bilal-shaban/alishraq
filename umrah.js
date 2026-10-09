@@ -451,3 +451,17 @@ $('askForm').onsubmit = async e => {
 render();
 // تحديث البيانات من الخادم؛ إن فشل الاتصال تبقى البطاقة المحفوظة تعمل، وإن رُفض الرقم يُسجَّل الخروج
 if (me) enter(code).then(ok => { if (ok === false) logout(); }).catch(() => {});
+
+// تطبيق وضع القراءة الليلية المحفوظ فوراً عند تحميل أي صفحة في الموقع
+document.addEventListener('DOMContentLoaded', () => {
+    const isNightMode = localStorage.getItem('night_reading_mode') === 'true';
+    const toggleSwitch = document.getElementById('nightModeToggle');
+    
+    if (isNightMode) {
+        document.documentElement.setAttribute('data-night-mode', 'true');
+        if (toggleSwitch) toggleSwitch.checked = true;
+    } else {
+        document.documentElement.removeAttribute('data-night-mode');
+        if (toggleSwitch) toggleSwitch.checked = false;
+    }
+});
