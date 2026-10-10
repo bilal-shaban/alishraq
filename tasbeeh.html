@@ -92,7 +92,9 @@
                 >
               </li>
               <li class="nav-item">
-                <a class="nav-link gold px-3 d-inline-block" href="./matwaf.html"
+                <a
+                  class="nav-link gold px-3 d-inline-block"
+                  href="./matwaf.html"
                   >المطوف
                 </a>
               </li>
@@ -105,52 +107,58 @@
     <!-- محتوى الصفحة مع إضافة مسافة علوية (margin-top) -->
     <main style="margin-top: 130px" class="pb-5 mb-5">
       <div class="container my-3" style="max-width: 500px">
-        <!-- إحصائيات سريعة (عدد الدورات والإجمالي التاريخي) -->
-        <div class="row g-2 mb-3 text-center">
-          <div class="col-6">
-            <div
-              class="p-2 bg-card-dark border-gold-subtle rounded-3 shadow-sm"
-            >
-              <span class="d-block small text-light opacity-75"
-                >الدورات المكتملة</span
-              >
-              <span id="rounds-counter" class="gold fw-bold fs-5">0</span>
-            </div>
-          </div>
-          <div class="col-6">
-            <div
-              class="p-2 bg-card-dark border-gold-subtle rounded-3 shadow-sm"
-            >
-              <span class="d-block small text-light opacity-75"
-                >الإجمالي</span
-              >
-              <span id="total-counter" class="gold fw-bold fs-5">0</span>
-            </div>
-          </div>
-        </div>
-
         <!-- الهدف اليومي -->
-        <div class="card bg-card-dark border-gold-subtle rounded-4 mb-3 shadow-sm">
+        <div
+          class="card bg-card-dark border-gold-subtle rounded-4 mb-3 shadow-sm"
+        >
           <div class="card-body p-3">
             <div class="d-flex justify-content-between align-items-center mb-2">
-              <span id="daily-goal-label" class="small gold fw-bold">0 / 300 تسبيحة اليوم</span>
-              <button class="btn btn-sm btn-link gold text-decoration-none p-0" data-bs-toggle="collapse" data-bs-target="#goal-edit-row">
+              <span id="daily-goal-label" class="small gold fw-bold"
+                >0 / 300 تسبيحة اليوم</span
+              >
+              <button
+                class="btn btn-sm btn-link gold text-decoration-none p-0"
+                data-bs-toggle="collapse"
+                data-bs-target="#goal-edit-row"
+              >
                 <i class="bi bi-pencil-square"></i>
               </button>
             </div>
-            <div class="progress bg-secondary bg-opacity-25" style="height: 8px;">
-              <div id="daily-goal-bar" class="progress-bar bg-gold" role="progressbar" style="width: 0%;"></div>
+            <div
+              class="progress bg-secondary bg-opacity-25"
+              style="height: 8px"
+            >
+              <div
+                id="daily-goal-bar"
+                class="progress-bar bg-gold"
+                role="progressbar"
+                style="width: 0%"
+              ></div>
             </div>
             <div class="collapse mt-2" id="goal-edit-row">
               <div class="input-group input-group-sm">
-                <input type="number" id="daily-goal-input" class="form-control bg-dark text-light border-gold-subtle" min="10" step="10" value="300">
-                <button class="btn btn-gold-solid" onclick="setDailyGoal(document.getElementById('daily-goal-input').value)">حفظ الهدف</button>
+                <input
+                  type="number"
+                  id="daily-goal-input"
+                  class="form-control bg-dark text-light border-gold-subtle"
+                  min="10"
+                  step="10"
+                  value="300"
+                />
+                <button
+                  class="btn btn-gold-solid"
+                  onclick="
+                    setDailyGoal(
+                      document.getElementById('daily-goal-input').value,
+                    )
+                  "
+                >
+                  حفظ الهدف
+                </button>
               </div>
             </div>
           </div>
         </div>
-
-       
 
         <!-- صندوق اختيار الذكر -->
         <div
@@ -182,8 +190,9 @@
             </div>
             <select
               id="dhikr-select"
-              class="form-select bg-dark text-light border-gold-subtle shadow-none"
+              class="form-select text-light border-gold-subtle shadow-none"
               onchange="changeDhikr(this)"
+              style="background-color: #1b1b18"
             >
               <option value="سُبْحَانَ اللَّهِ">سُبْحَانَ اللَّهِ</option>
               <option value="الْحَمْدُ لِلَّهِ">الْحَمْدُ لِلَّهِ</option>
@@ -228,7 +237,9 @@
               <span id="counter-number" class="display-3 fw-bold gold m-0"
                 >0</span
               >
-              <span class="text-light opacity-50 small mt-1">اضغط أو مرّر إصبعك للتسبيح</span>
+              <span class="text-light opacity-50 small mt-1"
+                >اضغط أو مرّر إصبعك للتسبيح</span
+              >
             </div>
           </div>
         </div>
@@ -246,21 +257,65 @@
             <!-- تتولد الخرزات هنا برمجياً -->
           </div>
         </div>
-
+        <!-- إحصائيات سريعة (عدد الدورات والإجمالي التاريخي) -->
+        <div class="row g-2 mb-3 text-center">
+          <div class="col-6">
+            <div
+              class="p-2 bg-card-dark border-gold-subtle rounded-3 shadow-sm"
+            >
+              <span class="d-block small text-light opacity-75"
+                >الدورات المكتملة</span
+              >
+              <span id="rounds-counter" class="gold fw-bold fs-5">0</span>
+            </div>
+          </div>
+          <div class="col-6">
+            <div
+              class="p-2 bg-card-dark border-gold-subtle rounded-3 shadow-sm"
+            >
+              <span class="d-block small text-light opacity-75">الإجمالي</span>
+              <span id="total-counter" class="gold fw-bold fs-5">0</span>
+            </div>
+          </div>
+        </div>
         <!-- اختيار صوت النقر -->
         <div class="card bg-card-dark border-gold-subtle rounded-4 p-2 my-3">
-          <div class="text-center mb-1 small text-light opacity-75">صوت النقر</div>
+          <div class="text-center mb-1 small text-light opacity-75">
+            صوت النقر
+          </div>
           <div class="d-flex justify-content-center gap-2 sound-picker">
-            <button class="btn btn-sm btn-gold-outline" data-sound="silent" onclick="setSoundPref('silent')"><i class="bi bi-volume-mute"></i> صامت</button>
-            <button class="btn btn-sm btn-gold-outline" data-sound="wood" onclick="setSoundPref('wood')"><i class="bi bi-circle-fill"></i> خشبي</button>
-            <button class="btn btn-sm btn-gold-outline" data-sound="metal" onclick="setSoundPref('metal')"><i class="bi bi-gem"></i> معدني</button>
+            <button
+              class="btn btn-sm btn-gold-outline"
+              data-sound="silent"
+              onclick="setSoundPref('silent')"
+            >
+              <i class="bi bi-volume-mute"></i> صامت
+            </button>
+            <button
+              class="btn btn-sm btn-gold-outline"
+              data-sound="wood"
+              onclick="setSoundPref('wood')"
+            >
+              <i class="bi bi-circle-fill"></i> خشبي
+            </button>
+            <button
+              class="btn btn-sm btn-gold-outline"
+              data-sound="metal"
+              onclick="setSoundPref('metal')"
+            >
+              <i class="bi bi-gem"></i> معدني
+            </button>
           </div>
         </div>
 
-         <!-- الرسم البياني الأسبوعي -->
-        <div class="card bg-card-dark border-gold-subtle rounded-4 mb-3 shadow-sm">
+        <!-- الرسم البياني الأسبوعي -->
+        <div
+          class="card bg-card-dark border-gold-subtle rounded-4 mb-3 shadow-sm"
+        >
           <div class="card-body p-3">
-            <div class="small text-light opacity-75 mb-2">تسبيحاتك خلال آخر 7 أيام</div>
+            <div class="small text-light opacity-75 mb-2">
+              تسبيحاتك خلال آخر 7 أيام
+            </div>
             <div class="weekly-chart" id="weekly-chart"></div>
           </div>
         </div>
@@ -339,7 +394,9 @@
       <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content bg-card-dark text-light border-gold-subtle">
           <div class="modal-header border-gold-subtle">
-            <h5 class="modal-title gold fw-bold fs-6"><i class="bi bi-stars me-1"></i> أسماء الله الحسنى</h5>
+            <h5 class="modal-title gold fw-bold fs-6">
+              <i class="bi bi-stars me-1"></i> أسماء الله الحسنى
+            </h5>
             <button
               type="button"
               class="btn-close btn-close-white"
@@ -348,7 +405,9 @@
             ></button>
           </div>
           <div class="modal-body">
-            <p class="small text-light opacity-75 mb-3">اضغط على أي اسم لتبدأ التسبيح والذكر به.</p>
+            <p class="small text-light opacity-75 mb-3">
+              اضغط على أي اسم لتبدأ التسبيح والذكر به.
+            </p>
             <div id="asma-list-container"></div>
           </div>
         </div>
@@ -395,15 +454,15 @@
 
         <!-- زر المطوف -->
         <!-- زر المطوف (باستخدام أيقونة تعبر عن السعي والحركة) -->
-<a
-  href="matwaf.html"
-  class="nav-item-bottom text-center text-decoration-none"
-  data-page="matwaf"
->
-  <i class="bi bi-person-walking fs-5 d-block"></i>
-  <i class="bi bi-person-walking fs-5 d-block active-icon"></i>
-  <span class="small">المطوف</span>
-</a>
+        <a
+          href="matwaf.html"
+          class="nav-item-bottom text-center text-decoration-none"
+          data-page="matwaf"
+        >
+          <i class="bi bi-person-walking fs-5 d-block"></i>
+          <i class="bi bi-person-walking fs-5 d-block active-icon"></i>
+          <span class="small">المطوف</span>
+        </a>
 
         <!-- زر الإعدادات -->
         <a

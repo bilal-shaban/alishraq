@@ -28,7 +28,8 @@ body{background:#21211d;font-family:'Tajawal',sans-serif}
 
   <div class="box mb-3">
     <input id="key" type="password" class="form-control u-in mb-2" placeholder="رمز المشرف" autocomplete="off">
-    <input id="label" class="form-control u-in mb-2" placeholder="اسم الباص أو النشاط (مثال: باص 3 — الحرم)" autocomplete="off">
+    <select id="labelSel" class="form-select u-in mb-2" aria-label="الباص أو النشاط"></select>
+    <div id="busMsg" class="small mb-2" style="color:#d3d3c7"></div>
     <button id="go" class="btn btn-gold w-100">بدء المسح</button>
   </div>
 
@@ -56,12 +57,46 @@ const show = (cls, html) => { $('res').className = cls; $('res').innerHTML = htm
 const call = body => fetch(API, { method: 'POST', body: JSON.stringify(body) }).then(r => r.json());
 
 $('key').value = sessionStorage.getItem('sup_key') || '';
-$('label').value = localStorage.getItem('sup_label') || '';
+/* ---------- الباص: قائمة مرتبطة بالباصات المدخلة في لوحة المشرف ---------- */
+let buses = []; try { buses = JSON.parse(localStorage.getItem('sup_buses')) || []; } catch {}
+const busLabel = b => 'باص ' + b.no + (b.title ? ' — ' + b.title : '');
+const getLabel = () => $('labelSel').value.trim();
+const busMsg = (t, cls = '') => { $('busMsg').className = 'small mb-2 ' + cls; $('busMsg').textContent = t; };
+function paintLabels(want) {
+  want = want ?? getLabel();
+  const names = buses.map(busLabel);
+  $('labelSel').innerHTML = `<option value="">${names.length ? '— اختر الباص —' : '— لا توجد باصات —'}</option>`
+    + names.map(n => `<option value="${esc(n)}"${n === want ? ' selected' : ''}>${esc(n)}</option>`).join('');
+}
+let loadSeq = 0;
+async function loadBuses() {
+  const k = $('key').value.trim(), seq = ++loadSeq;
+  if (!k) return busMsg('أدخل رمز المشرف لتحميل الباصات');
+  busMsg('جارٍ تحميل الباصات...');
+  try {
+    const r = await call({ action: 'scan_opts', key: k });
+    if (seq !== loadSeq) return; // نتيجة قديمة
+    if (r.ok) {
+      buses = r.buses || []; localStorage.setItem('sup_buses', JSON.stringify(buses)); paintLabels(); loadList();
+      return buses.length ? busMsg('') : busMsg('لم تُضَف باصات بعد: أضفها من لوحة المشرف ← تبويب «الباصات».', 'text-warning');
+    }
+    // فشل: نميّز بين رمز خاطئ ونشر قديم للخادم (إجراء verify موجود في كل النسخ)
+    const v = await call({ action: 'verify', key: k });
+    if (seq !== loadSeq) return;
+    busMsg(v.ok ? 'الخادم لا يدعم قائمة الباصات: انشر Code.gs بنسخة جديدة (Deploy ← Manage deployments ← Edit ← New version).' : 'رمز المشرف غير صحيح', 'text-danger');
+  } catch { if (seq === loadSeq) busMsg(buses.length ? 'بلا اتصال — تُعرض آخر قائمة محفوظة' : 'تعذّر الاتصال، حاول مرة أخرى', 'text-warning'); }
+}
+paintLabels(localStorage.getItem('sup_label') || '');
+let keyTimer = 0;
+$('key').oninput = () => { clearTimeout(keyTimer); keyTimer = setTimeout(loadBuses, 600); }; // بلا حاجة لمغادرة الخانة
+$('key').onchange = loadBuses;
+$('labelSel').onchange = loadList;
+loadBuses();
 
 let scanner = null, busy = false, last = '', lastAt = 0, list = [];
 
 /* ---------- قائمة المسجّلين (محفوظة لكل نشاط) ---------- */
-const lk = () => 'scanlist:' + $('label').value.trim();
+const lk = () => 'scanlist:' + getLabel();
 function renderList() {
   $('lst').innerHTML = list.map(x => `<li>${esc(x.name)} <span class="text-secondary">(${esc(x.no)})</span></li>`).join('');
   $('cnt').textContent = list.length;
@@ -74,7 +109,6 @@ function addToList(no, name) {
   list.push({ no, name, time: new Date().toLocaleTimeString('ar-SA-u-ca-gregory', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Riyadh' }) });
   localStorage.setItem(lk(), JSON.stringify(list)); renderList();
 }
-$('label').onchange = loadList;
 $('clr').onclick = () => { if (confirm('بدء قائمة جديدة لهذا النشاط؟ سيُمسح عرض القائمة هنا فقط، أما الشيت فلا يتأثر.')) { list = []; localStorage.removeItem(lk()); renderList(); } };
 loadList();
 
@@ -85,7 +119,7 @@ async function onScan(text) {
   last = text; lastAt = now;
   if (!/^UMRAH:/i.test(text)) return show('bad', '❌ رمز غير صالح');
   busy = true; navigator.vibrate?.(80);
-  const label = $('label').value.trim();
+  const label = getLabel();
   try {
     const r = await call({ action: 'checkin', key: $('key').value.trim(), label, pilgrimNo: text.slice(6) });
     if (!r.ok) show('bad', r.error === 'key' ? '🔒 رمز المشرف غير صحيح' : r.error === 'notfound' ? '❌ معتمر غير موجود' : '❌ تعذّر التسجيل');
@@ -102,7 +136,8 @@ async function stopScan() {
 }
 $('go').onclick = async () => {
   if (scanner) return stopScan();
-  if (!$('key').value.trim() || !$('label').value.trim()) return show('bad', 'أدخل رمز المشرف واسم الباص أولًا');
+  if (!$('key').value.trim()) return show('bad', 'أدخل رمز المشرف أولًا');
+  if (!getLabel()) { await loadBuses(); if (!getLabel()) return show('bad', 'اختر الباص من القائمة أولًا'); }
   // التحقق من رمز المشرف على الخادم قبل تشغيل الكاميرا
   $('go').disabled = true; show('', 'جارٍ التحقق من الرمز...');
   try {
@@ -111,7 +146,7 @@ $('go').onclick = async () => {
   } catch { return show('bad', '📶 تعذّر الاتصال، حاول مرة أخرى'); }
   finally { $('go').disabled = false; }
   sessionStorage.setItem('sup_key', $('key').value.trim());
-  localStorage.setItem('sup_label', $('label').value.trim());
+  localStorage.setItem('sup_label', getLabel());
   loadList();
   $('reader').classList.remove('d-none');
   scanner = new Html5Qrcode('reader');
@@ -134,7 +169,7 @@ $('pdf').onclick = async () => {
 async function makePdf() {
   try { await Promise.all([document.fonts.load('700 30px Tajawal'), document.fonts.load('400 22px Tajawal')]); } catch {}
   const W = 794, H = 1123, S = 2, M = 50, RH = 44, FF = 'Tajawal, sans-serif';
-  const label = $('label').value.trim(), now = new Date();
+  const label = getLabel(), now = new Date();
   const when = now.toLocaleString('ar-SA-u-ca-gregory', { dateStyle: 'full', timeStyle: 'short', timeZone: 'Asia/Riyadh' });
   const topFirst = 300, topNext = 90, bottom = 70;
   const capFirst = Math.floor((H - topFirst - RH - bottom) / RH), capNext = Math.floor((H - topNext - RH - bottom) / RH);

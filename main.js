@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="d-flex justify-content-between align-items-center">
         <div>
           <h5 class="text-gold mb-1" style="  font-family: 'Tajawal', sans-serif; color: #edcea0;">متابعة القراءة </h5>
-          <p class="mb-0 text-muted small">سورة ${progress.surahName} - الآية رقم (${progress.ayahNumber})</p>
+          <p class="mb-0 text-muted small">سورة ${progress.surahName} - الآية (${progress.ayahNumber})</p>
         </div>
         <a href="surah-reader.html?surah=${progress.surahNumber}" class="btn btn-sm btn-gold-outline px-4 py-2 rounded-pill" style="border-color: #edcea0; color: #edcea0; text-decoration: none;">
           إكمال القراءة <i class="bi bi-arrow-left ms-1"></i>

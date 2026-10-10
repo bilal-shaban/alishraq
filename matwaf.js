@@ -205,7 +205,7 @@
             <h4 class="gold fw-bold mb-3"><i class="bi bi-scissors me-1"></i> ختام العمرة</h4>
             <p class="text-light opacity-85 px-2 mb-3" style="font-size: ${currentFontSize}px;">لقد أتممت طوافَك وسعيَك ولله الحمد! قم بالحلق أو التقصير.</p>
             <div class="p-3 rounded mb-3 bg-success bg-opacity-10 border border-success text-center">
-              <p class="text-success fw-bold mb-0">تقبل الله عمرتك!</p>
+              <p class="text-success fw-bold mb-0"> تقبل الله عمرتك وجعلها مبرورة مشكورة <br> وجعل ذنبك مغفورا إن شاء الله!</p>
             </div>
             <div class="d-grid gap-2 mb-3">
               <a href="https://api.whatsapp.com/send?text=الحمد%20لله%20الذي%20بنعمته%20تتم%20الصالحات،%20لقد%20أتممت%20عمرتي%20اليوم%20بفضل%20الله.%20تقبل%20الله%20منا%20ومنكم." target="_blank" class="btn btn-success rounded-pill fw-bold">
