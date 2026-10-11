@@ -25,6 +25,8 @@
     <link rel="stylesheet" href="style.css" />
     <!-- PWA Manifest -->
     <link rel="manifest" href="./manifest.json" />
+     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
     <meta name="theme-color" content="#21211D" />
   </head>
   <body style="background-color: #21211D; color: #F8F9FA; font-family: 'Tajawal', sans-serif;">
@@ -91,7 +93,7 @@
       <div class="container my-3" style="max-width: 500px">
         <!-- قسم بوصلة القبلة الخرافي والمتطور -->
         <div class="row justify-content-center mb-5">
-          <div class="col-11">
+          <div class="col-11" >
             <div
               class="qibla-card shadow-lg p-4 text-center rounded-4 position-relative overflow-hidden"
             >
@@ -165,10 +167,9 @@
               <button
                 id="btn-enable-compass"
                 onclick="requestCompassPermission()"
-                class="btn btn-gold-solid rounded-pill px-4 py-2 d-none shadow-sm"
+                class="btn btn-gold-solid rounded-bottom-pill px-4 py-2 d-none shadow-sm"
               >
-                <i class="bi bi-shield-lock me-1"></i> تفعيل مستشعر الاتجاه (iOS
-                / أندرويد)
+                <i class="bi bi-shield-lock me-1"></i> تفعيل مستشعر الاتجاه 
               </button>
             </div>
           </div>
@@ -208,6 +209,13 @@
     <!-- ملفات الجافاسكريبت -->
      <script src="./qibla.js"></script>
     <script src="./main.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+     <script>
+      AOS.init({
+        duration: 1500, // مدة الحركة بالمللي ثانية
+        once: true, // تظهر الحركة مرة واحدة فقط
+      });
+    </script>
   </body>
 </html>

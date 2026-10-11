@@ -197,7 +197,7 @@ function renderMe() {
   $('loginForm').classList.add('d-none');
   if (role === 'admin') {
     t.innerHTML = `<div class="ticket mt-2">
-      <div class="head d-flex justify-content-between align-items-center"><div><small>مشرف إداري</small><div class="h5 fw-bold mb-0">${esc(me.Name)}</div></div><i class="bi bi-shield-check" style="font-size:2.2rem"></i></div>
+      <div class="head d-flex justify-content-between align-items-center"><div><small>مشرف إداري${me.PilgrimNo ? ' · رقم المعتمر ' + esc(me.PilgrimNo) : ''}</small><div class="h5 fw-bold mb-0">${esc(me.Name)}</div></div><i class="bi bi-shield-check" style="font-size:2.2rem"></i></div>
       <div class="perf"></div>
       <div class="body"><div class="d-grid gap-2">
         <a class="btn btn-dark" href="./scan.html"><i class="bi bi-qr-code-scan ms-1"></i>صفحة مسح الحضور</a>
@@ -227,10 +227,10 @@ function renderMe() {
 async function saveCardImage(btn) {
   btn.disabled = true;
   try {
-    const hotel = (n, r, l) => [`${n || '—'} — غرفة ${r || '—'}`, plain(l)].filter(Boolean).join('\n'); // بدون كلمة الواي فاي ولا تواريخ الدخول والمغادرة
+    const hotel = (n, r, l, d) => [`${n || '—'} — غرفة ${r || '—'}`, d, plain(l)].filter(Boolean).join('\n'); // بدون كلمة الواي فاي ولا تواريخ الدخول والمغادرة
     const rows = [
-      ['فندق مكة المكرمة', hotel(me.Makkah_Hotel, me.Makkah_Room, me.Makkah_Location)],
-      ['فندق المدينة المنورة', hotel(me.Madinah_Hotel, me.Madinah_Room, me.Madinah_Location)]
+      ['فندق مكة المكرمة', hotel(me.Makkah_Hotel, me.Makkah_Room, me.Makkah_Location, me.Makkah_Details)],
+      ['فندق المدينة المنورة', hotel(me.Madinah_Hotel, me.Madinah_Room, me.Madinah_Location, me.Madinah_Details)]
     ];
     const bus = [me.Bus_Title, me.Bus_No && 'رقم ' + me.Bus_No].filter(Boolean).join(' — ');
     if (bus) rows.push(['باص الرحلة', bus]);
@@ -241,29 +241,37 @@ async function saveCardImage(btn) {
   } catch { toast('تعذّر حفظ البطاقة'); } finally { btn.disabled = false; }
 }
 
-/* ---------- باص الرحلة وفنادق الإقامة ---------- */
+/* ---------- باص الرحلة، المشرفون، وفنادق الإقامة ---------- */
 function renderBus() {
-  const b = $('busBox'), ok = me && role === 'pilgrim' && (me.Bus_Title || me.Bus_No || me.Supervisor_Name || me.Supervisor_Phone);
+  const b = $('busBox'), ok = me && role === 'pilgrim' && (me.Bus_Title || me.Bus_No || me.Bus_Location);
   b.classList.toggle('d-none', !ok);
   if (!ok) return;
   const row = (k, v) => v ? `<div class="mb-2"><small class="d-block" style="color:#d3d3c7">${k}</small><div class="text-light fw-bold">${v}</div></div>` : '';
   b.innerHTML = `<h2><i class="bi bi-bus-front ms-2"></i>باص الرحلة</h2>
     ${row('عنوان الباص', esc(me.Bus_Title))}${row('رقم الباص', esc(me.Bus_No))}
-    ${row('موقع الباص', isUrl(me.Bus_Location) ? `<a href="${esc(me.Bus_Location)}" target="_blank" rel="noopener" class="gold"><i class="bi bi-map ms-1"></i>افتح الموقع على الخريطة</a>` : esc(me.Bus_Location))}
-    ${row('المشرف', esc(me.Supervisor_Name))}
-    ${me.Supervisor_Phone ? `<a class="btn btn-gold-solid w-100 mt-1" href="${phoneHref(me.Supervisor_Phone)}"><i class="bi bi-telephone-fill ms-1"></i>اتصل بالمشرف <span dir="ltr">${esc(me.Supervisor_Phone)}</span></a>` : ''}`;
+    ${row('موقع الباص', isUrl(me.Bus_Location) ? `<a href="${esc(me.Bus_Location)}" target="_blank" rel="noopener" class="gold"><i class="bi bi-map ms-1"></i>افتح الموقع على الخريطة</a>` : esc(me.Bus_Location))}`;
 }
-function renderHotels() {
-  const b = $('hotelBox'), f = ['Makkah', 'Madinah'].map(c => ({ c, h: me?.[c + '_Hotel'], r: me?.[c + '_Room'], w: me?.[c + '_WiFi'], i: me?.[c + '_CheckIn'], o: me?.[c + '_CheckOut'], l: me?.[c + '_Location'] }));
-  const ok = me && role === 'pilgrim' && f.some(x => x.h || x.w || x.i || x.o);
+function renderSup() {
+  const b = $('mySupBox'), ok = me && role === 'pilgrim' && (me.Supervisor_Name || me.Supervisor_Phone);
   b.classList.toggle('d-none', !ok);
   if (!ok) return;
-  const block = (title, x) => (x.h || x.w || x.i || x.o) ? `<div class="mb-3"><div class="gold fw-bold mb-1"><i class="bi bi-building ms-1"></i>${title}</div>
+  b.innerHTML = `<h2><i class="bi bi-person-badge ms-2"></i>المشرفون</h2>
+    <div class="ev align-items-center" style="margin-bottom:0"><div class="ic"><i class="bi bi-person-fill"></i></div>
+      <div class="flex-grow-1"><div class="fw-bold text-light">${esc(me.Supervisor_Name || 'المشرف')}</div><small>مشرفك في الرحلة</small></div>
+      ${me.Supervisor_Phone ? `<a class="btn btn-gold-solid rounded-pill" href="${phoneHref(me.Supervisor_Phone)}"><i class="bi bi-telephone-fill ms-1"></i>اتصال</a>` : ''}</div>`;
+}
+function renderHotels() {
+  const b = $('hotelBox'), f = ['Makkah', 'Madinah'].map(c => ({ c, h: me?.[c + '_Hotel'], r: me?.[c + '_Room'], w: me?.[c + '_WiFi'], i: me?.[c + '_CheckIn'], o: me?.[c + '_CheckOut'], l: me?.[c + '_Location'], d: me?.[c + '_Details'] }));
+  const ok = me && role === 'pilgrim' && f.some(x => x.h || x.w || x.i || x.o || x.d || isUrl(x.l));
+  b.classList.toggle('d-none', !ok);
+  if (!ok) return;
+  const block = (title, x) => (x.h || x.w || x.i || x.o || x.d || isUrl(x.l)) ? `<div class="mb-3"><div class="gold fw-bold mb-1"><i class="bi bi-building ms-1"></i>${title}</div>
     <div class="text-light">${esc(x.h || '—')}${x.r ? ' — غرفة ' + esc(x.r) : ''}</div>
     ${x.w ? `<div class="mt-1"><small>كلمة مرور الواي فاي:</small> <code class="text-warning fs-6" dir="ltr">${esc(x.w)}</code> <button type="button" class="btn btn-sm btn-gold-outline rounded-pill py-0" data-copy="${esc(x.w)}"><i class="bi bi-clipboard"></i></button></div>` : ''}
     ${x.i ? `<div><small><i class="bi bi-box-arrow-in-left ms-1"></i>الدخول: ${esc(fmtDay(x.i))}</small></div>` : ''}
     ${x.o ? `<div><small><i class="bi bi-box-arrow-right ms-1"></i>المغادرة: ${esc(fmtDay(x.o))}</small></div>` : ''}
-    ${isUrl(x.l) ? `<a href="${esc(x.l)}" target="_blank" rel="noopener" class="gold small"><i class="bi bi-map ms-1"></i>الموقع على الخريطة</a>` : ''}</div>` : '';
+    ${x.d ? `<div class="mt-1"><small><i class="bi bi-geo-alt ms-1"></i>${esc(x.d)}</small></div>` : ''}
+    ${isUrl(x.l) ? `<a href="${esc(x.l)}" target="_blank" rel="noopener" class="btn btn-sm btn-gold-outline rounded-pill mt-2"><i class="bi bi-map ms-1"></i>الموقع على الخريطة</a>` : ''}</div>` : '';
   b.innerHTML = `<h2><i class="bi bi-buildings ms-2"></i>معلومات الفنادق</h2>${block('فندق مكة المكرمة', f[0])}${block('فندق المدينة المنورة', f[1])}`;
 }
 $('hotelBox').onclick = e => { const b = e.target.closest('[data-copy]'); if (b) copyText(b.dataset.copy); };
@@ -335,7 +343,7 @@ async function sync(forceInq) {
   if (!me || syncing || document.hidden) return;
   syncing = true;
   try {
-    const r = await post({ action: 'sync', code, inq: role === 'pilgrim' && (forceInq === true || inq.some(q => !q.reply)), lostId: lost?.id });
+    const r = await post({ action: 'sync', code, inq: role === 'pilgrim' && (forceInq === true || inq.some(q => !q.reply)), lostId: lost?.id, mh: me.Makkah_Hotel, dh: me.Madinah_Hotel });
     if (r.ok === false) return logout();
     const msgs = [];
     if (JSON.stringify([r.banner || '', r.events || []]) !== JSON.stringify([banner, raw])) {
@@ -352,6 +360,7 @@ async function sync(forceInq) {
       if (lost?.status === 'responding' && was !== 'responding') msgs.push('ردّ المشرف: ' + (lost.reply || 'نحن في طريقنا إليك'));
       renderLost();
     }
+    if (r.hi && Object.keys(r.hi).some(k => me[k] !== r.hi[k])) { Object.assign(me, r.hi); renderMe(); renderHotels(); renderTabs(); } // تحديث واي فاي/موقع الفندق
     save(); notify(msgs);
   } catch {} finally { syncing = false; }
 }
@@ -361,12 +370,12 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden) sync
 
 /* ---------- علامات التبويب ---------- */
 let curTab = 'all';
-const TABS = [['all', 'الكل'], ['bus', 'باص الرحلة'], ['hotel', 'معلومات الفنادق'], ['prog', 'برنامج الرحلة'], ['ask', 'ملاحظات واستفسارات'], ['rate', 'تقييم الرحلة']];
+const TABS = [['all', 'الكل'], ['bus', 'باص الرحلة'], ['sup', 'المشرفون'], ['hotel', 'معلومات الفنادق'], ['prog', 'برنامج الرحلة'], ['ask', 'ملاحظات واستفسارات'], ['rate', 'تقييم الرحلة']];
 function renderTabs() {
   const on = me && role === 'pilgrim';
   $('tabsBar').classList.toggle('d-none', !on);
   if (!on) { document.querySelectorAll('[data-sec]').forEach(el => el.classList.remove('tab-off')); return; }
-  const has = { bus: !$('busBox').classList.contains('d-none'), hotel: !$('hotelBox').classList.contains('d-none') };
+  const has = { bus: !$('busBox').classList.contains('d-none'), sup: !$('mySupBox').classList.contains('d-none'), hotel: !$('hotelBox').classList.contains('d-none') };
   if (curTab !== 'all' && has[curTab] === false) curTab = 'all';
   $('tabs').innerHTML = TABS.filter(([k]) => has[k] !== false).map(([k, l]) =>
     `<li class="nav-item"><button type="button" class="nav-link${k === curTab ? ' active' : ''}" data-t="${k}">${l}</button></li>`).join('');
@@ -387,7 +396,7 @@ function render() {
   $('app').classList.toggle('d-none', !me);
   ['rateBox', 'askBox'].forEach(i => $(i).classList.toggle('d-none', adm));
   $('adminBox').classList.toggle('d-none', !(me && adm));
-  applyBanner(); renderBus(); renderHotels(); renderLost(); renderInq(); updateNotifyBar(); renderTabs();
+  applyBanner(); renderBus(); renderSup(); renderHotels(); renderLost(); renderInq(); updateNotifyBar(); renderTabs();
   applySchedule();
   if (me && adm && typeof adminRender === 'function') adminRender();
 }
@@ -451,17 +460,3 @@ $('askForm').onsubmit = async e => {
 render();
 // تحديث البيانات من الخادم؛ إن فشل الاتصال تبقى البطاقة المحفوظة تعمل، وإن رُفض الرقم يُسجَّل الخروج
 if (me) enter(code).then(ok => { if (ok === false) logout(); }).catch(() => {});
-
-// تطبيق وضع القراءة الليلية المحفوظ فوراً عند تحميل أي صفحة في الموقع
-document.addEventListener('DOMContentLoaded', () => {
-    const isNightMode = localStorage.getItem('night_reading_mode') === 'true';
-    const toggleSwitch = document.getElementById('nightModeToggle');
-    
-    if (isNightMode) {
-        document.documentElement.setAttribute('data-night-mode', 'true');
-        if (toggleSwitch) toggleSwitch.checked = true;
-    } else {
-        document.documentElement.removeAttribute('data-night-mode');
-        if (toggleSwitch) toggleSwitch.checked = false;
-    }
-});

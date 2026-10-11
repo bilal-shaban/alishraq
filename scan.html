@@ -39,12 +39,16 @@ body{background:#21211d;font-family:'Tajawal',sans-serif}
 
   <div id="listBox" class="box mt-3 d-none">
     <div class="d-flex justify-content-between align-items-center mb-2">
-      <b class="gold">المسجّلون في هذه الجلسة</b>
-      <button id="clr" type="button" class="btn btn-sm btn-outline-light">قائمة جديدة</button>
+      <b class="gold">المسجّلون في هذا الباص</b>
+      <button id="clr" type="button" class="btn btn-sm btn-outline-danger">🗑️ مسح جميع الحضور</button>
     </div>
     <ol id="lst" class="mb-0 small"></ol>
   </div>
-  <button id="pdf" type="button" class="btn btn-gold w-100 mt-3 d-none">إنهاء المسح وتصدير تقرير PDF</button>
+  <div id="acts" class="d-grid gap-2 mt-3 d-none">
+    <button id="fin" type="button" class="btn btn-gold">حفظ وإنهاء المسح</button>
+    <div class="row g-2"><div class="col-6"><button id="pdf" type="button" class="btn btn-outline-light w-100">تقرير PDF</button></div>
+      <div class="col-6"><button id="csv" type="button" class="btn btn-outline-light w-100">تقرير CSV</button></div></div>
+  </div>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -98,19 +102,58 @@ let scanner = null, busy = false, last = '', lastAt = 0, list = [];
 /* ---------- قائمة المسجّلين (محفوظة لكل نشاط) ---------- */
 const lk = () => 'scanlist:' + getLabel();
 function renderList() {
-  $('lst').innerHTML = list.map(x => `<li>${esc(x.name)} <span class="text-secondary">(${esc(x.no)})</span></li>`).join('');
+  $('lst').innerHTML = list.map(x => `<li class="mb-1">${esc(x.name)} <span class="text-secondary">(${esc(x.no)})</span>
+    <button type="button" class="btn btn-sm btn-outline-danger py-0 me-1" data-rm="${esc(x.no)}" data-name="${esc(x.name)}">إزالة</button></li>`).join('');
   $('cnt').textContent = list.length;
   $('listBox').classList.toggle('d-none', !list.length);
-  $('pdf').classList.toggle('d-none', !list.length);
+  $('acts').classList.toggle('d-none', !list.length);
 }
-function loadList() { try { list = JSON.parse(localStorage.getItem(lk())) || []; } catch { list = []; } renderList(); }
+const splitTime = t => { t = String(t || ''); return /^\d{4}-\d\d-\d\d/.test(t) ? { date: t.slice(0, 10), time: t.slice(11, 16) } : { date: '', time: t }; };
+const nowHM = () => new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Riyadh' });
+// القائمة تُقرأ من الشيت (نفس ما يراه تبويب الحضور)، والنسخة المحلية للعمل دون اتصال فقط
+async function syncList() {
+  const key = $('key').value.trim(), label = getLabel();
+  if (!key || !label) return false;
+  try {
+    const r = await call({ action: 'scan_list', key, label });
+    if (!r.ok || label !== getLabel()) return false;
+    list = r.items.map(x => ({ no: x.no, name: x.name, ...splitTime(x.time) }));
+    localStorage.setItem(lk(), JSON.stringify(list)); renderList(); return true;
+  } catch { return false; }
+}
+function loadList() { try { list = JSON.parse(localStorage.getItem(lk())) || []; } catch { list = []; } renderList(); syncList(); }
 function addToList(no, name) {
   if (list.some(x => x.no === no)) return;
-  list.push({ no, name, time: new Date().toLocaleTimeString('ar-SA-u-ca-gregory', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Riyadh' }) });
+  list.push({ no, name, date: new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Riyadh' }), time: nowHM() });
   localStorage.setItem(lk(), JSON.stringify(list)); renderList();
 }
-$('clr').onclick = () => { if (confirm('بدء قائمة جديدة لهذا النشاط؟ سيُمسح عرض القائمة هنا فقط، أما الشيت فلا يتأثر.')) { list = []; localStorage.removeItem(lk()); renderList(); } };
+$('clr').onclick = async () => {
+  const label = getLabel(), key = $('key').value.trim();
+  if (!label || !key) return show('bad', 'أدخل رمز المشرف واختر الباص أولًا');
+  if (!confirm(`مسح جميع الحضور المسجَّل في «${label}»؟ سيُحذف من تبويب الحضور أيضًا ولا يمكن التراجع.`)) return;
+  try {
+    const r = await call({ action: 'scan_remove', key, label, all: true });
+    if (!r.ok) return show('bad', r.error === 'key' ? '🔒 رمز المشرف غير صحيح' : '❌ تعذّر المسح — إن تكرر ذلك انشر Code.gs بنسخة جديدة');
+    list = []; localStorage.removeItem(lk()); renderList(); last = '';
+    show('dup', `🗑️ مُسح حضور «${esc(label)}» (${r.removed ?? 0})`);
+  } catch { show('bad', '📶 تعذّر الاتصال — لم يتم المسح'); }
+};
 loadList();
+
+/* ---------- إزالة صاعد سُجِّل بالخطأ ---------- */
+const rmBtn = (no, name) => `<br><button type="button" class="btn btn-sm btn-light mt-2" data-rm="${esc(no)}" data-name="${esc(name)}">إزالة من الباص</button>`;
+async function removeOne(no, name) {
+  const label = getLabel(), key = $('key').value.trim();
+  if (!label || !key) return show('bad', 'أدخل رمز المشرف واختر الباص أولًا');
+  if (!confirm(`إزالة ${name} من «${label}»؟`)) return;
+  try {
+    const r = await call({ action: 'scan_remove', key, label, pilgrimNo: no });
+    if (!r.ok) return show('bad', r.error === 'key' ? '🔒 رمز المشرف غير صحيح' : '❌ تعذّرت الإزالة — إن تكرر ذلك انشر Code.gs بنسخة جديدة');
+    list = list.filter(x => x.no !== no); localStorage.setItem(lk(), JSON.stringify(list)); renderList();
+    last = ''; show('dup', `🗑️ أُزيل ${esc(name)} من «${esc(label)}»`);
+  } catch { show('bad', '📶 تعذّر الاتصال — لم تتم الإزالة'); }
+}
+document.addEventListener('click', e => { const b = e.target.closest('[data-rm]'); if (b) removeOne(b.dataset.rm, b.dataset.name); });
 
 /* ---------- المسح ---------- */
 async function onScan(text) {
@@ -123,11 +166,11 @@ async function onScan(text) {
   try {
     const r = await call({ action: 'checkin', key: $('key').value.trim(), label, pilgrimNo: text.slice(6) });
     if (!r.ok) show('bad', r.error === 'key' ? '🔒 رمز المشرف غير صحيح' : r.error === 'notfound' ? '❌ معتمر غير موجود' : '❌ تعذّر التسجيل');
-    else if (r.dup) { addToList(r.pilgrimNo, r.name); show('dup', `⚠️ ${esc(r.name)}<br><small>مسجّل مسبقًا في «${esc(label)}»</small>`); }
-    else { addToList(r.pilgrimNo, r.name); show('ok', `✅ ${esc(r.name)}<br><small>رقم ${esc(r.pilgrimNo)}</small>`); }
+    else if (r.dup) { addToList(r.pilgrimNo, r.name); show('dup', `⚠️ ${esc(r.name)}<br><small>مسجّل مسبقًا في «${esc(label)}»</small>${rmBtn(r.pilgrimNo, r.name)}`); }
+    else { addToList(r.pilgrimNo, r.name); show('ok', `✅ ${esc(r.name)}<br><small>رقم ${esc(r.pilgrimNo)}</small>${rmBtn(r.pilgrimNo, r.name)}`); }
   } catch {
     show('bad', '📶 تعذّر الاتصال — أعد المسح'); last = '';
-  } finally { busy = false; }
+  } finally { busy = false; syncList(); }
 }
 async function stopScan() {
   if (!scanner) return;
@@ -159,12 +202,31 @@ $('go').onclick = async () => {
   }
 };
 
-/* ---------- تقرير PDF (تُرسم الصفحات على Canvas ليظهر العربي سليمًا) ---------- */
+/* ---------- حفظ وإنهاء المسح + تقارير PDF و CSV ---------- */
+// كل مسحة تُحفظ في الشيت فورًا؛ هذا الزر يوقف الكاميرا ويتأكد أن ما سُجّل ظاهر في تبويب الحضور
+$('fin').onclick = async () => {
+  const b = $('fin'); b.disabled = true;
+  try {
+    await stopScan();
+    if (!(await syncList())) return show('bad', '📶 تعذّر التأكد من الحفظ — تأكد من الاتصال وأعد الضغط');
+    show('ok', `✅ تم حفظ ${list.length} معتمر<br><small>«${esc(getLabel())}» — ظاهرون الآن في تبويب الحضور بلوحة المشرف</small>`);
+  } finally { b.disabled = false; }
+};
 $('pdf').onclick = async () => {
   const b = $('pdf'); b.disabled = true;
-  try { await stopScan(); await makePdf(); show('ok', '✅ تم إنشاء التقرير'); }
+  try { await stopScan(); await syncList(); await makePdf(); show('ok', '✅ تم إنشاء التقرير'); }
   catch { show('bad', '❌ تعذّر إنشاء التقرير'); }
   finally { b.disabled = false; }
+};
+$('csv').onclick = async () => {
+  await stopScan(); await syncList();
+  const q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"', label = getLabel();
+  const lines = [['#', 'رقم المعتمر', 'الاسم', 'التاريخ', 'وقت المسح', 'الباص'], ...list.map((x, i) => [i + 1, x.no, x.name, x.date || '', x.time || '', label])];
+  const blob = new Blob(['\ufeff' + lines.map(l => l.map(q).join(',')).join('\r\n')], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = url; a.download = 'attendance-' + new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-') + '.csv';
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
+  show('ok', '✅ تم إنشاء ملف CSV');
 };
 async function makePdf() {
   try { await Promise.all([document.fonts.load('700 30px Tajawal'), document.fonts.load('400 22px Tajawal')]); } catch {}

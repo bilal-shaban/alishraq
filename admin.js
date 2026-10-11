@@ -1,5 +1,5 @@
 // لوحة المشرف الإداري — تعتمد على متغيرات umrah.js ($, esc, post, code, role, me, toast, phoneHref, STATUS_CLS, when, endOf, loadImg, askConfirm)
-let admTab = 'today', admLabel = '', admData = null, optsData = null, pplData = null, schedData = [], schedAll = false, impRows = null, auditData = [];
+let admTab = 'today', admLabel = '', admData = null, optsData = null, supData = [], pplData = null, schedData = [], schedAll = false, impRows = null, auditData = [];
 
 const JSPDF = 'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js';
 const XLSX_URL = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
@@ -9,8 +9,8 @@ const admPost = (action, extra = {}) => post({ action, code, ...extra }).then(r 
 const admRefresh = tab => `<button type="button" class="btn btn-sm btn-gold-outline mb-3" data-tab="${tab}"><i class="bi bi-arrow-clockwise ms-1"></i>تحديث</button>`;
 const fmtMin = m => m == null ? '—' : m < 60 ? Math.round(m) + ' د' : Math.floor(m / 60) + ' س ' + Math.round(m % 60) + ' د';
 const busName = b => b === 'بدون باص' ? b : 'باص ' + b;
-const ADM_TABS = [['today', 'اليوم', 'bi-speedometer2'], ['att', 'الحضور', 'bi-bus-front'], ['ppl', 'المعتمرون', 'bi-people'], ['hotels', 'الفنادق', 'bi-buildings'],
-  ['buses', 'الباصات', 'bi-bus-front-fill'], ['sched', 'الجدول', 'bi-calendar-event'], ['news', 'الأخبار', 'bi-megaphone'], ['rate', 'التقييمات', 'bi-star'],
+const ADM_TABS = [['today', 'اليوم', 'bi-speedometer2'], ['att', 'الحضور', 'bi-bus-front'], ['ppl', 'المعتمرون', 'bi-people'], ['sups', 'المشرفون', 'bi-person-badge'], ['hotels', 'الفنادق', 'bi-buildings'],
+  ['buses', 'الباصات', 'bi-bus-front-fill'], ['sched', 'البرنامج والنشاطات', 'bi-calendar-event'], ['news', 'الأخبار', 'bi-megaphone'], ['rate', 'التقييمات', 'bi-star'],
   ['inq', 'الاستفسارات', 'bi-chat-dots'], ['lost', 'التائهون', 'bi-exclamation-triangle'], ['audit', 'السجل', 'bi-journal-text']];
 
 function adminRender() {
@@ -30,7 +30,7 @@ async function admGo(tab) {
   admTab = tab;
   document.querySelectorAll('#admTabs [data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   $('admBody').innerHTML = '<div class="text-center desc-text py-4">جارٍ التحميل...</div>';
-  try { await ({ today: admToday, att: admAtt, ppl: admPpl, hotels: admHotels, buses: admBuses, news: admNews, sched: admSched, rate: admRate, inq: admInq, lost: admLost, audit: admAudit })[tab](); }
+  try { await ({ today: admToday, att: admAtt, ppl: admPpl, sups: admSups, hotels: admHotels, buses: admBuses, news: admNews, sched: admSched, rate: admRate, inq: admInq, lost: admLost, audit: admAudit })[tab](); }
   catch (e) { $('admBody').innerHTML = `<div class="text-center py-3"><div class="text-danger mb-2">تعذّر التحميل</div>${admRefresh(tab)}</div>`; }
 }
 
@@ -55,28 +55,27 @@ async function admToday() {
 }
 
 /* ---------- الحضور حسب الباص ---------- */
+// الباصات = كل ما في تبويب «الباصات». التعديل والحذف يتمّان من صفحة المسح فقط.
 async function admAtt(label) {
   const r = await admPost('adm_att', { label: label ?? admLabel });
   admLabel = r.label; admData = r;
-  const tot = r.buses.reduce((a, b) => a + b.total, 0), on = r.buses.reduce((a, b) => a + b.present.length, 0);
+  const bd = r.boarded || [], ms = r.missing || [];
   $('admBody').innerHTML = `
     <div class="d-flex gap-2 mb-3">
-      <select id="admLabel" class="form-select u-in">${r.labels.length ? r.labels.map(l => `<option ${l === r.label ? 'selected' : ''}>${esc(l)}</option>`).join('') : '<option>لا يوجد حضور مسجّل بعد</option>'}</select>
+      <select id="admLabel" class="form-select u-in" aria-label="الباص">${r.options.length ? r.options.map(o => `<option value="${esc(o.label)}"${o.label === r.label ? ' selected' : ''}>${esc(o.label)} (${o.count})</option>`).join('') : '<option value="">لا باصات — أضفها من تبويب «الباصات»</option>'}</select>
       <button type="button" class="btn btn-gold-outline" data-tab="att" aria-label="تحديث"><i class="bi bi-arrow-clockwise"></i></button></div>
-    <div class="text-center mb-3"><div class="display-6 gold fw-bold">${on} / ${tot}</div><small>إجمالي الصاعدين</small></div>
-    ${r.buses.map(b => {
-      const p = b.present.length;
-      return `<details class="ev" style="display:block"><summary class="d-flex justify-content-between align-items-center" style="cursor:pointer">
-        <b class="text-light">${esc(busName(b.bus))}</b><span class="badge ${p === b.total ? 'bg-success' : 'bg-warning text-dark'}">${p} / ${b.total}</span></summary>
-        <div class="progress my-2" style="height:6px"><div class="progress-bar ${p === b.total ? 'bg-success' : 'bg-warning'}" style="width:${b.total ? p / b.total * 100 : 0}%"></div></div>
-        ${b.missing.length ? `<div class="text-danger small fw-bold mb-1">لم يصعدوا (${b.missing.length})</div>${b.missing.map(m => `
-          <div class="d-flex justify-content-between align-items-center small py-1 border-bottom border-secondary"><span>${esc(m.name)} <span class="text-secondary">${esc(m.no)}</span></span>
-          ${m.phone ? `<a href="${phoneHref(m.phone)}" class="gold"><i class="bi bi-telephone-fill"></i></a>` : ''}</div>`).join('')}` : '<div class="text-success small">صعد الجميع ✔</div>'}
-        ${p ? `<div class="small mt-2" style="color:#d3d3c7"><b>صعدوا (${p}):</b> ${b.present.map(m => esc(m.name)).join('، ')}</div>` : ''}</details>`;
-    }).join('')}
-    <div class="d-grid gap-2 mt-3">
-      <button type="button" class="btn btn-gold-solid" data-act="csv-one"><i class="bi bi-download ms-1"></i>تصدير هذا النشاط (CSV)</button>
-      <button type="button" class="btn btn-gold-outline" data-act="csv-all"><i class="bi bi-download ms-1"></i>تصدير كل الحضور (CSV)</button></div>`;
+    ${r.label ? `<div class="text-center mb-3"><div class="display-6 gold fw-bold">${bd.length}</div><small>إجمالي الصاعدين</small>
+        <div class="small" style="color:#d3d3c7">${r.scope === 'assigned' ? `من معتمري هذا الباص: ${r.popPresent} / ${r.popTotal}` : `من إجمالي المعتمرين (${r.popTotal}) — لا معتمر مسجَّل على هذا الباص`}</div></div>
+      <div class="gold fw-bold mb-2"><i class="bi bi-check-circle ms-1"></i>صعدوا (${bd.length})</div>
+      ${bd.map(m => `<div class="d-flex justify-content-between align-items-center small py-1 border-bottom border-secondary"><span class="text-light">${esc(m.name)} <span class="text-secondary">${esc(m.no)}</span></span><span class="text-secondary">${esc(String(m.time).slice(11))}</span></div>`).join('') || '<small class="desc-text">لم يصعد أحد بعد.</small>'}
+      <div class="text-danger fw-bold mt-3 mb-2"><i class="bi bi-x-circle ms-1"></i>لم يصعدوا (${ms.length})</div>
+      ${ms.map(m => `<div class="d-flex justify-content-between align-items-center small py-1 border-bottom border-secondary"><span>${esc(m.name)} <span class="text-secondary">${esc(m.no)}</span></span>
+        ${m.phone ? `<a href="${phoneHref(m.phone)}" class="btn btn-sm btn-gold-outline py-0" aria-label="اتصال"><i class="bi bi-telephone-fill"></i></a>` : '<small class="text-secondary">بلا هاتف</small>'}</div>`).join('') || '<div class="text-success small">صعد الجميع ✔</div>'}
+      <div class="row g-2 mt-3">
+        <div class="col-6"><button type="button" class="btn btn-gold-solid w-100" data-act="att-pdf-one"><i class="bi bi-file-earmark-pdf ms-1"></i>PDF للباص</button></div>
+        <div class="col-6"><button type="button" class="btn btn-gold-solid w-100" data-act="csv-one"><i class="bi bi-filetype-csv ms-1"></i>CSV للباص</button></div>
+        <div class="col-6"><button type="button" class="btn btn-gold-outline w-100" data-act="att-pdf-all"><i class="bi bi-file-earmark-pdf ms-1"></i>PDF لكل الحضور</button></div>
+        <div class="col-6"><button type="button" class="btn btn-gold-outline w-100" data-act="csv-all"><i class="bi bi-filetype-csv ms-1"></i>CSV لكل الحضور</button></div></div>` : ''}`;
 }
 function admCsv(lines, name) {
   const q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
@@ -85,7 +84,61 @@ function admCsv(lines, name) {
   a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 4000);
 }
-const attLines = rows => [['الوقت', 'رقم المعتمر', 'الاسم', 'النشاط/الباص', 'المسجِّل'], ...rows.map(r => [r.time, r.no, r.name, r.label, r.by])];
+const attLines = rows => [['الوقت', 'رقم المعتمر', 'الاسم', 'الباص', 'المسجِّل'], ...rows.map(r => [r.time, r.no, r.name, r.label, r.by])];
+const oneLines = r => [['الحالة', 'رقم المعتمر', 'الاسم', 'الهاتف', 'وقت الصعود', 'الباص'],
+  ...r.boarded.map(m => ['صعد', m.no, m.name, m.phone, m.time, r.label]), ...r.missing.map(m => ['لم يصعد', m.no, m.name, m.phone, '', r.label])];
+
+// PDF جدولي عام: sections = [{ head, cols: [{ t, w, align }], rows: [[...]] }] (تُرسم الصفحات على Canvas ليظهر العربي سليمًا)
+async function admTablePdf({ title, sub, meta = [], sections }, file) {
+  await loadLib(JSPDF, () => window.jspdf); await admFonts();
+  const W = 794, H = 1123, S = 2, M = 50, RH = 38, FF = 'Tajawal, sans-serif', CW = W - 2 * M, pages = [];
+  let x, y;
+  const page = () => {
+    const c = document.createElement('canvas'); c.width = W * S; c.height = H * S;
+    x = c.getContext('2d'); x.scale(S, S); x.direction = 'rtl'; x.textBaseline = 'middle'; x.fillStyle = '#fff'; x.fillRect(0, 0, W, H);
+    x.fillStyle = '#21211d'; x.fillRect(0, 0, W, 14); x.fillStyle = '#edcea0'; x.fillRect(0, 14, W, 4);
+    pages.push(c); y = 44;
+  };
+  const need = h => { if (y + h > H - 60) page(); };
+  const txt = (s, px, py, size, weight, color, align) => { x.font = `${weight} ${size}px ${FF}`; x.fillStyle = color; x.textAlign = align; x.fillText(s, px, py); };
+  const fit = (s, w, font) => { x.font = font; s = String(s ?? ''); if (x.measureText(s).width <= w) return s; while (s.length > 1 && x.measureText(s + '…').width > w) s = s.slice(0, -1); return s + '…'; };
+  const rowDraw = (cells, cols, fill, bold, color) => {
+    x.fillStyle = fill; x.fillRect(M, y, CW, RH);
+    let right = W - M;
+    cols.forEach((c, i) => {
+      const w = CW * c.w, font = `${bold ? 700 : 400} 17px ${FF}`, t = fit(cells[i], w - 14, font);
+      if (c.align === 'center') txt(t, right - w / 2, y + RH / 2, 17, bold ? 700 : 400, color, 'center'); else txt(t, right - 8, y + RH / 2, 17, bold ? 700 : 400, color, 'right');
+      right -= w;
+    });
+    y += RH;
+  };
+  page();
+  txt(title, W / 2, y + 26, 32, 700, '#21211d', 'center'); y += 52;
+  txt('حملة الإشراق', W / 2, y + 12, 20, 400, '#8a6d2f', 'center'); y += 34;
+  meta.forEach(m => { txt(m, W - M, y + 14, 18, 400, '#444', 'right'); y += 30; });
+  txt(new Date().toLocaleString('ar-SA-u-ca-gregory', { dateStyle: 'full', timeStyle: 'short', timeZone: 'Asia/Riyadh' }), W - M, y + 14, 16, 400, '#777', 'right'); y += 36;
+  sections.forEach(sec => {
+    need(RH * 3); y += 8;
+    x.fillStyle = '#edcea0'; x.fillRect(M, y, CW, 36); txt(fit(sec.head, CW - 20, `700 20px ${FF}`), W - M - 10, y + 18, 20, 700, '#21211d', 'right'); y += 44;
+    if (!sec.rows.length) { need(RH); txt('لا يوجد', W - M - 8, y + 18, 17, 400, '#777', 'right'); y += RH; return; }
+    const head = () => rowDraw(sec.cols.map(c => c.t), sec.cols, '#f1e7cf', true, '#21211d');
+    head();
+    sec.rows.forEach((r, i) => { if (y + RH > H - 60) { page(); head(); } rowDraw(r, sec.cols, i % 2 ? '#fff' : '#f7f2e6', false, '#21211d'); x.fillStyle = '#e4dcc6'; x.fillRect(M, y - 1, CW, 1); });
+  });
+  pages.forEach((c, i) => { const g = c.getContext('2d'); g.direction = 'rtl'; g.textBaseline = 'middle'; g.font = `400 14px ${FF}`; g.fillStyle = '#888'; g.textAlign = 'center'; g.fillText(`صفحة ${i + 1} من ${pages.length}`, W / 2, H - 30); });
+  const doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4', compress: true });
+  pages.forEach((c, i) => { if (i) doc.addPage(); doc.addImage(c.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, 210, 297); });
+  doc.save(file);
+}
+const BOARD_COLS = [{ t: '#', w: .08, align: 'center' }, { t: 'الاسم', w: .44 }, { t: 'رقم المعتمر', w: .2, align: 'center' }, { t: 'وقت الصعود', w: .28, align: 'center' }];
+const MISS_COLS = [{ t: '#', w: .08, align: 'center' }, { t: 'الاسم', w: .44 }, { t: 'رقم المعتمر', w: .2, align: 'center' }, { t: 'الهاتف', w: .28, align: 'center' }];
+const oneSections = r => [
+  { head: `صعدوا (${r.boarded.length})`, cols: BOARD_COLS, rows: r.boarded.map((m, i) => [i + 1, m.name, m.no, String(m.time).slice(11) || m.time]) },
+  { head: `لم يصعدوا (${r.missing.length})`, cols: MISS_COLS, rows: r.missing.map((m, i) => [i + 1, m.name, m.no, m.phone || '—']) }];
+const allSections = r => {
+  const by = {}; r.rows.forEach(m => (by[m.label] = by[m.label] || []).push(m));
+  return r.options.filter(o => by[o.label]).map(o => ({ head: `${o.label} — ${by[o.label].length} صاعد`, cols: BOARD_COLS, rows: by[o.label].map((m, i) => [i + 1, m.name, m.no, String(m.time).slice(11) || m.time]) }));
+};
 
 /* ---------- إدارة المعتمرين ---------- */
 const PFIELDS = [['Code', 'الرقم السري للدخول'], ['PilgrimNo', 'رقم المعتمر'], ['Name', 'الاسم'], ['Phone', 'الهاتف'], ['Bus_No', 'رقم الباص'], ['Bus_Title', 'عنوان الباص'],
@@ -104,12 +157,14 @@ async function pplLoad(q) {
   const r = await admPost('adm_p_list', { q }); pplData = r;
   $('pCount').textContent = `${r.total} معتمر${!q && r.items.length < r.total ? ' — يُعرض أول 30، استخدم البحث' : ''}`;
   $('pList').innerHTML = r.items.map((p, i) => `<div class="ev" style="display:block"><div class="d-flex justify-content-between align-items-center"><b class="text-light">${esc(p.Name)}</b>
-    <button type="button" class="btn btn-sm btn-gold-outline py-0" data-act="p-edit" data-i="${i}" aria-label="تعديل"><i class="bi bi-pencil"></i></button></div>
+    <span class="d-flex gap-1"><button type="button" class="btn btn-sm btn-gold-outline py-0" data-act="p-edit" data-i="${i}" aria-label="تعديل"><i class="bi bi-pencil"></i></button>
+      ${delBtn(`data-act="p-del" data-no="${esc(p.PilgrimNo)}" data-name="${esc(p.Name)}"`)}</span></div>
     <small>رقم ${esc(p.PilgrimNo)}${p.Bus_No ? ' · باص ' + esc(p.Bus_No) : ''}${p.Makkah_Room ? ' · مكة غرفة ' + esc(p.Makkah_Room) : ''}${p.Madinah_Room ? ' · المدينة غرفة ' + esc(p.Madinah_Room) : ''}</small></div>`).join('') || '<p class="desc-text">لا نتائج.</p>';
 }
 async function pForm(p) {
   try { optsData = await admPost('adm_opts'); } catch { optsData = optsData || { makkah: [], madinah: [], buses: [] }; }
-  const hs = pplData.headers, o = optsData, hasBus = o.buses.length > 0;
+  try { supData = (await admPost('adm_sup_list')).items.filter(x => x.name); } catch { supData = []; }
+  const hs = pplData.headers, o = optsData, hasBus = o.buses.length > 0, hasSup = supData.length > 0;
   const opt = (v, cur, label) => `<option value="${esc(v)}"${v === cur ? ' selected' : ''}>${esc(label ?? v)}</option>`;
   const field = (k, l) => {
     const v = p ? String(p[k] ?? '') : '';
@@ -120,18 +175,24 @@ async function pForm(p) {
     } else if (k === 'Bus_No' && hasBus) {
       const bs = v && !o.buses.some(b => b.no === v) ? [{ no: v, title: '' }, ...o.buses] : o.buses;
       ctl = `<select class="form-select form-select-sm u-in" data-k="Bus_No"><option value="">— اختر —</option>${bs.map(b => opt(b.no, v, 'باص ' + b.no + (b.title ? ' — ' + b.title : ''))).join('')}</select>`;
+    } else if (k === 'Supervisor_Name' && hasSup) {
+      const ss = v && !supData.some(x => x.name === v) ? [{ name: v, phone: p?.Supervisor_Phone || '' }, ...supData] : supData;
+      ctl = `<select class="form-select form-select-sm u-in" data-k="Supervisor_Name" id="pSupSel"><option value="" data-phone="">— اختر —</option>${ss.map(x => `<option value="${esc(x.name)}" data-phone="${esc(x.phone)}"${x.name === v ? ' selected' : ''}>${esc(x.name)}</option>`).join('')}</select>`;
+    } else if (k === 'Supervisor_Phone' && hasSup) {
+      ctl = `<input class="form-control u-in form-control-sm" data-k="Supervisor_Phone" id="pSupPhone" value="${esc(v)}" readonly placeholder="يُدخل تلقائيًا">`;
     } else if (k === 'Code' && !p) {
       ctl = `<div class="input-group input-group-sm"><input class="form-control u-in" data-k="Code" inputmode="numeric" maxlength="12"><button type="button" class="btn btn-gold-outline" data-act="p-gen" aria-label="توليد رقم عشوائي"><i class="bi bi-dice-5"></i></button></div>`;
     } else ctl = `<input class="form-control u-in form-control-sm" data-k="${k}" value="${esc(v)}" ${p && k === 'PilgrimNo' ? 'readonly' : ''}>`;
-    return `<div class="col-6"><label class="small">${k === 'Bus_No' && hasBus ? 'الباص' : l}</label>${ctl}</div>`;
+    return `<div class="col-6"><label class="small">${k === 'Bus_No' && hasBus ? 'الباص' : k === 'Supervisor_Name' && hasSup ? 'المشرف' : l}</label>${ctl}</div>`;
   };
   const nw = p ? 0 : 1;
   $('pBox').innerHTML = `<div class="u-box mb-3" style="border-color:#edcea0"><div class="gold fw-bold mb-2">${p ? 'تعديل معتمر' : 'إضافة معتمر'}</div><div class="row g-2">
     ${PFIELDS.filter(([k]) => hs.includes(k) && !(k === 'Bus_Title' && hasBus)).map(([k, l]) => field(k, l)).join('')}</div>
-    ${!o.makkah.length || !o.madinah.length || !hasBus ? '<small class="d-block mt-2" style="color:#d3d3c7">لتفعيل القوائم المنسدلة أضف الفنادق والباصات من تبويبَي «الفنادق» و«الباصات».</small>' : ''}
+    ${!o.makkah.length || !o.madinah.length || !hasBus || !hasSup ? '<small class="d-block mt-2" style="color:#d3d3c7">لتفعيل القوائم المنسدلة أضف الفنادق والباصات والمشرفين من تبويبات «الفنادق» و«الباصات» و«المشرفون».</small>' : ''}
     <div class="d-flex gap-2 mt-3 flex-wrap"><button type="button" class="btn btn-gold-solid flex-grow-1" data-act="p-save" data-new="${nw}">حفظ</button>
       <button type="button" class="btn btn-success flex-grow-1" data-act="p-save" data-send="1" data-new="${nw}"><i class="bi bi-whatsapp ms-1"></i>حفظ وإرسال</button>
-      <button type="button" class="btn btn-outline-light" data-act="p-cancel">إلغاء</button></div></div>`;
+      <button type="button" class="btn btn-outline-light" data-act="p-cancel">إلغاء</button></div>
+    ${p ? `<button type="button" class="btn btn-outline-danger w-100 mt-2" data-act="p-del" data-no="${esc(p.PilgrimNo)}" data-name="${esc(p.Name)}"><i class="bi bi-trash ms-1"></i>حذف المعتمر</button>` : ''}</div>`;
   $('pBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
   if (!p) await pGen();
 }
@@ -240,13 +301,25 @@ function sForm(e) {
 
 /* ---------- الفنادق والباصات (خيارات القوائم المنسدلة) ---------- */
 const delBtn = (attrs) => `<button type="button" class="btn btn-sm btn-outline-danger py-0" ${attrs} aria-label="حذف"><i class="bi bi-trash"></i></button>`;
+const hForm = (kind, h) => `<input class="form-control u-in mb-2" data-k="name" placeholder="اسم الفندق" maxlength="100" value="${esc(h?.name)}" ${h ? 'readonly' : ''}>
+  <input class="form-control u-in mb-2" data-k="wifi" dir="ltr" placeholder="كلمة مرور الواي فاي" maxlength="100" value="${esc(h?.wifi)}">
+  <input class="form-control u-in mb-2" data-k="loc" dir="ltr" placeholder="رابط الموقع على الخريطة (https://maps.app.goo.gl/…)" maxlength="500" value="${esc(h?.loc)}">
+  <textarea class="form-control u-in mb-2" data-k="details" rows="2" maxlength="500" placeholder="تفاصيل مكان الفندق (الحي، أقرب معلم، المدخل…)">${esc(h?.details)}</textarea>
+  <div class="d-flex gap-2"><button type="button" class="btn btn-gold-solid flex-grow-1" data-act="h-add" data-kind="${kind}"${h ? ' data-edit="1"' : ''}><i class="bi bi-${h ? 'check-lg' : 'plus-lg'} ms-1"></i>${h ? 'حفظ التعديل' : 'إضافة الفندق'}</button>
+  ${h ? `<button type="button" class="btn btn-outline-light" data-act="h-cancel" data-kind="${kind}">إلغاء</button>` : ''}</div>`;
 async function admHotels() {
   optsData = await admPost('adm_opts');
-  const box = (kind, title, arr) => `<div class="u-box mb-3"><div class="gold fw-bold mb-2">${title}</div>
-    <div class="d-flex gap-2 mb-2"><input class="form-control u-in" placeholder="اسم الفندق" maxlength="100"><button type="button" class="btn btn-gold-solid" data-act="h-add" data-kind="${kind}" aria-label="إضافة"><i class="bi bi-plus-lg"></i></button></div>
-    ${arr.map(n => `<div class="d-flex justify-content-between align-items-center border-bottom border-secondary py-2"><span class="text-light">${esc(n)}</span>${delBtn(`data-act="h-del" data-kind="${kind}" data-name="${esc(n)}"`)}</div>`).join('') || '<small class="desc-text">لا فنادق مضافة بعد.</small>'}</div>`;
-  $('admBody').innerHTML = `<p class="small" style="color:#d3d3c7">الأسماء هنا تظهر في قائمة منسدلة عند إضافة معتمر أو تعديله. حذف اسم لا يغيّر المعتمرين المسجَّلين مسبقًا.</p>`
-    + box('makkah', 'فنادق مكة المكرمة', optsData.makkah) + box('madinah', 'فنادق المدينة المنورة', optsData.madinah);
+  const hot = kind => optsData.hotels?.[kind] || optsData[kind].map(name => ({ name })); // خادم قديم: أسماء فقط
+  const box = (kind, title) => `<div class="u-box mb-3"><div class="gold fw-bold mb-2">${title}</div>
+    <div id="hf-${kind}" class="mb-3">${hForm(kind, null)}</div>
+    ${hot(kind).map((h, i) => `<div class="ev" style="display:block"><div class="d-flex justify-content-between align-items-center"><b class="text-light">${esc(h.name)}</b>
+        <span class="d-flex gap-1"><button type="button" class="btn btn-sm btn-gold-outline py-0" data-act="h-edit" data-kind="${kind}" data-i="${i}" aria-label="تعديل"><i class="bi bi-pencil"></i></button>
+        ${delBtn(`data-act="h-del" data-kind="${kind}" data-name="${esc(h.name)}"`)}</span></div>
+      ${h.wifi ? `<small class="d-block"><i class="bi bi-wifi ms-1"></i><span dir="ltr">${esc(h.wifi)}</span></small>` : ''}
+      ${h.details ? `<small class="d-block"><i class="bi bi-info-circle ms-1"></i>${esc(h.details)}</small>` : ''}
+      ${h.loc ? `<a class="gold small" href="${esc(h.loc)}" target="_blank" rel="noopener"><i class="bi bi-map ms-1"></i>الموقع على الخريطة</a>` : ''}</div>`).join('') || '<small class="desc-text">لا فنادق مضافة بعد.</small>'}</div>`;
+  $('admBody').innerHTML = `<p class="small" style="color:#d3d3c7">تظهر الأسماء في قائمة منسدلة عند إضافة معتمر. وتظهر كلمة الواي فاي والموقع والتفاصيل تلقائيًا في بطاقة كل معتمر مسجَّل في هذا الفندق (تبويب «معلومات الفنادق»). حذف فندق لا يغيّر المعتمرين المسجَّلين مسبقًا.</p>`
+    + box('makkah', 'فنادق مكة المكرمة') + box('madinah', 'فنادق المدينة المنورة');
 }
 async function admBuses() {
   optsData = await admPost('adm_opts');
@@ -259,15 +332,47 @@ async function admBuses() {
       <small>${esc(b.title) || '—'}</small></div>`).join('') || '<p class="desc-text">لا باصات مضافة بعد.</p>'}`;
 }
 
+/* ---------- المشرفون ---------- */
+async function admSups() {
+  supData = (await admPost('adm_sup_list')).items;
+  $('admBody').innerHTML = `<div class="d-flex gap-2 mb-3"><button type="button" class="btn btn-gold-solid flex-grow-1" data-act="sup-add"><i class="bi bi-plus-lg ms-1"></i>إضافة مشرف</button>${admRefresh('sups').replace('mb-3', '')}</div>
+    <div id="supBox"></div>
+    ${supData.map((x, i) => `<div class="ev" style="display:block"><div class="d-flex justify-content-between align-items-center"><b class="text-light">${esc(x.name)}${x.me ? ' <span class="badge bg-success">أنت</span>' : ''}</b>
+        <span class="d-flex gap-1"><button type="button" class="btn btn-sm btn-gold-outline py-0" data-act="sup-edit" data-i="${i}" aria-label="تعديل"><i class="bi bi-pencil"></i></button>
+        ${x.me ? '' : delBtn(`data-act="sup-del" data-i="${i}"`)}</span></div>
+      <small class="d-block">${x.phone ? `<a href="${phoneHref(x.phone)}" class="gold" dir="ltr">${esc(x.phone)}</a>` : 'بلا هاتف'}${x.no ? ' · رقم معتمر ' + esc(x.no) : ''}</small>
+      ${x.notes ? `<small class="d-block">${esc(x.notes)}</small>` : ''}</div>`).join('') || '<p class="desc-text">لا مشرفين.</p>'}
+    <small class="d-block mt-2" style="color:#d3d3c7">الأرقام السرية لا تُعرض بعد الحفظ. المشرف المضاف يدخل برقمه من صفحة المعتمر فتظهر له لوحة المشرف، ويظهر اسمه ورقمه في قائمة المشرفين عند إضافة المعتمرين.</small>`;
+}
+function supForm(x) {
+  $('supBox').innerHTML = `<div class="u-box mb-3" style="border-color:#edcea0" data-id="${x ? x.id : ''}" data-old="${esc(x?.name)}"><div class="gold fw-bold mb-2">${x ? 'تعديل مشرف' : 'إضافة مشرف'}</div>
+    <input class="form-control u-in mb-2" data-k="name" placeholder="اسم المشرف" maxlength="100" value="${esc(x?.name)}">
+    <input class="form-control u-in mb-2" data-k="phone" type="tel" dir="ltr" placeholder="رقم الهاتف (يُفضّل دوليًا +9665…)" maxlength="40" value="${esc(x?.phone)}">
+    <input class="form-control u-in mb-2" data-k="no" placeholder="رقم المعتمر (اختياري)" maxlength="30" value="${esc(x?.no)}">
+    <div class="input-group mb-2"><input class="form-control u-in" data-k="code" dir="ltr" maxlength="20" autocomplete="off" placeholder="${x ? 'رقم سري جديد (اتركه فارغًا للإبقاء على الحالي)' : 'الرقم السري للدخول'}">
+      <button type="button" class="btn btn-gold-outline" data-act="sup-gen" aria-label="توليد رقم عشوائي"><i class="bi bi-dice-5"></i></button></div>
+    <textarea class="form-control u-in mb-3" data-k="notes" rows="2" maxlength="300" placeholder="المهمة أو ملاحظات (مثال: مشرف الباص 2)">${esc(x?.notes)}</textarea>
+    <div class="d-flex gap-2"><button type="button" class="btn btn-gold-solid flex-grow-1" data-act="sup-save">حفظ</button><button type="button" class="btn btn-outline-light" data-act="sup-cancel">إلغاء</button></div></div>`;
+  $('supBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  if (!x) supGen();
+}
+async function supGen() { // 8 أرقام للمشرفين (صلاحياتهم أكبر)
+  try { const r = await admPost('adm_gen_code', { len: 8 }), i = $('supBox').querySelector('[data-k="code"]'); if (i) i.value = r.code; }
+  catch (e) { toast(e.message || 'تعذّر توليد الرقم'); }
+}
+
 /* ---------- شريط الأخبار العاجل ---------- */
 async function admNews() {
   const r = await admPost('adm_news_get'), exp = r.expires, expired = exp && Date.now() > exp, on = r.text && !expired;
+  const hrs = [[0, 'بدون انتهاء تلقائي'], [1, 'يختفي بعد ساعة'], [3, 'بعد 3 ساعات'], [6, 'بعد 6 ساعات'], [12, 'بعد 12 ساعة'], [24, 'بعد 24 ساعة']],
+    cur = on && exp ? (r.hours || 0) : 0;
+  if (cur && !hrs.some(x => x[0] === cur)) hrs.push([cur, `بعد ${cur} ساعة`]);
   const when = exp ? new Date(exp).toLocaleString('ar-SA-u-ca-gregory', { weekday: 'long', hour: 'numeric', minute: '2-digit', day: 'numeric', month: 'long', timeZone: 'Asia/Riyadh' }) : '';
   $('admBody').innerHTML = `${admRefresh('news')}
     <div class="gold fw-bold mb-2">شريط الأخبار العاجل</div>
     <div class="small mb-2">${on ? `<span class="text-success">ظاهر للمعتمرين الآن</span>${exp ? ' حتى ' + esc(when) : ' (بدون انتهاء تلقائي)'}` : '<span class="text-secondary">لا يوجد خبر ظاهر</span>'}</div>
     <textarea id="newsTxt" class="form-control u-in mb-2" rows="3" maxlength="300" placeholder="اكتب الخبر العاجل…">${esc(on ? r.text : '')}</textarea>
-    <select id="newsH" class="form-select u-in mb-3"><option value="0">بدون انتهاء تلقائي</option><option value="1">يختفي بعد ساعة</option><option value="3">بعد 3 ساعات</option><option value="6">بعد 6 ساعات</option><option value="12">بعد 12 ساعة</option><option value="24">بعد 24 ساعة</option></select>
+    <select id="newsH" class="form-select u-in mb-3">${hrs.map(([v, l]) => `<option value="${v}"${v === cur ? ' selected' : ''}>${l}</option>`).join('')}</select>
     <div class="d-flex gap-2"><button type="button" class="btn btn-gold-solid flex-grow-1" data-act="news-save"><i class="bi bi-megaphone ms-1"></i>نشر الخبر</button>
       <button type="button" class="btn btn-outline-danger" data-act="news-clear">إزالة الشريط</button></div>
     <div class="small mt-2" style="color:#d3d3c7">يصل المعتمرين تنبيه خلال دقيقة إلى دقيقتين إن كانت صفحتهم مفتوحة.</div>`;
@@ -432,6 +537,7 @@ function admChange(e) {
   if (t.id === 'admLabel') admAtt(t.value).catch(() => toast('تعذّر التحميل'));
   else if (t.id === 'sAll') { schedAll = t.checked; paintSched(); }
   else if (t.id === 'pFile' && t.files[0]) pParse(t.files[0]);
+  else if (t.id === 'pSupSel') $('pSupPhone').value = t.selectedOptions[0]?.dataset.phone || '';
 }
 const collect = box => Object.fromEntries([...box.querySelectorAll('[data-k]')].map(i => [i.dataset.k, i.value.trim()]));
 
@@ -448,11 +554,26 @@ async function admClick(e) {
   if (act === 's-add') return sForm(null);
   if (act === 's-edit') return sForm(schedData.find(x => x.Event_ID === id));
   if (act === 's-cancel') { $('sBox').innerHTML = ''; return; }
+  if (act === 'h-edit') { const k = b.dataset.kind; $('hf-' + k).innerHTML = hForm(k, optsData.hotels[k][+b.dataset.i]); return $('hf-' + k).scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  if (act === 'h-cancel') { $('hf-' + b.dataset.kind).innerHTML = hForm(b.dataset.kind, null); return; }
+  if (act === 'sup-add') return supForm(null);
+  if (act === 'sup-edit') return supForm(supData[+b.dataset.i]);
+  if (act === 'sup-cancel') { $('supBox').innerHTML = ''; return; }
+  if (act === 'sup-gen') return supGen();
   if (act === 'p-tpl') return admCsv([pplData.headers], 'pilgrims-template.csv');
   b.disabled = true;
   try {
-    if (act === 'csv-one') admCsv(attLines(admData.rows), 'attendance.csv');
+    if (act === 'csv-one') admCsv(oneLines(admData), 'attendance-' + admData.label.replace(/[\\/:*?"<>|\s]+/g, '-') + '.csv');
     else if (act === 'csv-all') admCsv(attLines((await admPost('adm_att', { label: '*' })).rows), 'attendance-all.csv');
+    else if (act === 'att-pdf-one') {
+      toast('جارٍ إعداد الملف...', 3000);
+      await admTablePdf({ title: 'تقرير حضور الباص', meta: ['الباص: ' + admData.label, `إجمالي الصاعدين: ${admData.boarded.length}`, `لم يصعدوا: ${admData.missing.length}`], sections: oneSections(admData) }, 'attendance-bus.pdf');
+    }
+    else if (act === 'att-pdf-all') {
+      toast('جارٍ إعداد الملف...', 3000);
+      const all = await admPost('adm_att', { label: '*' });
+      await admTablePdf({ title: 'تقرير الحضور الكامل', meta: [`إجمالي التسجيلات: ${all.rows.length}`, `عدد المعتمرين: ${all.pilgrims}`], sections: allSections(all) }, 'attendance-all.pdf');
+    }
     else if (act === 'report') { toast('جارٍ إعداد التقرير...', 4000); await admReportPdf(); }
     else if (act === 'p-save') {
       const send = b.dataset.send === '1', data = pCollect();
@@ -462,8 +583,21 @@ async function admClick(e) {
       if (send) waSend(data, win);
     }
     else if (act === 'h-add') {
-      const name = b.closest('.u-box').querySelector('input').value.trim();
-      await admPost('adm_opt_add', { kind: b.dataset.kind, name }); toast('تمت الإضافة'); await admHotels();
+      const f = collect(b.closest('[id^="hf-"]')), edit = b.dataset.edit === '1';
+      await admPost('adm_opt_add', { kind: b.dataset.kind, edit, ...f }); toast(edit ? 'تم حفظ التعديل' : 'تمت إضافة الفندق'); await admHotels();
+    }
+    else if (act === 'p-del') {
+      if (!await askConfirm('حذف المعتمر؟', `${b.dataset.name} (رقم ${b.dataset.no}) — سيُحذف نهائيًا ولن يتمكن من الدخول برقمه.`, 'نعم، احذف')) return;
+      await admPost('adm_p_del', { no: b.dataset.no }); toast('تم حذف المعتمر'); $('pBox').innerHTML = ''; await pplLoad($('pQ').value.trim());
+    }
+    else if (act === 'sup-save') {
+      const f = collect(card);
+      await admPost('adm_sup_save', { id: card.dataset.id, oldName: card.dataset.old, ...f }); toast(card.dataset.id ? 'تم الحفظ' : 'تمت الإضافة — أبلغ المشرف برقمه السري'); await admSups();
+    }
+    else if (act === 'sup-del') {
+      const x = supData[+b.dataset.i];
+      if (!await askConfirm('حذف المشرف؟', `${x.name} — لن يتمكن من الدخول بعد الآن.`, 'نعم، احذف')) return;
+      await admPost('adm_sup_del', { id: x.id, oldName: x.name }); toast('تم الحذف'); await admSups();
     }
     else if (act === 'h-del') {
       if (!await askConfirm('حذف الفندق؟', b.dataset.name, 'نعم، احذف')) return;
