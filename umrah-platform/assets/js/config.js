@@ -8,7 +8,7 @@
 window.UMRAH_CONFIG = {
   API_URL: 'https://script.google.com/macros/s/AKfycby59EludkHs__0RnNiwAUt3bBJ0vEKh6c46RHbpJt6f9aHg-d80OydGrQNKjI6kLZzQbA/exec',
   FIREBASE: {
-    apiKey: '1:436692620564:web:b5e7bea64f03e5741b1e01',
+    apiKey: 'AIzaSyCiJyyWnhrxN4wJ2_5Ursnq7JuMjmcBjGE',
     authBase: 'https://identitytoolkit.googleapis.com/v1',
     tokenBase: 'https://securetoken.googleapis.com/v1'
   },
