@@ -1447,12 +1447,14 @@ window.UMRAH_SCHEMA = {
      "enumValues": [
       "low",
       "normal",
-      "high"
+      "high",
+      "urgent"
      ],
      "enumLabels": {
       "low": "منخفضة",
       "normal": "عادية",
-      "high": "عالية"
+      "high": "عالية",
+      "urgent": "عاجلة"
      },
      "def": "normal"
     },

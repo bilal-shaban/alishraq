@@ -7,6 +7,49 @@
     var cur = 'home', timer;
     root.innerHTML = '<div class="container-narrow mx-auto" style="max-width:760px"><ul class="nav nav-pills nav-fill rm-tabs mb-3" role="tablist">' + tabs.map(function (t) { return '<li class="nav-item"><button class="nav-link' + (t[0] === cur ? ' active' : '') + '" data-tab="' + t[0] + '">' + t[1] + '</button></li>'; }).join('') + '</ul><div id="pt-body"></div></div>';
     var body = A.$('#pt-body'), O;
+
+    /* ---- نداء طارئ: «أنا تائه» / «سأتأخر عن الباص» ---- */
+    function sosHtml() {
+      return '<div class="rm-card mb-3" id="sos"><div class="rm-card-head"><h2>نداء طارئ</h2></div>' +
+        '<p class="small text-secondary mb-2">يصل ندائك فوراً للمشرفين، ويُرسَل موقعك إن سمحت للمتصفح بذلك.</p>' +
+        '<div class="row g-2"><div class="col-6"><button type="button" class="btn btn-danger w-100 py-3" data-sos="lost">🚨 أنا تائه</button></div>' +
+        '<div class="col-6"><button type="button" class="btn btn-warning w-100 py-3" data-sos="late">⏰ سأتأخر عن الباص</button></div></div>' +
+        '<div id="sos-m" class="mt-2" aria-live="polite"></div></div>';
+    }
+    var sosArm = {};
+    function sosPos() {
+      return new Promise(function (res) {
+        if (!navigator.geolocation) { res(null); return; }
+        var done = false, t = setTimeout(function () { if (!done) { done = true; res(null); } }, 7000);
+        navigator.geolocation.getCurrentPosition(function (p) {
+          if (done) return; done = true; clearTimeout(t);
+          res({ lat: p.coords.latitude, lng: p.coords.longitude, acc: p.coords.accuracy });
+        }, function () { if (done) return; done = true; clearTimeout(t); res(null); }, { enableHighAccuracy: true, timeout: 6000, maximumAge: 30000 });
+      });
+    }
+    body.addEventListener('click', async function (ev) {
+      var b = ev.target.closest('[data-sos]'); if (!b) return;
+      var kind = b.getAttribute('data-sos');
+      if (!sosArm[kind]) { /* الضغطة الأولى تُجهّز والثانية ترسل، لتفادي الضغط بالخطأ */
+        sosArm[kind] = true; b.setAttribute('data-label', b.textContent); b.textContent = 'اضغط مرة أخرى للتأكيد';
+        setTimeout(function () { sosArm[kind] = false; if (b.isConnected && b.getAttribute('data-label')) b.textContent = b.getAttribute('data-label'); }, 4000);
+        return;
+      }
+      sosArm[kind] = false; if (b.getAttribute('data-label')) b.textContent = b.getAttribute('data-label');
+      var all = A.$$('[data-sos]'), msg = A.$('#sos-m');
+      all.forEach(function (x) { x.disabled = true; });
+      if (msg) msg.innerHTML = '<div class="alert alert-info py-2">جارٍ إرسال ندائك…</div>';
+      try {
+        var pos = await sosPos();
+        var r = await Api.call('me.alerts.create', { kind: kind, lat: pos ? pos.lat : null, lng: pos ? pos.lng : null, acc: pos ? pos.acc : null });
+        msg = A.$('#sos-m');
+        if (msg) msg.innerHTML = '<div class="alert alert-success py-2">تم إرسال ندائك، وسيتواصل معك المشرف قريباً.' + (r && r.duplicate ? ' (أُرسل قبل قليل)' : '') + '</div>';
+      } catch (e) {
+        msg = A.$('#sos-m');
+        if (msg) msg.innerHTML = '<div class="alert alert-danger py-2">تعذر إرسال النداء: ' + esc(Api.describe ? Api.describe(e) : (e.message || 'حاول مرة أخرى')) + '. اتصل بمشرفك مباشرة.</div>';
+      }
+      all.forEach(function (x) { x.disabled = false; });
+    });
     root.addEventListener('click', function (ev) { var b = ev.target.closest('[data-tab]'); if (!b) return; cur = b.getAttribute('data-tab'); A.$$('[data-tab]', root).forEach(function (x) { x.classList.toggle('active', x === b); }); draw(); });
     function act(s) { return '<li><div class="flex-grow-1"><div class="fw-bold">' + esc(s.Title) + '</div><div class="small text-secondary">' + esc(A.enumLabel('schedule', 'Category', s.Category)) + (s.Location ? ' · ' + esc(s.Location) : '') + '</div>' + (s.Notes ? '<div class="small mt-1">' + esc(s.Notes) + '</div>' : '') + '</div><div class="text-end"><div class="num small">' + Fmt.time(s.Date_Time) + (s.End_Time ? '–' + Fmt.time(s.End_Time) : '') + '</div>' + A.liveBadge(s.live_state) + '</div></li>'; }
 
@@ -14,7 +57,7 @@
       body.innerHTML = A.skeleton(3);
       try { O = await Api.call('me.overview', {}); } catch (e) { body.innerHTML = A.errBox(e); return; }
       var p = O.profile || {}, c = O.campaign;
-      body.innerHTML = '<div class="rm-card mb-3"><div class="rm-rule"><i></i></div><h2 class="fs-4 mb-1">السلام عليكم ' + esc(p.Full_Name || '') + '</h2><p class="text-secondary mb-0">' + esc(O.welcome || ('أهلاً بك في ' + O.company.name)) + '</p></div>' +
+      body.innerHTML = sosHtml() + '<div class="rm-card mb-3"><div class="rm-rule"><i></i></div><h2 class="fs-4 mb-1">السلام عليكم ' + esc(p.Full_Name || '') + '</h2><p class="text-secondary mb-0">' + esc(O.welcome || ('أهلاً بك في ' + O.company.name)) + '</p></div>' +
         (c ? '<div class="rm-card mb-3"><div class="rm-card-head"><h2>حملتي</h2></div><dl class="rm-kv mb-0"><dt>الحملة</dt><dd>' + esc(c.Campaign_Name) + '</dd><dt>الفترة</dt><dd class="num">' + Fmt.date(c.Start_Date) + ' ← ' + Fmt.date(c.End_Date) + '</dd><dt>الانطلاق من</dt><dd>' + esc(c.Departure_City || '—') + '</dd></dl></div>' : '') +
         '<div class="rm-card mb-3"><div class="rm-card-head"><h2>جارٍ الآن</h2><span class="rm-live"></span></div>' + (O.live_now.length ? '<ul class="rm-list">' + O.live_now.map(act).join('') + '</ul>' : A.emptyBox('لا نشاط جارياً الآن', '')) + '</div>' +
         '<div class="rm-card mb-3"><div class="rm-card-head"><h2>الموعد القادم</h2></div>' + (O.next_activity ? '<ul class="rm-list">' + act(O.next_activity) + '</ul>' : A.emptyBox('لا مواعيد قادمة', '')) + '</div>' +
@@ -36,7 +79,7 @@
       try { var r = await Api.call('me.announcements', {}); body.innerHTML = r.items.length ? r.items.map(function (a) { return '<div class="rm-card mb-3"><div class="d-flex justify-content-between gap-2"><h3 class="fs-5">' + esc(a.Title) + '</h3>' + A.badge('announcements', 'Priority', a.Priority) + '</div><p class="mb-1" style="white-space:pre-line">' + esc(a.Message) + '</p><div class="small text-secondary num">' + Fmt.dateTime(a.Created_At) + '</div></div>'; }).join('') : '<div class="rm-card">' + A.emptyBox('لا إعلانات', 'ستظهر إعلانات حملتك هنا.') + '</div>'; } catch (e) { body.innerHTML = A.errBox(e); }
     }
     async function help() {
-      body.innerHTML = '<div class="rm-card mb-3"><form id="hf"><label class="form-label" for="h-m">اكتب طلبك</label><textarea id="h-m" class="form-control" rows="4" maxlength="1000" required></textarea><div class="form-text">لا ترسل كلمات مرور أو أرقام بطاقات أو بيانات جواز هنا.</div><div id="h-e" class="mt-2"></div><button class="btn btn-gold mt-2" type="submit">إرسال</button></form></div><div id="hl">' + A.skeleton(2) + '</div><div id="rt"></div>';
+      body.innerHTML = sosHtml() + '<div class="rm-card mb-3"><form id="hf"><label class="form-label" for="h-m">اكتب طلبك</label><textarea id="h-m" class="form-control" rows="4" maxlength="1000" required></textarea><div class="form-text">لا ترسل كلمات مرور أو أرقام بطاقات أو بيانات جواز هنا.</div><div id="h-e" class="mt-2"></div><button class="btn btn-gold mt-2" type="submit">إرسال</button></form></div><div id="hl">' + A.skeleton(2) + '</div><div id="rt"></div>';
       async function load() { var box = A.$('#hl'); try { var r = await Api.call('me.inquiries.list', {}); box.innerHTML = r.items.length ? r.items.map(function (i) { return '<div class="rm-card mb-2"><div class="d-flex justify-content-between"><span class="num small text-secondary">' + Fmt.dateTime(i.Created_At) + '</span>' + A.badge('inquiries', 'Status', i.Status) + '</div><p class="mb-1 mt-1">' + esc(i.Message) + '</p>' + (i.Response ? '<div class="p-2 rounded" style="background:var(--rm-surface-2);border-inline-start:3px solid var(--rm-gold)"><b>رد الشركة:</b> ' + esc(i.Response) + '</div>' : '') + '</div>'; }).join('') : ''; } catch (e) { box.innerHTML = A.errBox(e); } }
       load();
       A.$('#hf').addEventListener('submit', async function (ev) {
