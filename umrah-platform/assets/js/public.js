@@ -9,7 +9,7 @@
   function errText(e) { return e && (e.details && e.details.fields ? Object.keys(e.details.fields).map(function (k) { return e.details.fields[k]; }).join('، ') : '') || Api.describe(e); }
 
   /* ---------------- الرئيسية ---------------- */
-  A.Pages.index = function () {
+  function renderIndex() {
     var root = document.getElementById('app-root');
     var features = [['المعتمرون والحجوزات', 'ملف لكل معتمر، حجوزات بسعة محسوبة، وتنبيه عند تجاوز السعة.'], ['دفعات ومصاريف', 'تسجيل يدوي بسجل لا يُحذف — يُلغى فقط. لا بيانات بطاقات ولا تحصيل إلكتروني.'], ['برنامج حي', 'مواعيد بتوقيت شركتك وحالة «جارٍ الآن» تُحسب في الخادم.'], ['غرف ونقل', 'توزيع على غرف مكة والمدينة، ورحلات بكشف ركاب وفحص تعارض.'], ['بوابة المعتمر', 'يرى المعتمر برنامجه وإعلانات حملته ويرسل طلب مساعدة ويقيّم.'], ['عزل وصلاحيات', 'كل شركة في ملف منفصل، وثمانية أدوار تُضبط صلاحياتها ضمن حدّ مقفل.']];
     var faq = [['هل بياناتنا منفصلة عن الشركات الأخرى؟', 'نعم. لكل شركة ملف Google Sheets خاص بها يُنشأ تلقائياً، ويُحدَّد من حساب المستخدم الموثّق على الخادم لا من المتصفح.'], ['هل تُخزَّن كلمات المرور؟', 'لا. المصادقة عبر Firebase Auth، ولا تُحفظ كلمات المرور في Sheets أو في المنصة.'], ['هل تحصّل المنصة المدفوعات؟', 'لا. الدفعات تسجيل يدوي لما استلمتموه خارج المنصة.'], ['ماذا يُرسل عبر تيليجرام؟', 'تنبيهات تشغيلية فقط. لا كلمات مرور ولا جوازات ولا تفاصيل دفع، وفشل الإرسال لا يمنع حفظ أي عملية.']];
@@ -25,7 +25,7 @@
   };
 
   /* ---------------- الدخول ---------------- */
-  A.Pages.login = function () {
+  function renderLogin() {
     var root = document.getElementById('app-root'), mode = 'in';
     var expired = A.qs('expired');
     root.innerHTML = '<div class="rm-auth"><div class="rm-auth-art rm-pattern"><div class="rm-arch"><div>' + ARCH + '</div></div></div><div class="rm-auth-form"><div class="rm-auth-card"><div class="d-flex justify-content-between align-items-center mb-4"><a class="rm-brand-row" href="index.html">' + A.MARK + '<b class="rm-display">' + esc(NAME) + '</b></a>' + themeBtn() + '</div><div id="lg-body"></div></div></div></div>';
@@ -87,4 +87,25 @@
       btn.disabled = false;
     });
   };
+
+  /* إذا كان المستخدم مسجَّلاً من قبل («تذكرني» أو جلسة مفتوحة) ندخله مباشرة بدل عرض شاشة الدخول */
+  async function resumeSession() {
+    try {
+      if (!Auth.hasSession() || Auth.isPreview() || A.qs('expired')) return false;
+      var me = await Api.call('auth.me', {});
+      if (!me) return false;
+      location.replace(A.homeFor(me));
+      return true;
+    } catch (e) { return false; }
+  }
+  function withResume(render) {
+    return function () {
+      if (!Auth.hasSession() || Auth.isPreview() || A.qs('expired')) { render(); return; }
+      var root = document.getElementById('app-root');
+      if (root) root.innerHTML = '<div class="d-flex justify-content-center align-items-center" style="min-height:60vh"><span class="text-secondary">جارٍ التحقق من تسجيل الدخول…</span></div>';
+      resumeSession().then(function (done) { if (!done) render(); });
+    };
+  }
+  A.Pages.index = withResume(renderIndex);
+  A.Pages.login = withResume(renderLogin);
 })();
