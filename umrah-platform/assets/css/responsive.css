@@ -1,0 +1,31 @@
+@media (max-width: 1199.98px) { .rm-app { grid-template-columns: 240px 1fr; } .rm-content { padding: 1.4rem 1.1rem 2.5rem; } }
+@media (max-width: 991.98px) {
+  .rm-app { grid-template-columns: 1fr; }
+  .rm-side { position: fixed; inset-block: 0; inset-inline-start: 0; width: min(300px, 86vw); transform: translateX(100%); transition: transform .22s ease; box-shadow: 0 0 0 100vmax rgba(0,0,0,0); }
+  [dir="ltr"] .rm-side { transform: translateX(-100%); }
+  body.nav-open .rm-side { transform: none; box-shadow: 0 0 0 100vmax rgba(0,0,0,.55); }
+  .rm-top { padding: .6rem 1rem; }
+  .rm-auth { grid-template-columns: 1fr; }
+  .rm-auth-art { display: none; }
+  .rm-hide-md { display: none !important; }
+}
+@media (max-width: 575.98px) {
+  .rm-content { padding: 1.1rem 16px 2.5rem; }
+  .rm-page-head h1 { font-size: 1.35rem; }
+  .rm-stat .v { font-size: 1.6rem; }
+  .rm-kv { grid-template-columns: 1fr; gap: .1rem; } .rm-kv dd { margin-bottom: .6rem; }
+  .rm-toolbar .search { max-width: none; }
+  .rm-hide-sm { display: none !important; }
+  .rm-user .name { display: none; }
+}
+/* جدول بطاقات على الجوال */
+@media (max-width: 767.98px) {
+  .rm-table.stack thead { display: none; }
+  .rm-table.stack, .rm-table.stack tbody, .rm-table.stack tr, .rm-table.stack td { display: block; width: 100%; }
+  .rm-table.stack tr { border-bottom: 1px solid var(--rm-line); padding: .6rem .25rem; }
+  .rm-table.stack td { border: 0 !important; padding: .25rem .9rem; display: flex; gap: .75rem; justify-content: space-between; align-items: baseline; }
+  .rm-table.stack td::before { content: attr(data-label); color: var(--rm-mute); font-size: .82rem; flex: none; }
+  .rm-table.stack td.acts { justify-content: flex-start; padding-top: .5rem; }
+  .rm-table.stack td.acts::before { content: none; }
+}
+@media print { .rm-side, .rm-top, .rm-toolbar, .rm-pager, .rm-preview-banner, .btn { display: none !important; } .rm-app { display: block; } body { background: #fff; color: #000; } }
