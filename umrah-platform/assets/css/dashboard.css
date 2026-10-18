@@ -116,3 +116,7 @@
 .rm-tabs .nav-link.active { background: var(--rm-gold); color: #1a1405; border-color: var(--rm-gold); }
 .rm-hero .rm-arch { margin-inline: auto; }
 @media (max-width: 860px) { .rm-hero-in { grid-template-columns: 1fr; } .rm-hero .rm-arch { display: none; } }
+
+/* تبويبات بوابة المعتمر: تبقى في سطر واحد على الجوال (5 تبويبات) */
+.rm-tabs { flex-wrap: nowrap; gap: 2px; }
+.rm-tabs .nav-link { padding-inline: .25rem; font-size: .9rem; white-space: nowrap; }

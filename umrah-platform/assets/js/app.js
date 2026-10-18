@@ -15,6 +15,7 @@
 
   var ICONS = {
     home: 'M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10',
+    scan: 'M4 8V5a1 1 0 011-1h3M16 4h3a1 1 0 011 1v3M20 16v3a1 1 0 01-1 1h-3M8 20H5a1 1 0 01-1-1v-3M4 12h16',
     users: 'M16 11a4 4 0 10-8 0 4 4 0 008 0zM4 20c0-3.3 3.6-5 8-5s8 1.7 8 5',
     ticket: 'M3 8a2 2 0 002-2h14a2 2 0 002 2v2a2 2 0 000 4v2a2 2 0 00-2 2H5a2 2 0 00-2-2v-2a2 2 0 000-4V8zM14 6v12',
     flag: 'M5 21V4m0 0h11l-2 4 2 4H5',
@@ -364,6 +365,7 @@
       { id: 'rooms', href: 'rooms.html', label: 'nav.rooms', icon: 'bed', perm: 'rooms.read' },
       { id: 'transport', href: 'transport.html', label: 'nav.transport', icon: 'bus', perm: 'transport.read' },
       { id: 'schedule', href: 'schedule.html', label: 'nav.schedule', icon: 'cal', perm: 'schedule.read' },
+      { id: 'attendance', href: 'attendance.html', label: 'الحضور', icon: 'scan', perm: 'attendance.read' },
       { id: 'sheikh', href: 'sheikh.html', label: 'nav.sheikh', icon: 'mosque', perm: 'schedule.write_religious' }] },
     { g: 'التواصل', items: [
       { id: 'announcements', href: 'announcements.html', label: 'nav.announcements', icon: 'mega', perm: 'announcements.read' },
