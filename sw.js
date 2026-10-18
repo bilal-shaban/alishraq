@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ishraq-cache-v4';
+const CACHE_NAME = 'ishraq-cache-v5';
 const assetsToCache = [
   './',
   './index.html',
@@ -71,19 +71,35 @@ self.addEventListener('activate', (event) => {
 
 // جلب الملفات: نجرب الشبكة أولاً دائماً (لضمان وصول أي تحديث فوراً)، ونرجع للكاش فقط عند انقطاع الإنترنت
 self.addEventListener('fetch', (event) => {
+  const req = event.request;
+
+  // لا نتدخل في: الطلبات غير GET (مثل تسجيل الدخول وإرسال البيانات)،
+  // ولا في الطلبات الخارجية (Firebase وGoogle Apps Script وخطوط Google وغيرها)،
+  // ولا في صفحات منصة المعتمر (مجلد umrah-platform) لأنها تدير نفسها.
+  const url = new URL(req.url);
+  if (
+    req.method !== 'GET' ||
+    url.origin !== self.location.origin ||
+    url.pathname.includes('/umrah-platform/')
+  ) {
+    return;
+  }
+
   event.respondWith(
-    fetch(event.request)
+    fetch(req)
       .then((networkResponse) => {
         // كل مرة ننجح فيها بجلب نسخة من الشبكة، نحدّث الكاش بها لتبقى نسخة الأوفلاين محدثة
-        const responseClone = networkResponse.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseClone);
-        });
+        if (networkResponse && networkResponse.ok) {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(req, responseClone);
+          });
+        }
         return networkResponse;
       })
       .catch(() => {
         // ما في اتصال بالإنترنت: نرجع لآخر نسخة محفوظة بالكاش
-        return caches.match(event.request);
+        return caches.match(req);
       })
   );
 });
